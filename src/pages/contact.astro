@@ -14,7 +14,7 @@ import Layout from "../layouts/Layout.astro";
         </nav>
     </header>
 
-    <main class="main-container">
+    <main class="contact-grid">
         <nav class="sub-nav">
             <a href="/" class="back-link">BACK</a>
         </nav>
@@ -22,9 +22,9 @@ import Layout from "../layouts/Layout.astro";
         <section class="project-card footer-card">
             <div class="footer-content">
                 <p class="footer-label">INQUIRIES</p>
-                <a href="mailto:FELIZE.KROOK1@GMAIL.COM" class="footer-email"
-                    >FELIZE.KROOK1@GMAIL.COM</a
-                >
+                <a href="mailto:FELIZE.KROOK1@GMAIL.COM" class="footer-email">
+                    FELIZE.KROOK1@GMAIL.COM
+                </a>
 
                 <div class="footer-links">
                     <a href="https://instagram.com/felizekrook" target="_blank"
@@ -37,20 +37,12 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <style>
-    /* --- CORE RESET --- */
-    :global(body) {
-        margin: 0;
-        background-color: #fff;
-        font-family: sans-serif;
-        -webkit-text-size-adjust: 100%;
-    }
-
-    /* --- STICKY HEADER --- */
+    /* HERO BAR - Exactly matching About Page */
     .hero {
         text-align: center;
         position: sticky;
         top: 0;
-        z-index: 1000;
+        z-index: 100; /* Matched to 100 */
         background-color: #ffffff;
         padding: 2rem 2rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -60,6 +52,17 @@ import Layout from "../layouts/Layout.astro";
         box-sizing: border-box;
     }
 
+    .logo-link {
+        text-decoration: none;
+        color: inherit;
+        display: inline-block;
+    }
+
+    .logo-link:hover {
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+
     h1 {
         font-size: clamp(1rem, 2vw, 12rem);
         line-height: 0.85;
@@ -67,17 +70,6 @@ import Layout from "../layouts/Layout.astro";
         text-transform: uppercase;
         margin: 0;
         color: #000;
-    }
-
-    .logo-link {
-        text-decoration: none;
-        color: inherit;
-        display: inline-block;
-        transition: opacity 0.3s ease;
-    }
-
-    .logo-link:hover {
-        opacity: 0.7;
     }
 
     .header-nav {
@@ -100,11 +92,11 @@ import Layout from "../layouts/Layout.astro";
         opacity: 0.6;
     }
 
-    /* --- MAIN CONTAINER & SUB NAV --- */
-    .main-container {
+    /* GRID STRUCTURE - Exactly matching About Page */
+    .contact-grid {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
-        padding: 3vh 2rem 0 2rem; /* The fix: Vertical gap matches About page */
+        padding: 3vh 2rem 0 2rem;
     }
 
     .sub-nav {
@@ -122,15 +114,16 @@ import Layout from "../layouts/Layout.astro";
         text-transform: uppercase;
         transition: opacity 0.3s ease;
     }
+
     .back-link:hover {
         opacity: 0.6;
     }
 
-    /* --- CONTENT CARD --- */
+    /* CONTACT SPECIFIC CONTENT */
     .project-card {
         grid-column: 1 / span 12;
         width: 100%;
-        height: 70vh; /* Adjusted slightly to look better with the new padding */
+        height: 70vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -142,6 +135,7 @@ import Layout from "../layouts/Layout.astro";
         text-align: center;
         max-width: 600px;
     }
+
     .footer-label {
         font-size: 0.6rem;
         letter-spacing: 0.2em;
@@ -149,6 +143,7 @@ import Layout from "../layouts/Layout.astro";
         text-transform: uppercase;
         color: #000;
     }
+
     .footer-email {
         font-size: clamp(1rem, 2.5vw, 2.2rem);
         text-decoration: none;
@@ -157,14 +152,17 @@ import Layout from "../layouts/Layout.astro";
         margin-bottom: 3.5rem;
         transition: opacity 0.2s ease;
     }
+
     .footer-email:hover {
         opacity: 0.6;
     }
+
     .footer-links {
         display: flex;
         justify-content: center;
         gap: 2.5rem;
     }
+
     .footer-links a {
         font-size: 0.7rem;
         text-decoration: none;
@@ -172,18 +170,14 @@ import Layout from "../layouts/Layout.astro";
         letter-spacing: 0.1em;
         transition: opacity 0.2s ease;
     }
-    .footer-links a:hover {
-        opacity: 0.6;
-    }
 
-    /* --- MOBILE --- */
+    /* IPHONE / MOBILE NAV FIX - Exactly matching About Page */
     @media (max-width: 900px) {
         .hero {
             padding: 1.5rem 1rem;
             flex-direction: column;
             gap: 1rem;
             height: auto;
-            position: relative;
         }
 
         h1 {
@@ -199,16 +193,14 @@ import Layout from "../layouts/Layout.astro";
             width: 100%;
         }
 
-        .main-container {
-            padding: 3vh 1rem 0 1rem;
-        }
-
         .sub-nav {
             margin-bottom: 2.5rem;
+            justify-content: flex-start;
         }
 
-        .project-card {
-            height: 50vh;
+        .contact-grid {
+            /* Standard padding to match About mobile */
+            padding: 3vh 2rem 0 2rem;
         }
     }
 </style>
