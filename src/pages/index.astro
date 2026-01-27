@@ -1,0 +1,800 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+
+import img1 from "../assets/1.jpeg";
+import img2 from "../assets/2.jpeg";
+import img3 from "../assets/3.jpeg";
+import img4 from "../assets/4.jpeg";
+import img5 from "../assets/5.jpeg";
+import img6 from "../assets/6.jpeg";
+---
+
+<Layout title="HOME">
+	<header class="hero">
+		<a href="/" class="logo-link">
+			<h1>FELIZE KROOK</h1>
+		</a>
+		<nav class="header-nav">
+			<a href="/gallery">GALLERY</a>
+			<a href="/about">ABOUT</a>
+			<a href="/contact">CONTACT</a>
+		</nav>
+	</header>
+
+	<main class="main-content" id="scroll-container">
+		<section class="centered-gallery">
+			<div class="project-card landing-card" id="landing-trigger">
+				<div class="video-background" id="video-wrapper">
+					<div id="playback-status" class="playback-status">
+						<svg
+							class="pause-icon"
+							width="10"
+							height="10"
+							viewBox="0 0 10 10"
+						>
+							<rect
+								x="1"
+								y="0"
+								width="1.5"
+								height="10"
+								fill="white"></rect>
+							<rect
+								x="7.5"
+								y="0"
+								width="1.5"
+								height="10"
+								fill="white"></rect>
+						</svg>
+						<svg
+							class="play-icon"
+							width="10"
+							height="10"
+							viewBox="0 0 10 10"
+						>
+							<polygon points="0,0 10,5 0,10" fill="white"
+							></polygon>
+						</svg>
+					</div>
+
+					<video
+						autoplay
+						muted
+						loop
+						playsinline
+						id="bg-video-1"
+						class="bg-video is-active"
+					>
+						<source src="/clouds.mp4" type="video/mp4" />
+					</video>
+					<video
+						muted
+						loop
+						playsinline
+						id="bg-video-2"
+						class="bg-video"
+					>
+						<source src="/mountains.mp4" type="video/mp4" />
+					</video>
+					<video
+						muted
+						loop
+						playsinline
+						id="bg-video-3"
+						class="bg-video"
+					>
+						<source src="/waves.mp4" type="video/mp4" />
+					</video>
+					<div class="video-overlay" id="glitch-overlay"></div>
+					<div class="scroll-fade-overlay" id="scroll-fade"></div>
+				</div>
+
+				<div class="landing-content" id="landing-text-wrapper">
+					<p class="landing-label">
+						PORTFOLIO<br />SHOWCASE<br />2026
+					</p>
+					<div class="scroll-to-continue">SCROLL TO CONTINUE</div>
+					<div class="landing-arrow-container">
+						<div
+							class="arrow-indicator down-arrow"
+							id="scroll-to-work"
+						>
+							<svg
+								viewBox="0 0 20 100"
+								preserveAspectRatio="none"
+							>
+								<line
+									x1="10"
+									y1="0"
+									x2="10"
+									y2="100"
+									stroke="white"
+									stroke-width="0.3"></line>
+								<polyline
+									points="4,96 10,100 16,96"
+									fill="none"
+									stroke="white"
+									stroke-width="0.3"></polyline>
+							</svg>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="project-card first-hero">
+				<div class="image-container">
+					<Image
+						src={img2}
+						alt="Project 01"
+						class="zoom-img"
+						quality="high"
+						format="webp"
+					/>
+					<div class="details"><span>01</span> SKETCHES</div>
+				</div>
+			</div>
+			<div class="project-card first-hero">
+				<div class="image-container">
+					<Image
+						src={img1}
+						alt="Project 02"
+						class="zoom-img"
+						quality="high"
+						format="webp"
+					/>
+					<div class="details"><span>02</span> PANTHER</div>
+				</div>
+			</div>
+			<div class="project-card first-hero">
+				<div class="image-container">
+					<Image
+						src={img4}
+						alt="Project 03"
+						class="zoom-img"
+						quality="high"
+						format="webp"
+					/>
+					<div class="details"><span>03</span> SKETCHES 2</div>
+				</div>
+			</div>
+			<div class="project-card first-hero">
+				<div class="image-container">
+					<Image
+						src={img5}
+						alt="Project 04"
+						class="zoom-img"
+						quality="high"
+						format="webp"
+					/>
+					<div class="details"><span>04</span> FELIZE</div>
+				</div>
+			</div>
+			<div class="project-card first-hero">
+				<div class="image-container">
+					<Image
+						src={img6}
+						alt="Project 05"
+						class="zoom-img"
+						quality="high"
+						format="webp"
+					/>
+					<div class="details"><span>05</span> BALENCIAGA</div>
+				</div>
+			</div>
+			<div class="project-card first-hero">
+				<div class="image-container">
+					<Image
+						src={img3}
+						alt="Project 06"
+						class="zoom-img"
+						quality="high"
+						format="webp"
+					/>
+					<div class="details"><span>06</span> CHANEL</div>
+				</div>
+			</div>
+
+			<div class="project-card footer-card">
+				<div class="footer-content">
+					<p class="footer-label">INQUIRIES</p>
+					<a
+						href="mailto:FELIZE.KROOK1@GMAIL.COM"
+						class="footer-email">FELIZE.KROOK1@GMAIL.COM</a
+					>
+					<div class="footer-links">
+						<a
+							href="https://instagram.com/felizekrook"
+							target="_blank">INSTAGRAM</a
+						>
+						<a href="/about">ABOUT</a>
+					</div>
+					<button id="back-to-top" class="back-to-top-text"
+						>BACK TO TOP</button
+					>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<div id="lightbox" class="lightbox">
+		<img class="lightbox-content" id="lightbox-img" alt="Fullscreen View" />
+	</div>
+
+	<style>
+		:global(body) {
+			margin: 0;
+			overflow: hidden;
+			background-color: #fff;
+			font-family: sans-serif;
+			-webkit-text-size-adjust: 100%;
+		}
+		.main-content {
+			width: 100%;
+			height: 100vh;
+			overflow-y: scroll;
+			scroll-snap-type: y mandatory;
+			scroll-behavior: smooth;
+			-webkit-overflow-scrolling: touch;
+		}
+		.hero {
+			text-align: center;
+			position: fixed;
+			width: 100%;
+			top: 0;
+			z-index: 1000;
+			background-color: #ffffff;
+			padding: 2rem 2rem;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			box-sizing: border-box;
+		}
+		h1 {
+			font-size: clamp(1rem, 2vw, 12rem);
+			line-height: 0.85;
+			letter-spacing: -0.05em;
+			text-transform: uppercase;
+			margin: 0;
+			color: #000;
+		}
+		.logo-link {
+			text-decoration: none;
+			color: inherit;
+			display: inline-block;
+			transition: opacity 0.3s ease;
+		}
+		.logo-link:hover {
+			opacity: 0.6;
+		}
+		.header-nav {
+			position: absolute;
+			right: 2rem;
+			display: flex;
+			gap: 1.5rem;
+		}
+		.header-nav a {
+			font-size: 0.7rem;
+			text-decoration: none;
+			color: #000;
+			letter-spacing: 0.05em;
+			text-transform: uppercase;
+			transition: opacity 0.3s ease;
+		}
+		.header-nav a:hover {
+			opacity: 0.6;
+		}
+		.landing-card {
+			position: relative;
+			overflow: hidden;
+			background-color: #000;
+		}
+		.video-background,
+		.landing-content {
+			opacity: 0;
+			transition: opacity 1.5s ease-in-out;
+		}
+		.is-visible {
+			opacity: 1 !important;
+		}
+		.video-background {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+			pointer-events: none;
+		}
+		.bg-video {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			opacity: 0;
+			transition: opacity 1s ease-in-out;
+		}
+		.bg-video.is-active {
+			opacity: 1;
+			z-index: 2;
+		}
+		.video-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.3);
+			z-index: 5;
+		}
+		.scroll-fade-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: #000;
+			opacity: 0;
+			z-index: 6;
+			pointer-events: none;
+			will-change: opacity;
+		}
+
+		.playback-status {
+			position: absolute;
+			top: 130px;
+			left: 2rem;
+			z-index: 20;
+			opacity: 0.5;
+			pointer-events: none;
+			transition: opacity 0.3s ease;
+			display: flex;
+			align-items: center;
+		}
+		.playback-status .pause-icon {
+			display: block;
+		}
+		.playback-status .play-icon {
+			display: none;
+		}
+		.playback-status.is-paused .pause-icon {
+			display: none;
+		}
+		.playback-status.is-paused .play-icon {
+			display: block;
+		}
+
+		.glitch-active {
+			animation: glitch-fx 0.15s steps(2) infinite;
+			text-shadow:
+				2px 0 #ffffff,
+				-2px 0 #000000;
+			background: rgba(255, 255, 255, 0.15);
+		}
+		@keyframes glitch-fx {
+			0% {
+				clip-path: inset(40% 0 61% 0);
+				transform: translate(-20px, 5px) skew(10deg);
+				filter: grayscale(1) contrast(3) brightness(1.5);
+			}
+			20% {
+				clip-path: inset(92% 0 1% 0);
+				transform: translate(20px, -5px) skew(-5deg);
+				filter: grayscale(1) invert(1);
+			}
+			40% {
+				clip-path: inset(43% 0 1% 0);
+				transform: translate(-15px, 15px);
+				filter: grayscale(1) contrast(2);
+			}
+			60% {
+				clip-path: inset(25% 0 58% 0);
+				transform: translate(15px, -15px) skew(5deg);
+				filter: grayscale(1) brightness(0.5);
+			}
+			80% {
+				clip-path: inset(54% 0 7% 0);
+				transform: translate(-25px, 0);
+				filter: grayscale(1) contrast(5);
+			}
+			100% {
+				clip-path: inset(10% 0 85% 0);
+				transform: translate(0);
+				filter: grayscale(1);
+			}
+		}
+		.landing-content {
+			z-index: 10;
+			text-align: center;
+			color: #fff;
+			pointer-events: none;
+			width: 100%;
+		}
+		.landing-label,
+		.scroll-to-continue {
+			color: #fff !important;
+		}
+		.landing-arrow-container {
+			margin-top: 2rem;
+			height: 15vh;
+			display: flex;
+			justify-content: center;
+		}
+		.arrow-indicator {
+			position: relative;
+			height: 100%;
+			width: 20px;
+			cursor: pointer;
+			transition: opacity 0.3s ease;
+			pointer-events: auto;
+		}
+		.arrow-indicator:hover {
+			opacity: 0.5;
+		}
+		.project-card {
+			width: 100%;
+			height: 100vh;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			scroll-snap-align: center;
+			scroll-snap-stop: always;
+			padding: 0 2rem;
+			box-sizing: border-box;
+			position: relative;
+			scroll-margin-top: 100px;
+		}
+		.image-container {
+			position: relative;
+			width: fit-content;
+			max-width: 600px;
+		}
+		.zoom-img {
+			width: auto;
+			max-width: 100%;
+			height: auto;
+			max-height: 65vh;
+			object-fit: contain;
+			cursor: zoom-in;
+			transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+		}
+		.zoom-img:hover {
+			transform: scale(1.05);
+		}
+		.details {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 1.5rem;
+			font-size: 0.7rem;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			width: 100%;
+		}
+		.footer-content {
+			text-align: center;
+			width: 100%;
+			max-width: 800px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.footer-label {
+			font-size: 0.6rem;
+			letter-spacing: 0.2em;
+			margin-bottom: 1.5rem;
+			text-transform: uppercase;
+			color: #000;
+		}
+		.footer-email {
+			font-size: clamp(1rem, 2.5vw, 2.2rem);
+			text-decoration: none;
+			color: #000;
+			display: block;
+			margin-bottom: 3.5rem;
+			transition: opacity 0.2s ease;
+		}
+		.footer-email:hover {
+			opacity: 0.6;
+		}
+		.footer-links {
+			display: flex;
+			justify-content: center;
+			gap: 2.5rem;
+			margin-bottom: 4rem;
+		}
+		.footer-links a {
+			font-size: 0.7rem;
+			text-decoration: none;
+			color: #000;
+			letter-spacing: 0.1em;
+			transition: opacity 0.2s ease;
+		}
+		.back-to-top-text {
+			background: none;
+			border: none;
+			padding: 0;
+			cursor: pointer;
+			font-size: 0.7rem;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			color: #000 !important;
+			transition: opacity 0.2s ease;
+		}
+		.back-to-top-text:hover {
+			opacity: 0.6;
+		}
+		.lightbox {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 3000;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: rgba(255, 255, 255, 0.6);
+			backdrop-filter: blur(2px);
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 0.6s ease;
+			cursor: zoom-out;
+		}
+		.lightbox.show {
+			opacity: 1;
+			visibility: visible;
+		}
+		.lightbox-content {
+			max-width: 90%;
+			max-height: 85vh;
+			object-fit: contain;
+		}
+
+		@media (max-width: 900px) {
+			h1 {
+				font-size: 1.4rem;
+			}
+			.hero {
+				padding: 1.5rem 1rem;
+				flex-direction: column;
+				gap: 1rem;
+			}
+			.header-nav {
+				position: static;
+				justify-content: center;
+				gap: 2rem;
+				width: 100%;
+			}
+			.landing-content {
+				position: absolute !important;
+				top: 55% !important;
+				left: 50% !important;
+				transform: translate(-50%, -50%) !important;
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			.landing-arrow-container {
+				margin-top: 4rem !important;
+			}
+			.project-card {
+				scroll-margin-top: 130px;
+				justify-content: flex-start;
+				padding-top: 15vh;
+			}
+			.zoom-img {
+				max-height: 50vh;
+				transition: none;
+			}
+			.zoom-img:hover {
+				transform: scale(1);
+			}
+			.playback-status {
+				top: 160px;
+				left: 1.5rem;
+			}
+		}
+	</style>
+
+	<script>
+		const v1 = document.getElementById("bg-video-1") as HTMLVideoElement;
+		const v2 = document.getElementById("bg-video-2") as HTMLVideoElement;
+		const v3 = document.getElementById("bg-video-3") as HTMLVideoElement;
+		const videos = [v1, v2, v3];
+
+		const glitchOverlay = document.getElementById(
+			"glitch-overlay",
+		) as HTMLElement;
+		const landingCard = document.getElementById(
+			"landing-trigger",
+		) as HTMLElement;
+		const scrollFade = document.getElementById(
+			"scroll-fade",
+		) as HTMLElement;
+		const mainContent = document.getElementById(
+			"scroll-container",
+		) as HTMLElement;
+		const landingText = document.getElementById(
+			"landing-text-wrapper",
+		) as HTMLElement;
+		const videoWrapper = document.getElementById(
+			"video-wrapper",
+		) as HTMLElement;
+		const playbackStatus = document.getElementById(
+			"playback-status",
+		) as HTMLElement;
+
+		let currentIndex = 0;
+		let isLandingVisible = true;
+		let lastTime = performance.now();
+		let accumulatedTime = 0;
+
+		// --- 6 SECOND INTERVAL ---
+		const SWAP_THRESHOLD = 6000;
+
+		const updateUI = () => {
+			const currentVideo = videos[currentIndex];
+			if (playbackStatus) {
+				if (currentVideo.paused)
+					playbackStatus.classList.add("is-paused");
+				else playbackStatus.classList.remove("is-paused");
+			}
+		};
+
+		videos.forEach((v) => {
+			v.addEventListener("play", updateUI);
+			v.addEventListener("pause", updateUI);
+		});
+
+		function masterLoop(now: number) {
+			const deltaTime = now - lastTime;
+			lastTime = now;
+			const currentVideo = videos[currentIndex];
+
+			if (!document.hidden && isLandingVisible && !currentVideo.paused) {
+				accumulatedTime += deltaTime;
+				if (accumulatedTime >= SWAP_THRESHOLD) {
+					accumulatedTime = 0;
+					swapVideos();
+				}
+			}
+			requestAnimationFrame(masterLoop);
+		}
+
+		function swapVideos() {
+			if (!glitchOverlay) return;
+			glitchOverlay.classList.add("glitch-active");
+			const randomGlitchDuration = Math.floor(Math.random() * 250) + 100;
+
+			setTimeout(() => {
+				const oldVideo = videos[currentIndex];
+				oldVideo.classList.remove("is-active");
+				currentIndex = (currentIndex + 1) % videos.length;
+				const newVideo = videos[currentIndex];
+
+				newVideo.classList.add("is-active");
+				newVideo
+					.play()
+					.then(() => {
+						if (newVideo.readyState >= 2) newVideo.currentTime = 0;
+					})
+					.catch(() => {});
+
+				setTimeout(() => {
+					if (videos[currentIndex] !== oldVideo) oldVideo.pause();
+				}, 1000);
+
+				setTimeout(() => {
+					glitchOverlay.classList.remove("glitch-active");
+				}, 200);
+			}, randomGlitchDuration);
+		}
+
+		function showLanding() {
+			if (videoWrapper) videoWrapper.classList.add("is-visible");
+			if (landingText) landingText.classList.add("is-visible");
+			videos[0].play().catch(() => {
+				updateUI();
+			});
+			requestAnimationFrame(masterLoop);
+		}
+
+		if (landingCard) {
+			landingCard.addEventListener("click", () => {
+				const activeVideo = videos[currentIndex];
+				if (activeVideo.paused) activeVideo.play();
+				else activeVideo.pause();
+			});
+		}
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					const wasLandingVisible = isLandingVisible;
+					isLandingVisible = entry.isIntersecting;
+					if (!isLandingVisible) {
+						videos[currentIndex].pause();
+					} else {
+						if (!wasLandingVisible) accumulatedTime = 0;
+						// Force UI refresh on return
+						updateUI();
+						videos[currentIndex].play();
+					}
+				});
+			},
+			{ threshold: 0.1 },
+		);
+
+		if (landingCard) observer.observe(landingCard);
+
+		if (v1) {
+			if (v1.readyState >= 3) showLanding();
+			else v1.addEventListener("canplay", showLanding);
+		}
+
+		if (mainContent && scrollFade && landingText) {
+			mainContent.addEventListener("scroll", () => {
+				const scrollPos = mainContent.scrollTop;
+				const progress = Math.min(
+					scrollPos / (window.innerHeight * 0.8),
+					1,
+				);
+				scrollFade.style.opacity = progress.toString();
+				landingText.style.opacity = (1 - progress * 1.5).toString();
+				if (playbackStatus)
+					playbackStatus.style.opacity = (
+						0.5 *
+						(1 - progress * 2)
+					).toString();
+			});
+		}
+
+		const backToTopBtn = document.getElementById("back-to-top");
+		const scrollWorkBtn = document.getElementById("scroll-to-work");
+
+		if (backToTopBtn)
+			backToTopBtn.addEventListener("click", () => {
+				if (!mainContent) return;
+				mainContent.style.scrollSnapType = "none";
+				mainContent.scrollTo({ top: 0, behavior: "smooth" });
+				setTimeout(() => {
+					mainContent.style.scrollSnapType = "y mandatory";
+				}, 800);
+			});
+
+		if (scrollWorkBtn) {
+			scrollWorkBtn.addEventListener("click", (e) => {
+				e.stopPropagation();
+				const firstProject = document.querySelector(".first-hero");
+				if (firstProject)
+					firstProject.scrollIntoView({
+						behavior: "smooth",
+						block: "start",
+					});
+			});
+		}
+
+		const lightbox = document.getElementById("lightbox") as HTMLElement;
+		const lightboxImg = document.getElementById(
+			"lightbox-img",
+		) as HTMLImageElement;
+		const allImages = document.querySelectorAll(".zoom-img");
+		if (lightbox && lightboxImg) {
+			allImages.forEach((img) => {
+				img.addEventListener("click", () => {
+					lightboxImg.src = (img as HTMLImageElement).src;
+					lightbox.classList.add("show");
+					document.body.style.overflow = "hidden";
+				});
+			});
+			lightbox.addEventListener("click", () => {
+				lightbox.classList.remove("show");
+				document.body.style.overflow = "auto";
+			});
+		}
+	</script>
+</Layout>

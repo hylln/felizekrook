@@ -1,0 +1,394 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="GALLERY">
+    <header class="hero">
+        <a href="/" class="logo-link">
+            <h1>FELIZE KROOK</h1>
+        </a>
+        <nav class="header-nav">
+            <a href="/gallery">GALLERY</a>
+            <a href="/about">ABOUT</a>
+            <a href="/contact">CONTACT</a>
+        </nav>
+    </header>
+
+    <main class="contact-grid">
+        <nav class="sub-nav">
+            <a href="/" class="back-link">BACK</a>
+        </nav>
+
+        <section class="thumbnail-grid">
+            <div class="thumb-card">
+                <img src="/2.jpeg" alt="Project 01" class="zoom-img" />
+                <div class="thumb-details">01</div>
+            </div>
+            <div class="thumb-card">
+                <img src="/1.jpeg" alt="Project 02" class="zoom-img" />
+                <div class="thumb-details">02</div>
+            </div>
+            <div class="thumb-card">
+                <img src="/4.jpeg" alt="Project 03" class="zoom-img" />
+                <div class="thumb-details">03</div>
+            </div>
+            <div class="thumb-card">
+                <img src="/5.jpeg" alt="Project 04" class="zoom-img" />
+                <div class="thumb-details">04</div>
+            </div>
+            <div class="thumb-card">
+                <img src="/6.jpeg" alt="Project 05" class="zoom-img" />
+                <div class="thumb-details">05</div>
+            </div>
+            <div class="thumb-card">
+                <img src="/3.jpeg" alt="Project 06" class="zoom-img" />
+                <div class="thumb-details">06</div>
+            </div>
+        </section>
+    </main>
+
+    <div id="lightbox" class="lightbox">
+        <span class="close-lightbox" id="close-btn">&times;</span>
+        <div class="nav-zone left" id="prev-zone"></div>
+        <div class="nav-zone right" id="next-zone"></div>
+
+        <div class="lightbox-content-wrapper" id="lightbox-wrapper">
+            <img
+                class="lightbox-content"
+                id="lightbox-img"
+                alt="Fullscreen View"
+            />
+        </div>
+    </div>
+</Layout>
+
+<style>
+    /* --- PREVENT LAYOUT SHIFT ON WINDOWS --- */
+    :global(html) {
+        scrollbar-gutter: stable;
+    }
+
+    /* --- NAVIGATION & HERO --- */
+    .hero {
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background-color: #ffffff;
+        padding: 2rem 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+    }
+    .logo-link {
+        text-decoration: none;
+        color: inherit;
+        display: inline-block;
+        transition: opacity 0.3s ease;
+    }
+    .logo-link:hover {
+        opacity: 0.7;
+    }
+    h1 {
+        font-size: clamp(1rem, 2vw, 12rem);
+        line-height: 0.85;
+        letter-spacing: -0.05em;
+        text-transform: uppercase;
+        margin: 0;
+        color: #000;
+    }
+    .header-nav {
+        position: absolute;
+        right: 2rem;
+        display: flex;
+        gap: 1.5rem;
+    }
+    .header-nav a {
+        font-size: 0.7rem;
+        text-decoration: none;
+        color: #000;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: opacity 0.3s ease;
+    }
+    .header-nav a:hover {
+        opacity: 0.6;
+    }
+
+    /* --- PAGE STRUCTURE --- */
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        padding: 3vh 2rem 0 2rem;
+        width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+    .sub-nav {
+        grid-column: 1 / span 12;
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .back-link {
+        font-size: 0.7rem;
+        text-decoration: none;
+        color: #000;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: opacity 0.3s ease;
+    }
+    .back-link:hover {
+        opacity: 0.6;
+    }
+
+    /* --- MASONRY GRID --- */
+    .thumbnail-grid {
+        grid-column: 1 / span 12;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-auto-rows: 10px;
+        gap: 0 1.5rem;
+        width: 100%;
+        padding-bottom: 5vh;
+        align-items: start;
+        box-sizing: border-box;
+    }
+
+    .thumb-card {
+        grid-row-end: span 30;
+        width: 100%;
+        margin-bottom: 2rem;
+        box-sizing: border-box;
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+            opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .thumb-card.reveal-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .thumb-card img {
+        width: 100%;
+        height: auto;
+        display: block;
+        cursor: zoom-in;
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .thumb-card img:hover {
+        transform: scale(1.025);
+    }
+    .thumb-details {
+        margin-top: 0.5rem;
+        font-size: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    /* --- LIGHTBOX --- */
+    .lightbox {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(2px);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+            opacity 0.6s ease,
+            visibility 0.6s ease;
+    }
+    .lightbox.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    .close-lightbox {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        font-size: 2.5rem;
+        z-index: 3000;
+        cursor: pointer;
+    }
+    .nav-zone {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 45%;
+        z-index: 2010;
+    }
+    .nav-zone.left {
+        left: 0;
+        cursor: w-resize;
+    }
+    .nav-zone.right {
+        right: 0;
+        cursor: e-resize;
+    }
+
+    .lightbox-content-wrapper {
+        width: 90%;
+        height: 85vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition:
+            transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+            opacity 0.3s ease;
+    }
+    .lightbox-content {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .flick-out-left {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+    .flick-out-right {
+        transform: translateX(30px);
+        opacity: 0;
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 900px) {
+        h1 {
+            font-size: 1.4rem;
+            width: 100%;
+            text-align: center;
+        }
+        .hero {
+            flex-direction: column;
+            padding: 1.5rem 1rem;
+            gap: 1rem;
+        }
+        .header-nav {
+            position: static;
+            margin-top: 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem; /* Matches About page spacing */
+            width: 100%;
+        }
+        .thumbnail-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .nav-zone {
+            width: 50%;
+        }
+    }
+</style>
+
+<script>
+    function resizeMasonryItem(item: HTMLElement) {
+        const grid = document.querySelector(".thumbnail-grid") as HTMLElement;
+        if (!grid) return;
+        const rowHeight = parseInt(
+            window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"),
+        );
+        const img = item.querySelector("img");
+        const details = item.querySelector(".thumb-details");
+        if (img && details) {
+            const totalHeight =
+                img.getBoundingClientRect().height +
+                details.getBoundingClientRect().height +
+                15;
+            const rowSpan = Math.ceil(totalHeight / rowHeight);
+            item.style.gridRowEnd = `span ${rowSpan}`;
+        }
+    }
+
+    function resizeAllItems() {
+        document
+            .querySelectorAll(".thumb-card")
+            .forEach((item) => resizeMasonryItem(item as HTMLElement));
+    }
+
+    const revealObserver = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("reveal-visible");
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.1 },
+    );
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById(
+        "lightbox-img",
+    ) as HTMLImageElement;
+    const lightboxWrapper = document.getElementById("lightbox-wrapper");
+    const thumbImgs = document.querySelectorAll(
+        ".zoom-img",
+    ) as NodeListOf<HTMLImageElement>;
+    const closeBtn = document.getElementById("close-btn");
+    const prevZone = document.getElementById("prev-zone");
+    const nextZone = document.getElementById("next-zone");
+
+    let currentIndex = 0;
+    const imgList = Array.from(thumbImgs).map((img) => img.src);
+
+    function updateLightboxImage(index: number, direction: "left" | "right") {
+        if (!lightboxWrapper || !lightboxImg) return;
+        const animClass =
+            direction === "left" ? "flick-out-right" : "flick-out-left";
+        lightboxWrapper.classList.add(animClass);
+        setTimeout(() => {
+            currentIndex = index;
+            lightboxImg.src = imgList[currentIndex];
+            lightboxWrapper.classList.remove(animClass);
+        }, 200);
+    }
+
+    if (lightbox && lightboxImg && closeBtn && prevZone && nextZone) {
+        thumbImgs.forEach((img, index) => {
+            img.addEventListener("click", () => {
+                currentIndex = index;
+                lightboxImg.src = imgList[currentIndex];
+                lightbox.classList.add("show");
+                document.body.style.overflow = "hidden";
+            });
+        });
+
+        closeBtn.addEventListener("click", () => {
+            lightbox.classList.remove("show");
+            document.body.style.overflow = "auto";
+        });
+
+        nextZone.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const nextIndex = (currentIndex + 1) % imgList.length;
+            updateLightboxImage(nextIndex, "right");
+        });
+
+        prevZone.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const prevIndex =
+                (currentIndex - 1 + imgList.length) % imgList.length;
+            updateLightboxImage(prevIndex, "left");
+        });
+    }
+
+    window.addEventListener("load", () => {
+        resizeAllItems();
+        document
+            .querySelectorAll(".thumb-card")
+            .forEach((item) => revealObserver.observe(item));
+    });
+    window.addEventListener("resize", resizeAllItems);
+</script>

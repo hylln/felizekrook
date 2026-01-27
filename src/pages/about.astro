@@ -1,0 +1,210 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="ABOUT">
+    <header class="hero">
+        <a href="/" class="logo-link">
+            <h1>FELIZE KROOK</h1>
+        </a>
+        <nav class="header-nav">
+            <a href="/gallery">GALLERY</a>
+            <a href="/about">ABOUT</a>
+            <a href="/contact">CONTACT</a>
+        </nav>
+    </header>
+
+    <main class="contact-grid">
+        <nav class="sub-nav">
+            <a href="/" class="back-link">BACK</a>
+        </nav>
+
+        <section class="about-content">
+            <h2><strong>ABOUT</strong></h2>
+            <div class="bio-text">
+                <p>
+                    <strong>EXT. MONSTROPOLIS - NIGHT</strong><br />
+                    The city skyline is a jagged silhouette against a dark, purple
+                    sky. Strange, bulbous buildings glow with eerie bioluminescence.
+                    This is a world where things go bump in the night.
+                </p>
+                <p>
+                    <strong>INT. SIMULATOR ROOM - NIGHT</strong><br />
+                    A child’s bedroom. Peaceful. Quiet. A door CREAKS open. A shadow
+                    stretches across the shag carpet. A monster, tall and hulking,
+                    creeps toward the bed. It has three eyes and tentacles for arms.
+                    It looms over the sleeping child, taking a deep breath, preparing
+                    to unleash a terrifying roar.
+                </p>
+                <p>
+                    Suddenly, the monster steps on a squeaky toy. <em
+                        >SQUEAK!</em
+                    > The monster panics. He trips over a toy truck, tangles himself
+                    in the bedsheets, and falls flat on his face. The child doesn't
+                    wake up.
+                </p>
+                <p>
+                    <strong>VOICE (O.S.)</strong><br />
+                    "SIMULATION TERMINATED. SIMULATION TERMINATED."
+                </p>
+                <p>
+                    The bedroom walls pivot away, revealing a vast industrial
+                    warehouse. This isn't a real bedroom. It's a training
+                    simulator. FLINT, a stern-looking monster with a clipboard,
+                    sighs and shakes her head. The monster on the floor, PHLEGM,
+                    looks up sheepishly, still tangled in a pink blanket.
+                </p>
+                <p>
+                    "Phlegm, you’re still making too much noise. You’re dead
+                    before you even reach the closet," Flint says. "Scream
+                    collection is a precise science! If you can't scare a
+                    simulated child, how do you expect to power this city?"
+                </p>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    /* HERO BAR - Consistent across all pages */
+    .hero {
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background-color: #ffffff;
+        padding: 2rem 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    .logo-link {
+        text-decoration: none;
+        color: inherit;
+        display: inline-block;
+    }
+
+    .logo-link:hover {
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+
+    h1 {
+        font-size: clamp(1rem, 2vw, 12rem);
+        line-height: 0.85;
+        letter-spacing: -0.05em;
+        text-transform: uppercase;
+        margin: 0;
+        color: #000;
+    }
+
+    .header-nav {
+        position: absolute;
+        right: 2rem;
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .header-nav a:hover {
+        opacity: 0.6;
+    }
+
+    .header-nav a {
+        font-size: 0.7rem;
+        text-decoration: none;
+        color: #000;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: opacity 0.3s ease;
+    }
+
+    /* GRID STRUCTURE */
+    .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        padding: 3vh 2rem 0 2rem;
+    }
+
+    .sub-nav {
+        grid-column: 1 / span 12;
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .back-link {
+        font-size: 0.7rem;
+        text-decoration: none;
+        color: #000;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: opacity 0.3s ease;
+    }
+    .back-link:hover {
+        opacity: 0.6;
+    }
+
+    /* ABOUT CONTENT STYLING */
+    .about-content {
+        grid-column: 1 / span 12;
+        max-width: 700px; /* Slightly narrower for a script-like feel */
+        margin: 0 auto;
+    }
+
+    h2 {
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 3rem;
+        font-weight: 400;
+        text-align: center;
+    }
+
+    .bio-text p {
+        font-size: 0.85rem;
+        line-height: 1.8;
+        color: #000;
+        margin-bottom: 2rem;
+        letter-spacing: 0.02em;
+    }
+
+    strong {
+        letter-spacing: 0.05em;
+        font-weight: 600;
+    }
+
+    /* --- IPHONE / MOBILE NAV FIX --- */
+    @media (max-width: 900px) {
+        .hero {
+            padding: 1.5rem 1rem;
+            flex-direction: column; /* Stack name and links */
+            gap: 1rem;
+            height: auto;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header-nav {
+            position: static; /* Move back into the column flow */
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .sub-nav {
+            margin-bottom: 2.5rem; /* Tighter spacing for mobile screens */
+            justify-content: flex-start;
+        }
+
+        .about-content {
+            padding: 0 1rem;
+        }
+    }
+</style>

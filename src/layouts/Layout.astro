@@ -1,0 +1,52 @@
+---
+// 1. Define the props to receive the title from individual pages
+const { title } = Astro.props;
+
+const siteName = "Felize Krook";
+// 2. Create the combined string. If title exists, show "PAGE | Name", otherwise just "Name"
+const fullTitle = title ? `${title} | ${siteName}` : siteName;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+
+		<title>{fullTitle}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style>
+	:root {
+		--bg: #ffffff;
+		--text: #000000;
+		--gutter: 2rem;
+	}
+
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	body {
+		background-color: var(--bg);
+		color: var(--text);
+		font-family: "Inter", sans-serif;
+		-webkit-font-smoothing: antialiased;
+		padding: var(--gutter);
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+</style>

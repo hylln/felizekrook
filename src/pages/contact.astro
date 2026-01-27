@@ -1,0 +1,214 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="CONTACT">
+    <header class="hero">
+        <a href="/" class="logo-link">
+            <h1>FELIZE KROOK</h1>
+        </a>
+        <nav class="header-nav">
+            <a href="/gallery">GALLERY</a>
+            <a href="/about">ABOUT</a>
+            <a href="/contact">CONTACT</a>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <nav class="sub-nav">
+            <a href="/" class="back-link">BACK</a>
+        </nav>
+
+        <section class="project-card footer-card">
+            <div class="footer-content">
+                <p class="footer-label">INQUIRIES</p>
+                <a href="mailto:FELIZE.KROOK1@GMAIL.COM" class="footer-email"
+                    >FELIZE.KROOK1@GMAIL.COM</a
+                >
+
+                <div class="footer-links">
+                    <a href="https://instagram.com/felizekrook" target="_blank"
+                        >INSTAGRAM</a
+                    >
+                </div>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    /* --- CORE RESET --- */
+    :global(body) {
+        margin: 0;
+        background-color: #fff;
+        font-family: sans-serif;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /* --- STICKY HEADER --- */
+    .hero {
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background-color: #ffffff;
+        padding: 2rem 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    h1 {
+        font-size: clamp(1rem, 2vw, 12rem);
+        line-height: 0.85;
+        letter-spacing: -0.05em;
+        text-transform: uppercase;
+        margin: 0;
+        color: #000;
+    }
+
+    .logo-link {
+        text-decoration: none;
+        color: inherit;
+        display: inline-block;
+        transition: opacity 0.3s ease;
+    }
+
+    .logo-link:hover {
+        opacity: 0.7;
+    }
+
+    .header-nav {
+        position: absolute;
+        right: 2rem;
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .header-nav a {
+        font-size: 0.7rem;
+        text-decoration: none;
+        color: #000;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: opacity 0.3s ease;
+    }
+
+    .header-nav a:hover {
+        opacity: 0.6;
+    }
+
+    /* --- MAIN CONTAINER & SUB NAV --- */
+    .main-container {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        padding: 3vh 2rem 0 2rem; /* The fix: Vertical gap matches About page */
+    }
+
+    .sub-nav {
+        grid-column: 1 / span 12;
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .back-link {
+        font-size: 0.7rem;
+        text-decoration: none;
+        color: #000;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: opacity 0.3s ease;
+    }
+    .back-link:hover {
+        opacity: 0.6;
+    }
+
+    /* --- CONTENT CARD --- */
+    .project-card {
+        grid-column: 1 / span 12;
+        width: 100%;
+        height: 70vh; /* Adjusted slightly to look better with the new padding */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    .footer-content {
+        text-align: center;
+        max-width: 600px;
+    }
+    .footer-label {
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+        color: #000;
+    }
+    .footer-email {
+        font-size: clamp(1rem, 2.5vw, 2.2rem);
+        text-decoration: none;
+        color: #000;
+        display: block;
+        margin-bottom: 3.5rem;
+        transition: opacity 0.2s ease;
+    }
+    .footer-email:hover {
+        opacity: 0.6;
+    }
+    .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+    }
+    .footer-links a {
+        font-size: 0.7rem;
+        text-decoration: none;
+        color: #000;
+        letter-spacing: 0.1em;
+        transition: opacity 0.2s ease;
+    }
+    .footer-links a:hover {
+        opacity: 0.6;
+    }
+
+    /* --- MOBILE --- */
+    @media (max-width: 900px) {
+        .hero {
+            padding: 1.5rem 1rem;
+            flex-direction: column;
+            gap: 1rem;
+            height: auto;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header-nav {
+            position: static;
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .main-container {
+            padding: 3vh 1rem 0 1rem;
+        }
+
+        .sub-nav {
+            margin-bottom: 2.5rem;
+        }
+
+        .project-card {
+            height: 50vh;
+        }
+    }
+</style>
