@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 
-// IMPORT IMAGES FROM ASSETS FOLDER
+// ASSET IMPORTS
 import angelsong from "../assets/angelsong.mp3";
 import img1 from "../assets/1.jpeg";
 import img2 from "../assets/2.jpeg";
@@ -58,7 +58,7 @@ const projects = [
 		<section class="centered-gallery">
 			<div class="project-card landing-card" id="landing-trigger">
 				<div class="video-background" id="video-wrapper">
-					<audio id="bg-music" loop preload="auto">
+					<audio id="bg-music" loop preload="none">
 						<source src={angelsong} type="audio/mpeg" />
 					</audio>
 
@@ -158,7 +158,7 @@ const projects = [
 						playsinline
 						id="bg-video-2"
 						class="bg-video"
-						preload="auto"
+						preload="metadata"
 					>
 						<source src="/mountains.mp4" type="video/mp4" />
 					</video>
@@ -167,7 +167,7 @@ const projects = [
 						playsinline
 						id="bg-video-3"
 						class="bg-video"
-						preload="auto"
+						preload="metadata"
 					>
 						<source src="/waves.mp4" type="video/mp4" />
 					</video>
@@ -217,6 +217,7 @@ const projects = [
 								class="zoom-img"
 								quality="high"
 								format="webp"
+								loading="lazy"
 							/>
 							<div class="details">
 								<span>{project.id}</span> {project.title}
@@ -293,7 +294,7 @@ const projects = [
 			justify-content: center;
 			align-items: center;
 			box-sizing: border-box;
-			transform: translateZ(0); /* Force GPU acceleration */
+			transform: translateZ(0);
 		}
 		h1 {
 			font-size: clamp(1rem, 2vw, 12rem);
@@ -343,6 +344,7 @@ const projects = [
 			inset: 0;
 			z-index: 1;
 			pointer-events: none;
+			backface-visibility: hidden;
 		}
 		.landing-content {
 			opacity: 0;
@@ -355,6 +357,7 @@ const projects = [
 				opacity 0.8s ease-in-out,
 				color 0.1s steps(2);
 			will-change: opacity, transform;
+			transform: translateZ(0);
 		}
 		.scroll-trigger {
 			cursor: pointer;
@@ -376,7 +379,7 @@ const projects = [
 			height: 100%;
 			object-fit: cover;
 			opacity: 0;
-			will-change: opacity, filter;
+			will-change: opacity;
 		}
 		.bg-video.is-active {
 			opacity: 1;
@@ -452,15 +455,15 @@ const projects = [
 		@keyframes glitch-switch {
 			0% {
 				transform: scale(1) skew(0deg);
-				filter: hue-rotate(0deg) contrast(1.2);
+				filter: hue-rotate(0deg);
 			}
 			50% {
 				transform: scale(1.02) skew(2deg) translateX(5px);
-				filter: hue-rotate(180deg) brightness(1.5);
+				filter: hue-rotate(180deg);
 			}
 			100% {
 				transform: scale(0.98) skew(-2deg) translateX(-5px);
-				filter: hue-rotate(0deg) contrast(1.2);
+				filter: hue-rotate(0deg);
 			}
 		}
 		.text-glitch {
@@ -478,6 +481,7 @@ const projects = [
 			background-size: 100% 2px;
 			z-index: 5;
 			pointer-events: none;
+			transform: translateZ(0);
 		}
 		.scroll-fade-overlay {
 			position: absolute;
@@ -487,6 +491,7 @@ const projects = [
 			z-index: 6;
 			pointer-events: none;
 			will-change: opacity;
+			transform: translateZ(0);
 		}
 		.playback-status {
 			position: absolute;
@@ -552,6 +557,7 @@ const projects = [
 			padding: 0 2rem;
 			box-sizing: border-box;
 			position: relative;
+			transform: translateZ(0);
 		}
 		.image-container {
 			position: relative;
@@ -780,12 +786,15 @@ const projects = [
 		});
 
 		if (volumeSlider && bgMusic) {
+			// Volume input on GPU cycle
 			volumeSlider.addEventListener(
 				"input",
 				(e) => {
-					bgMusic.volume = parseFloat(
-						(e.target as HTMLInputElement).value,
-					);
+					requestAnimationFrame(() => {
+						bgMusic.volume = parseFloat(
+							(e.target as HTMLInputElement).value,
+						);
+					});
 				},
 				{ passive: true },
 			);
@@ -957,9 +966,13 @@ const projects = [
 			new IntersectionObserver(
 				([entry]) => {
 					const activeVideo = videos[currentIndex];
-					entry.isIntersecting
-						? !isUserPaused && activeVideo.play().catch(() => {})
-						: activeVideo.pause();
+					// Throttled play/pause to avoid heavy frame drops on scroll
+					requestAnimationFrame(() => {
+						entry.isIntersecting
+							? !isUserPaused &&
+								activeVideo.play().catch(() => {})
+							: activeVideo.pause();
+					});
 				},
 				{ root: mainContent, threshold: 0.1 },
 			).observe(landingCard);
@@ -1028,6 +1041,7 @@ const projects = [
 			mainContent.addEventListener(
 				"scroll",
 				() => {
+					// Throttle scroll updates to screen refresh rate
 					requestAnimationFrame(() => {
 						const progress = Math.min(
 							mainContent.scrollTop / (window.innerHeight * 0.8),
