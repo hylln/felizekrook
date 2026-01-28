@@ -80,41 +80,55 @@ import img8 from "../assets/8.jpeg";
 						</svg>
 					</div>
 
-					<button id="audio-toggle" class="audio-toggle-overlay">
-						<svg
-							class="speaker-on-icon"
-							width="14"
-							height="14"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
-							></polygon>
-							<path
-								d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"
-							></path>
-						</svg>
-						<svg
-							class="speaker-off-icon"
-							width="14"
-							height="14"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
-							></polygon>
-							<line x1="23" y1="9" x2="17" y2="15"></line>
-							<line x1="17" y1="9" x2="23" y2="15"></line>
-						</svg>
-					</button>
+					<div class="audio-controls-group">
+						<div class="volume-slider-wrapper">
+							<input
+								type="range"
+								id="volume-slider"
+								min="0"
+								max="1"
+								step="0.01"
+								value="1"
+							/>
+						</div>
+						<button id="audio-toggle" class="audio-toggle-overlay">
+							<svg
+								class="speaker-on-icon"
+								width="14"
+								height="14"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<polygon
+									points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+								></polygon>
+								<path
+									d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"
+								></path>
+							</svg>
+							<svg
+								class="speaker-off-icon"
+								width="14"
+								height="14"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<polygon
+									points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+								></polygon>
+								<line x1="23" y1="9" x2="17" y2="15"></line>
+								<line x1="17" y1="9" x2="23" y2="15"></line>
+							</svg>
+						</button>
+					</div>
 
 					<video
 						autoplay
@@ -415,11 +429,18 @@ import img8 from "../assets/8.jpeg";
 			z-index: 2;
 		}
 
-		.audio-toggle-overlay {
+		/* Styles for volume slider and toggle container */
+		.audio-controls-group {
 			position: absolute;
 			top: 130px;
 			right: 2rem;
 			z-index: 100;
+			display: flex;
+			align-items: center;
+			pointer-events: auto;
+			transition: opacity 0.3s ease;
+		}
+		.audio-toggle-overlay {
 			background: none;
 			border: none;
 			padding: 10px;
@@ -428,7 +449,6 @@ import img8 from "../assets/8.jpeg";
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			pointer-events: auto;
 			transition:
 				opacity 0.3s ease,
 				color 0.1s steps(2);
@@ -445,8 +465,33 @@ import img8 from "../assets/8.jpeg";
 		.audio-toggle-overlay.is-playing .speaker-off-icon {
 			display: none;
 		}
-		.audio-toggle-overlay.is-dark {
+		.audio-controls-group.is-dark {
 			color: #000;
+		}
+		.audio-controls-group.is-dark .audio-toggle-overlay {
+			color: #000;
+		}
+
+		.volume-slider-wrapper {
+			width: 0;
+			overflow: hidden;
+			transition:
+				width 0.3s ease,
+				opacity 0.3s ease;
+			opacity: 0;
+			display: flex;
+			align-items: center;
+		}
+		/* Increased width to 80px and added margin to prevent thumb cut-off */
+		.audio-controls-group:hover .volume-slider-wrapper {
+			width: 80px;
+			opacity: 1;
+			margin-right: 4px;
+		}
+		#volume-slider {
+			width: 70px;
+			cursor: pointer;
+			accent-color: currentColor;
 		}
 
 		.video-glitch {
@@ -724,9 +769,13 @@ import img8 from "../assets/8.jpeg";
 				top: 160px;
 				left: 1.5rem;
 			}
-			.audio-toggle-overlay {
+			.audio-controls-group {
 				top: 160px;
 				right: 1.5rem;
+			}
+			/* Explicitly hide volume slider on mobile */
+			.volume-slider-wrapper {
+				display: none !important;
 			}
 		}
 	</style>
@@ -745,7 +794,15 @@ import img8 from "../assets/8.jpeg";
 		const landingText = document.getElementById("landing-text-wrapper");
 		const videoWrapper = document.getElementById("video-wrapper");
 		const playbackStatus = document.getElementById("playback-status");
+
+		const audioControlsGroup = document.querySelector(
+			".audio-controls-group",
+		);
 		const audioToggle = document.getElementById("audio-toggle");
+		const volumeSlider = document.getElementById(
+			"volume-slider",
+		) as HTMLInputElement;
+
 		const bgMusic = document.getElementById("bg-music") as HTMLAudioElement;
 		const lightbox = document.getElementById("lightbox") as HTMLElement;
 		const lightboxImg = document.getElementById(
@@ -790,11 +847,11 @@ import img8 from "../assets/8.jpeg";
 			if (currentIndex === 1) {
 				landingText?.classList.add("is-dark");
 				playbackStatus?.classList.add("is-dark");
-				audioToggle?.classList.add("is-dark");
+				audioControlsGroup?.classList.add("is-dark");
 			} else {
 				landingText?.classList.remove("is-dark");
 				playbackStatus?.classList.remove("is-dark");
-				audioToggle?.classList.remove("is-dark");
+				audioControlsGroup?.classList.remove("is-dark");
 			}
 		};
 
@@ -814,6 +871,15 @@ import img8 from "../assets/8.jpeg";
 				e.stopPropagation();
 				toggleMusic();
 			});
+
+		// Volume logic
+		if (volumeSlider && bgMusic) {
+			volumeSlider.addEventListener("input", (e) => {
+				const val = parseFloat((e.target as HTMLInputElement).value);
+				bgMusic.volume = val;
+			});
+			volumeSlider.addEventListener("click", (e) => e.stopPropagation());
+		}
 
 		function showLanding() {
 			videoWrapper?.classList.add("is-visible");
@@ -1086,8 +1152,8 @@ import img8 from "../assets/8.jpeg";
 						0.5 *
 						(1 - progress * 2)
 					).toString();
-				if (audioToggle)
-					audioToggle.style.opacity = (
+				if (audioControlsGroup)
+					(audioControlsGroup as HTMLElement).style.opacity = (
 						0.5 *
 						(1 - progress * 2)
 					).toString();
