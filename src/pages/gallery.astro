@@ -99,29 +99,25 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <style>
-    /* --- PREVENT LAYOUT SHIFT --- */
     :global(html) {
         scrollbar-gutter: stable;
     }
 
-    /* --- NAVIGATION & HERO --- */
     .hero {
         text-align: center;
         position: sticky;
         top: 0;
         z-index: 100;
         background-color: #ffffff;
-        padding: 2rem 2rem;
+        padding: 2rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
         display: flex;
         justify-content: center;
         align-items: center;
-        box-sizing: border-box;
     }
     .logo-link {
         text-decoration: none;
         color: inherit;
-        display: inline-block;
         transition: opacity 0.3s ease;
     }
     .logo-link:hover {
@@ -129,8 +125,6 @@ import Layout from "../layouts/Layout.astro";
     }
     h1 {
         font-size: clamp(1rem, 2vw, 12rem);
-        line-height: 0.85;
-        letter-spacing: -0.05em;
         text-transform: uppercase;
         margin: 0;
         color: #000;
@@ -145,7 +139,6 @@ import Layout from "../layouts/Layout.astro";
         font-size: 0.7rem;
         text-decoration: none;
         color: #000;
-        letter-spacing: 0.05em;
         text-transform: uppercase;
         transition: opacity 0.3s ease;
     }
@@ -153,68 +146,49 @@ import Layout from "../layouts/Layout.astro";
         opacity: 0.6;
     }
 
-    /* --- PAGE STRUCTURE --- */
     .contact-grid {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
-        padding: 3vh 2rem 0 2rem;
-        width: 100%;
+        padding: 3vh 2rem;
         overflow-x: hidden;
-        box-sizing: border-box;
     }
     .sub-nav {
         grid-column: 1 / span 12;
-        display: flex;
-        gap: 1.5rem;
         margin-bottom: 2rem;
     }
     .back-link {
         font-size: 0.7rem;
         text-decoration: none;
         color: #000;
-        letter-spacing: 0.05em;
         text-transform: uppercase;
         transition: opacity 0.3s ease;
     }
     .back-link:hover {
         opacity: 0.6;
     }
-
-    /* --- MASONRY GRID --- */
     .thumbnail-grid {
         grid-column: 1 / span 12;
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         grid-auto-rows: 10px;
         gap: 0 1.5rem;
-        width: 100%;
-        padding-bottom: 5vh;
-        align-items: start;
-        box-sizing: border-box;
     }
-
     .thumb-card {
-        grid-row-end: span 30;
-        width: 100%;
-        margin-bottom: 2rem;
-        box-sizing: border-box;
         opacity: 0;
         transform: translateY(30px);
         transition:
             opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
             transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        margin-bottom: 2rem;
     }
-
     .thumb-card.reveal-visible {
         opacity: 1;
         transform: translateY(0);
     }
     .thumb-card img {
         width: 100%;
-        height: auto;
-        display: block;
         cursor: zoom-in;
-        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: transform 0.5s ease;
     }
     .thumb-card img:hover {
         transform: scale(1.025);
@@ -223,10 +197,8 @@ import Layout from "../layouts/Layout.astro";
         margin-top: 0.5rem;
         font-size: 0.5rem;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
     }
 
-    /* --- LIGHTBOX --- */
     .lightbox {
         position: fixed;
         top: 0;
@@ -241,10 +213,9 @@ import Layout from "../layouts/Layout.astro";
         backdrop-filter: blur(2px);
         opacity: 0;
         visibility: hidden;
-        transition:
-            opacity 0.6s ease,
-            visibility 0.6s ease;
-        touch-action: none; /* Prevents default scroll/zoom while lightbox is open */
+        transition: opacity 0.6s ease;
+        touch-action: none;
+        -webkit-tap-highlight-color: transparent;
     }
     .lightbox.show {
         opacity: 1;
@@ -257,12 +228,8 @@ import Layout from "../layouts/Layout.astro";
         font-size: 2.5rem;
         z-index: 3000;
         cursor: pointer;
-        color: #000;
-        transition: opacity 0.3s ease;
     }
-    .close-lightbox:hover {
-        opacity: 0.6;
-    }
+
     .nav-zone {
         position: absolute;
         top: 0;
@@ -272,78 +239,76 @@ import Layout from "../layouts/Layout.astro";
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: opacity 0.3s ease;
-        opacity: 1;
+        cursor: pointer;
+        /* Arrow fade in/out transition */
+        transition:
+            opacity 0.2s ease,
+            visibility 0.2s ease;
     }
-    .nav-zone:hover {
-        opacity: 0.6;
+    .nav-zone.hiding {
+        opacity: 0 !important;
+        visibility: hidden;
+        pointer-events: none;
     }
     .nav-zone.left {
         left: 0;
-        cursor: w-resize;
     }
     .nav-zone.right {
         right: 0;
-        cursor: e-resize;
     }
-
     .lightbox-arrow-container {
         width: 80px;
-        height: 20px;
+        opacity: 1;
+        transition: opacity 0.3s;
+    }
+    .nav-zone:hover .lightbox-arrow-container {
+        opacity: 0.6;
     }
 
     .lightbox-content-wrapper {
-        width: 90%;
-        height: 85vh;
+        width: 100%;
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
+        will-change: transform, opacity;
         transition:
-            transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+            transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
             opacity 0.3s ease;
     }
+    .lightbox-content-wrapper.dragging {
+        transition: none !important;
+    }
+
     .lightbox-content {
-        max-width: 100%;
-        max-height: 100%;
+        max-width: 85%;
+        max-height: 80vh;
         object-fit: contain;
+        pointer-events: none;
+        user-select: none;
     }
 
-    .flick-out-left {
-        transform: translateX(-30px);
-        opacity: 0;
+    .slide-out-left {
+        transform: translate3d(-100%, 0, 0) !important;
+        opacity: 0 !important;
     }
-    .flick-out-right {
-        transform: translateX(30px);
-        opacity: 0;
+    .slide-out-right {
+        transform: translate3d(100%, 0, 0) !important;
+        opacity: 0 !important;
     }
 
-    /* --- RESPONSIVE --- */
     @media (max-width: 900px) {
-        h1 {
-            font-size: 1.4rem;
-            width: 100%;
-            text-align: center;
+        .header-nav {
+            position: static;
+            margin-top: 1rem;
         }
         .hero {
             flex-direction: column;
-            padding: 1.5rem 1rem;
-            gap: 1rem;
-        }
-        .header-nav {
-            position: static;
-            margin-top: 0;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            width: 100%;
         }
         .thumbnail-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(2, 1fr);
         }
         .nav-zone {
-            width: 50%;
-        }
-        .lightbox-arrow-container {
             display: none;
         }
     }
@@ -353,9 +318,7 @@ import Layout from "../layouts/Layout.astro";
     function resizeMasonryItem(item: HTMLElement) {
         const grid = document.querySelector(".thumbnail-grid") as HTMLElement;
         if (!grid) return;
-        const rowHeight = parseInt(
-            window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"),
-        );
+        const rowHeight = 10;
         const img = item.querySelector("img");
         const details = item.querySelector(".thumb-details");
         if (img && details) {
@@ -363,15 +326,8 @@ import Layout from "../layouts/Layout.astro";
                 img.getBoundingClientRect().height +
                 details.getBoundingClientRect().height +
                 15;
-            const rowSpan = Math.ceil(totalHeight / rowHeight);
-            item.style.gridRowEnd = `span ${rowSpan}`;
+            item.style.gridRowEnd = `span ${Math.ceil(totalHeight / rowHeight)}`;
         }
-    }
-
-    function resizeAllItems() {
-        document
-            .querySelectorAll(".thumb-card")
-            .forEach((item) => resizeMasonryItem(item as HTMLElement));
     }
 
     const revealObserver = new IntersectionObserver(
@@ -400,67 +356,130 @@ import Layout from "../layouts/Layout.astro";
 
     let currentIndex = 0;
     const imgList = Array.from(thumbImgs).map((img) => img.src);
+    let isAnimating = false;
 
-    // --- SWIPE LOGIC VARS ---
-    let touchStartX = 0;
-    let touchEndX = 0;
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
 
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        if (touchEndX < touchStartX - swipeThreshold) {
-            // Swiped Left -> Show Next
-            const nextIndex = (currentIndex + 1) % imgList.length;
-            updateLightboxImage(nextIndex, "right");
-        }
-        if (touchEndX > touchStartX + swipeThreshold) {
-            // Swiped Right -> Show Prev
-            const prevIndex =
-                (currentIndex - 1 + imgList.length) % imgList.length;
-            updateLightboxImage(prevIndex, "left");
-        }
-    }
+    function updateImage(index: number, direction: "left" | "right") {
+        if (!lightboxWrapper || !lightboxImg || isAnimating) return;
+        isAnimating = true;
 
-    function updateLightboxImage(index: number, direction: "left" | "right") {
-        if (!lightboxWrapper || !lightboxImg) return;
-        const animClass =
-            direction === "left" ? "flick-out-right" : "flick-out-left";
-        lightboxWrapper.classList.add(animClass);
+        // Start hiding arrows
+        prevZone?.classList.add("hiding");
+        nextZone?.classList.add("hiding");
+
+        const outClass =
+            direction === "right" ? "slide-out-left" : "slide-out-right";
+        lightboxWrapper.classList.add(outClass);
+
         setTimeout(() => {
             currentIndex = index;
+            lightboxWrapper.style.transition = "none";
+            lightboxWrapper.style.opacity = "0";
+            lightboxWrapper.style.transform =
+                direction === "right"
+                    ? "translate3d(100%, 0, 0)"
+                    : "translate3d(-100%, 0, 0)";
+
             lightboxImg.src = imgList[currentIndex];
-            lightboxWrapper.classList.remove(animClass);
-        }, 200);
+            lightboxWrapper.classList.remove(outClass);
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    lightboxWrapper.style.transition = "";
+                    lightboxWrapper.style.opacity = "1";
+                    lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
+
+                    setTimeout(() => {
+                        isAnimating = false;
+                        // Bring arrows back
+                        prevZone?.classList.remove("hiding");
+                        nextZone?.classList.remove("hiding");
+                    }, 400);
+                });
+            });
+        }, 350);
     }
 
-    if (lightbox && lightboxImg && closeBtn && prevZone && nextZone) {
-        thumbImgs.forEach((img, index) => {
+    if (lightbox && lightboxWrapper && lightboxImg) {
+        thumbImgs.forEach((img, i) =>
             img.addEventListener("click", () => {
-                currentIndex = index;
+                currentIndex = i;
                 lightboxImg.src = imgList[currentIndex];
                 lightbox.classList.add("show");
                 document.body.style.overflow = "hidden";
-            });
-        });
+            }),
+        );
 
-        closeBtn.addEventListener("click", () => {
+        closeBtn?.addEventListener("click", () => {
             lightbox.classList.remove("show");
             document.body.style.overflow = "auto";
         });
 
-        nextZone.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const nextIndex = (currentIndex + 1) % imgList.length;
-            updateLightboxImage(nextIndex, "right");
+        nextZone?.addEventListener("click", () =>
+            updateImage((currentIndex + 1) % imgList.length, "right"),
+        );
+        prevZone?.addEventListener("click", () =>
+            updateImage(
+                (currentIndex - 1 + imgList.length) % imgList.length,
+                "left",
+            ),
+        );
+
+        lightbox.addEventListener(
+            "touchstart",
+            (e) => {
+                if (isAnimating) return;
+                startX = e.touches[0].clientX;
+                currentX = startX;
+                isDragging = true;
+                lightboxWrapper.classList.add("dragging");
+            },
+            { passive: true },
+        );
+
+        lightbox.addEventListener(
+            "touchmove",
+            (e) => {
+                if (!isDragging) return;
+                currentX = e.touches[0].clientX;
+                const diff = currentX - startX;
+                lightboxWrapper.style.transform = `translate3d(${diff}px, 0, 0)`;
+                lightboxWrapper.style.opacity = Math.max(
+                    0.5,
+                    1 - Math.abs(diff) / window.innerWidth,
+                ).toString();
+            },
+            { passive: true },
+        );
+
+        lightbox.addEventListener("touchend", () => {
+            if (!isDragging) return;
+            isDragging = false;
+            lightboxWrapper.classList.remove("dragging");
+
+            const diff = currentX - startX;
+            const threshold = window.innerWidth * 0.2;
+
+            if (diff < -threshold) {
+                lightboxWrapper.style.transform = "";
+                updateImage((currentIndex + 1) % imgList.length, "right");
+            } else if (diff > threshold) {
+                lightboxWrapper.style.transform = "";
+                updateImage(
+                    (currentIndex - 1 + imgList.length) % imgList.length,
+                    "left",
+                );
+            } else {
+                lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
+                lightboxWrapper.style.opacity = "1";
+            }
+            startX = 0;
+            currentX = 0;
         });
 
-        prevZone.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const prevIndex =
-                (currentIndex - 1 + imgList.length) % imgList.length;
-            updateLightboxImage(prevIndex, "left");
-        });
-
-        // Close on backdrop click
         lightbox.addEventListener("click", (e) => {
             if (e.target === lightbox) {
                 lightbox.classList.remove("show");
@@ -468,36 +487,16 @@ import Layout from "../layouts/Layout.astro";
             }
         });
 
-        // --- GESTURE LISTENERS ---
-        lightbox.addEventListener(
-            "touchstart",
-            (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            },
-            { passive: true },
-        );
-
-        lightbox.addEventListener(
-            "touchend",
-            (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            },
-            { passive: true },
-        );
-
-        // KEYBOARD NAVIGATION
         window.addEventListener("keydown", (e) => {
             if (!lightbox.classList.contains("show")) return;
-
-            if (e.key === "ArrowRight") {
-                const nextIndex = (currentIndex + 1) % imgList.length;
-                updateLightboxImage(nextIndex, "right");
-            } else if (e.key === "ArrowLeft") {
-                const prevIndex =
-                    (currentIndex - 1 + imgList.length) % imgList.length;
-                updateLightboxImage(prevIndex, "left");
-            } else if (e.key === "Escape") {
+            if (e.key === "ArrowRight")
+                updateImage((currentIndex + 1) % imgList.length, "right");
+            else if (e.key === "ArrowLeft")
+                updateImage(
+                    (currentIndex - 1 + imgList.length) % imgList.length,
+                    "left",
+                );
+            else if (e.key === "Escape") {
                 lightbox.classList.remove("show");
                 document.body.style.overflow = "auto";
             }
@@ -505,10 +504,16 @@ import Layout from "../layouts/Layout.astro";
     }
 
     window.addEventListener("load", () => {
-        resizeAllItems();
         document
             .querySelectorAll(".thumb-card")
-            .forEach((item) => revealObserver.observe(item));
+            .forEach((c) => resizeMasonryItem(c as HTMLElement));
+        document
+            .querySelectorAll(".thumb-card")
+            .forEach((c) => revealObserver.observe(c));
     });
-    window.addEventListener("resize", resizeAllItems);
+    window.addEventListener("resize", () => {
+        document
+            .querySelectorAll(".thumb-card")
+            .forEach((c) => resizeMasonryItem(c as HTMLElement));
+    });
 </script>
