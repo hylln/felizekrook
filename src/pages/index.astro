@@ -97,11 +97,9 @@ import img6 from "../assets/6.jpeg";
 					<p class="landing-label">
 						PORTFOLIO<br />SHOWCASE<br />2026
 					</p>
-
 					<div class="scroll-to-continue scroll-trigger">
 						SCROLL TO CONTINUE
 					</div>
-
 					<div class="landing-arrow-container">
 						<div class="arrow-indicator down-arrow scroll-trigger">
 							<svg
@@ -262,7 +260,6 @@ import img6 from "../assets/6.jpeg";
 			margin: 0;
 			color: #000;
 		}
-
 		.logo-link {
 			text-decoration: none;
 			color: inherit;
@@ -272,7 +269,6 @@ import img6 from "../assets/6.jpeg";
 		.logo-link:hover {
 			opacity: 0.6;
 		}
-
 		.header-nav {
 			position: absolute;
 			right: 2rem;
@@ -296,7 +292,6 @@ import img6 from "../assets/6.jpeg";
 			overflow: hidden;
 			background-color: #000;
 		}
-
 		.video-background {
 			opacity: 0;
 			transition: opacity 1.5s ease-in-out;
@@ -308,7 +303,6 @@ import img6 from "../assets/6.jpeg";
 			z-index: 1;
 			pointer-events: none;
 		}
-
 		.landing-content {
 			opacity: 0;
 			z-index: 10;
@@ -320,20 +314,17 @@ import img6 from "../assets/6.jpeg";
 				opacity 0.8s ease-in-out,
 				color 0.1s steps(2);
 		}
-
 		.scroll-trigger {
 			cursor: pointer;
-			pointer-events: auto; /* Overrides 'none' from parent */
+			pointer-events: auto;
 			transition: opacity 0.3s ease;
 		}
 		.scroll-trigger:hover {
 			opacity: 0.6;
 		}
-
 		.is-visible {
 			opacity: 1 !important;
 		}
-
 		.bg-video {
 			position: absolute;
 			top: 0;
@@ -348,7 +339,7 @@ import img6 from "../assets/6.jpeg";
 			z-index: 2;
 		}
 
-		/* GLITCH EFFECTS */
+		/* GLITCH */
 		.video-glitch {
 			filter: url(#cyber-glitch) contrast(1.2) brightness(1.1);
 			animation: glitch-switch 0.1s steps(2) infinite;
@@ -386,7 +377,6 @@ import img6 from "../assets/6.jpeg";
 			z-index: 5;
 			pointer-events: none;
 		}
-
 		.scroll-fade-overlay {
 			position: absolute;
 			top: 0;
@@ -398,7 +388,6 @@ import img6 from "../assets/6.jpeg";
 			z-index: 6;
 			pointer-events: none;
 		}
-
 		.playback-status {
 			position: absolute;
 			top: 130px;
@@ -426,7 +415,6 @@ import img6 from "../assets/6.jpeg";
 		.playback-status.is-paused .play-icon {
 			display: block;
 		}
-
 		.landing-content.is-dark {
 			color: #000;
 		}
@@ -434,7 +422,6 @@ import img6 from "../assets/6.jpeg";
 		.landing-content.is-dark .arrow-indicator svg polyline {
 			stroke: #000;
 		}
-
 		.playback-status.is-dark svg rect,
 		.playback-status.is-dark svg polygon {
 			fill: #000;
@@ -492,7 +479,6 @@ import img6 from "../assets/6.jpeg";
 			letter-spacing: 0.1em;
 			width: 100%;
 		}
-
 		.footer-content {
 			text-align: center;
 			width: 100%;
@@ -611,7 +597,9 @@ import img6 from "../assets/6.jpeg";
 
 		const landingCard = document.getElementById("landing-trigger");
 		const scrollFade = document.getElementById("scroll-fade");
-		const mainContent = document.getElementById("scroll-container");
+		const mainContent = document.getElementById(
+			"scroll-container",
+		) as HTMLElement;
 		const landingText = document.getElementById("landing-text-wrapper");
 		const videoWrapper = document.getElementById("video-wrapper");
 		const playbackStatus = document.getElementById("playback-status");
@@ -712,7 +700,7 @@ import img6 from "../assets/6.jpeg";
 
 		randomGlitch();
 
-		// GLOBAL SCROLL TRIGGER LOGIC
+		// SHARED SCROLL TRIGGER
 		document.querySelectorAll(".scroll-trigger").forEach((trigger) => {
 			trigger.addEventListener("click", (e) => {
 				e.stopPropagation();
@@ -720,6 +708,45 @@ import img6 from "../assets/6.jpeg";
 					.querySelector(".first-hero")
 					?.scrollIntoView({ behavior: "smooth", block: "start" });
 			});
+		});
+
+		// --- KEYBOARD NAVIGATION FIX ---
+		window.addEventListener("keydown", (e) => {
+			if (["ArrowUp", "ArrowDown"].includes(e.key)) {
+				e.preventDefault(); // Stop default stuttery scroll
+
+				const cards = Array.from(
+					document.querySelectorAll(".project-card"),
+				);
+				const containerTop = mainContent.scrollTop;
+
+				// Find current card based on center position
+				let currentIdx = cards.findIndex((card) => {
+					const rect = card.getBoundingClientRect();
+					return rect.top >= -10 && rect.top <= 10;
+				});
+
+				// If not perfectly aligned, find the nearest one
+				if (currentIdx === -1) {
+					currentIdx = cards.findIndex(
+						(card) =>
+							card.getBoundingClientRect().top >
+							-window.innerHeight / 2,
+					);
+				}
+
+				if (e.key === "ArrowDown" && currentIdx < cards.length - 1) {
+					cards[currentIdx + 1].scrollIntoView({
+						behavior: "smooth",
+						block: "start",
+					});
+				} else if (e.key === "ArrowUp" && currentIdx > 0) {
+					cards[currentIdx - 1].scrollIntoView({
+						behavior: "smooth",
+						block: "start",
+					});
+				}
+			}
 		});
 
 		if (playbackStatus) {
