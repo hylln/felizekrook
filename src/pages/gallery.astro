@@ -63,7 +63,7 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <style>
-    /* --- PREVENT LAYOUT SHIFT ON WINDOWS --- */
+    /* --- PREVENT LAYOUT SHIFT --- */
     :global(html) {
         scrollbar-gutter: stable;
     }
@@ -279,7 +279,7 @@ import Layout from "../layouts/Layout.astro";
             margin-top: 0;
             display: flex;
             justify-content: center;
-            gap: 2rem; /* Matches About page spacing */
+            gap: 2rem;
             width: 100%;
         }
         .thumbnail-grid {
@@ -381,6 +381,23 @@ import Layout from "../layouts/Layout.astro";
             const prevIndex =
                 (currentIndex - 1 + imgList.length) % imgList.length;
             updateLightboxImage(prevIndex, "left");
+        });
+
+        // KEYBOARD NAVIGATION FOR GALLERY
+        window.addEventListener("keydown", (e) => {
+            if (!lightbox.classList.contains("show")) return;
+
+            if (e.key === "ArrowRight") {
+                const nextIndex = (currentIndex + 1) % imgList.length;
+                updateLightboxImage(nextIndex, "right");
+            } else if (e.key === "ArrowLeft") {
+                const prevIndex =
+                    (currentIndex - 1 + imgList.length) % imgList.length;
+                updateLightboxImage(prevIndex, "left");
+            } else if (e.key === "Escape") {
+                lightbox.classList.remove("show");
+                document.body.style.overflow = "auto";
+            }
         });
     }
 
