@@ -261,7 +261,6 @@ const projects = [
 			height: 100vh;
 			overflow-y: scroll;
 			scroll-snap-type: y mandatory;
-			/* Removed native smooth behavior here to allow custom JS speed control */
 		}
 		.hero {
 			text-align: center;
@@ -746,6 +745,7 @@ const projects = [
 
 		let currentIndex = 0;
 		let isTransitioning = false;
+		let isUserPaused = false; // Flag to track if the user intentionally paused the video
 
 		let initialPinchDistance = 0;
 		let isPinching = false;
@@ -853,30 +853,23 @@ const projects = [
 				isTransitioning = false;
 			}, 250);
 		}
-		// --- PROBABILISTIC AMBIENT GLITCH ---
+
 		function attemptGlitch() {
-			// 1. Only run if we are looking at the landing/hero section
 			const scrollPos = mainContent.scrollTop;
 			if (scrollPos > window.innerHeight * 0.5) {
-				setTimeout(attemptGlitch, 2000); // Check less often when scrolled away
+				setTimeout(attemptGlitch, 2000);
 				return;
 			}
 
 			const activeVideo = videos[currentIndex];
-
-			// NEW: Only proceed if the video is actually playing
 			if (activeVideo.paused) {
-				setTimeout(attemptGlitch, 500); // Check again in half a second
+				setTimeout(attemptGlitch, 500);
 				return;
 			}
 
-			// 2. Probability roll (e.g., 15% chance to glitch every check)
 			const glitchChance = Math.random() < 0.1;
-
 			if (glitchChance && !isTransitioning) {
 				const activeVideo = videos[currentIndex];
-
-				// Trigger Visuals
 				activeVideo.classList.add("video-glitch");
 				landingText?.classList.add("text-glitch");
 
@@ -884,9 +877,6 @@ const projects = [
 					() => {
 						activeVideo.classList.remove("video-glitch");
 						landingText?.classList.remove("text-glitch");
-
-						// 3. THE "CHAIN" PROBABILITY
-						// 5% chance to immediately glitch again (creates the "double-tap" feel)
 						if (Math.random() < 0.05) {
 							setTimeout(attemptGlitch, 50);
 						} else {
@@ -897,14 +887,12 @@ const projects = [
 						}
 					},
 					Math.random() * 100 + 50,
-				); // Randomize glitch duration (50ms to 150ms)
+				);
 			} else {
-				// If no glitch, check again in a short burst
 				setTimeout(attemptGlitch, 500);
 			}
 		}
 
-		// Start the cycle
 		attemptGlitch();
 
 		videos.forEach((v) => {
@@ -1018,26 +1006,35 @@ const projects = [
 			playbackStatus.addEventListener("click", (e) => {
 				e.stopPropagation();
 				const activeVideo = videos[currentIndex];
-				activeVideo.paused ? activeVideo.play() : activeVideo.pause();
+				if (activeVideo.paused) {
+					isUserPaused = false;
+					activeVideo.play();
+				} else {
+					isUserPaused = true;
+					activeVideo.pause();
+				}
 			});
 		}
 
 		if (landingCard) {
 			landingCard.addEventListener("click", () => {
 				const activeVideo = videos[currentIndex];
-				activeVideo.paused ? activeVideo.play() : activeVideo.pause();
+				if (activeVideo.paused) {
+					isUserPaused = false;
+					activeVideo.play();
+				} else {
+					isUserPaused = true;
+					activeVideo.pause();
+				}
 			});
 		}
 
-		// UPDATED: SLOW SWOOSH BACK TO TOP FUNCTION
 		const triggerBackToTop = () => {
 			mainContent.style.scrollSnapType = "none";
-
 			const start = mainContent.scrollTop;
-			const duration = 4000; // Increased duration for a slower "swoosh"
+			const duration = 4000;
 			const startTime = performance.now();
 
-			// Custom easing for a smoother finish
 			function easeOutQuart(x: number): number {
 				return 1 - Math.pow(1 - x, 4);
 			}
@@ -1045,20 +1042,43 @@ const projects = [
 			function animate(currentTime: number) {
 				const elapsed = currentTime - startTime;
 				const progress = Math.min(elapsed / duration, 1);
-
 				const easedProgress = easeOutQuart(progress);
 				mainContent.scrollTop = start * (1 - easedProgress);
 
 				if (progress < 1) {
 					window.requestAnimationFrame(animate);
 				} else {
-					// Re-enable snapping once we arrive
 					mainContent.style.scrollSnapType = "y mandatory";
 				}
 			}
-
 			window.requestAnimationFrame(animate);
 		};
+
+		// FIXED: Intersection Observer specifically observing the scroll container
+		if (landingCard && mainContent) {
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						const activeVideo = videos[currentIndex];
+						if (entry.isIntersecting) {
+							// Only play if the user hasn't explicitly paused it
+							if (!isUserPaused) {
+								activeVideo.play().catch(() => {});
+							}
+						} else {
+							// Card is out of view, pause for performance
+							activeVideo.pause();
+						}
+					});
+				},
+				{
+					root: mainContent, // Use the scroll container as the reference root
+					threshold: 0.1,
+				},
+			);
+
+			observer.observe(landingCard);
+		}
 
 		document.querySelectorAll(".scroll-trigger").forEach((trigger) => {
 			trigger.addEventListener("click", (e) => {
