@@ -261,7 +261,7 @@ const projects = [
 			height: 100vh;
 			overflow-y: scroll;
 			scroll-snap-type: y mandatory;
-			scroll-behavior: smooth;
+			/* Removed native smooth behavior here to allow custom JS speed control */
 		}
 		.hero {
 			text-align: center;
@@ -1029,12 +1029,35 @@ const projects = [
 			});
 		}
 
+		// UPDATED: SLOW SWOOSH BACK TO TOP FUNCTION
 		const triggerBackToTop = () => {
 			mainContent.style.scrollSnapType = "none";
-			mainContent.scrollTo({ top: 0, behavior: "smooth" });
-			setTimeout(() => {
-				mainContent.style.scrollSnapType = "y mandatory";
-			}, 800);
+
+			const start = mainContent.scrollTop;
+			const duration = 4000; // Increased duration for a slower "swoosh"
+			const startTime = performance.now();
+
+			// Custom easing for a smoother finish
+			function easeOutQuart(x: number): number {
+				return 1 - Math.pow(1 - x, 4);
+			}
+
+			function animate(currentTime: number) {
+				const elapsed = currentTime - startTime;
+				const progress = Math.min(elapsed / duration, 1);
+
+				const easedProgress = easeOutQuart(progress);
+				mainContent.scrollTop = start * (1 - easedProgress);
+
+				if (progress < 1) {
+					window.requestAnimationFrame(animate);
+				} else {
+					// Re-enable snapping once we arrive
+					mainContent.style.scrollSnapType = "y mandatory";
+				}
+			}
+
+			window.requestAnimationFrame(animate);
 		};
 
 		document.querySelectorAll(".scroll-trigger").forEach((trigger) => {
