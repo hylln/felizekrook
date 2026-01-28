@@ -103,7 +103,7 @@ import Layout from "../layouts/Layout.astro";
         scrollbar-gutter: stable;
     }
 
-    /* --- HERO BAR (Identical to About Page) --- */
+    /* --- HERO BAR --- */
     .hero {
         text-align: center;
         position: sticky;
@@ -321,8 +321,10 @@ import Layout from "../layouts/Layout.astro";
         max-width: 85%;
         max-height: 80vh;
         object-fit: contain;
-        pointer-events: none;
         user-select: none;
+        pointer-events: auto;
+        /* Important for localized zooming */
+        transform-origin: center center;
     }
 
     .slide-out-left {
@@ -335,7 +337,6 @@ import Layout from "../layouts/Layout.astro";
         opacity: 0 !important;
     }
 
-    /* --- MOBILE / IPHONE FIXES --- */
     @media (max-width: 900px) {
         .hero {
             padding: 1.5rem 1rem;
@@ -343,24 +344,20 @@ import Layout from "../layouts/Layout.astro";
             gap: 1rem;
             height: auto;
         }
-
         h1 {
             font-size: 1.4rem;
             width: 100%;
             text-align: center;
         }
-
         .header-nav {
             position: static;
             justify-content: center;
             gap: 2rem;
             width: 100%;
         }
-
         .thumbnail-grid {
             grid-template-columns: repeat(2, 1fr);
         }
-
         .nav-zone {
             display: none;
         }
@@ -411,9 +408,31 @@ import Layout from "../layouts/Layout.astro";
     const imgList = Array.from(thumbImgs).map((img) => img.src);
     let isAnimating = false;
 
+    // Interaction Variables
     let startX = 0;
     let currentX = 0;
     let isDragging = false;
+    let initialPinchDistance = 0;
+    let isPinching = false;
+
+    function getDistance(touches: TouchList) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    // New helper to find the center point between two fingers relative to the image
+    function getPinchCenter(touches: TouchList, element: HTMLElement) {
+        const rect = element.getBoundingClientRect();
+        const centerX = (touches[0].clientX + touches[1].clientX) / 2;
+        const centerY = (touches[0].clientY + touches[1].clientY) / 2;
+
+        // Convert to percentage for transform-origin
+        const xPercent = ((centerX - rect.left) / rect.width) * 100;
+        const yPercent = ((centerY - rect.top) / rect.height) * 100;
+
+        return `${xPercent}% ${yPercent}%`;
+    }
 
     function updateImage(index: number, direction: "left" | "right") {
         if (!lightboxWrapper || !lightboxImg || isAnimating) return;
@@ -436,6 +455,10 @@ import Layout from "../layouts/Layout.astro";
                     : "translate3d(-100%, 0, 0)";
 
             lightboxImg.src = imgList[currentIndex];
+            // Reset scale and origin for the new image
+            lightboxImg.style.transform = "scale(1)";
+            lightboxImg.style.transformOrigin = "center center";
+
             lightboxWrapper.classList.remove(outClass);
 
             requestAnimationFrame(() => {
@@ -459,6 +482,8 @@ import Layout from "../layouts/Layout.astro";
             img.addEventListener("click", () => {
                 currentIndex = i;
                 lightboxImg.src = imgList[currentIndex];
+                lightboxImg.style.transform = "scale(1)";
+                lightboxImg.style.transformOrigin = "center center";
                 lightbox.classList.add("show");
                 document.body.style.overflow = "hidden";
             }),
@@ -479,53 +504,84 @@ import Layout from "../layouts/Layout.astro";
             ),
         );
 
+        // Touch Interaction Handling
         lightbox.addEventListener(
             "touchstart",
             (e) => {
                 if (isAnimating) return;
-                startX = e.touches[0].clientX;
-                currentX = startX;
-                isDragging = true;
-                lightboxWrapper.classList.add("dragging");
+
+                if (e.touches.length === 2) {
+                    isPinching = true;
+                    isDragging = false;
+                    initialPinchDistance = getDistance(e.touches);
+                    // Set origin once when the pinch starts
+                    lightboxImg.style.transformOrigin = getPinchCenter(
+                        e.touches,
+                        lightboxImg,
+                    );
+                } else if (e.touches.length === 1) {
+                    startX = e.touches[0].clientX;
+                    currentX = startX;
+                    isDragging = true;
+                    lightboxWrapper.classList.add("dragging");
+                }
             },
-            { passive: true },
+            { passive: false },
         );
 
         lightbox.addEventListener(
             "touchmove",
             (e) => {
-                if (!isDragging) return;
-                currentX = e.touches[0].clientX;
-                const diff = currentX - startX;
-                lightboxWrapper.style.transform = `translate3d(${diff}px, 0, 0)`;
-                lightboxWrapper.style.opacity = Math.max(
-                    0.5,
-                    1 - Math.abs(diff) / window.innerWidth,
-                ).toString();
+                if (isPinching && e.touches.length === 2) {
+                    e.preventDefault();
+                    const currentDistance = getDistance(e.touches);
+                    const scale = currentDistance / initialPinchDistance;
+
+                    lightboxImg.style.transform = `scale(${scale})`;
+                    lightboxImg.style.transition = "none";
+                } else if (isDragging && !isPinching) {
+                    currentX = e.touches[0].clientX;
+                    const diff = currentX - startX;
+                    lightboxWrapper.style.transform = `translate3d(${diff}px, 0, 0)`;
+                    lightboxWrapper.style.opacity = Math.max(
+                        0.5,
+                        1 - Math.abs(diff) / window.innerWidth,
+                    ).toString();
+                }
             },
-            { passive: true },
+            { passive: false },
         );
 
-        lightbox.addEventListener("touchend", () => {
-            if (!isDragging) return;
-            isDragging = false;
-            lightboxWrapper.classList.remove("dragging");
+        lightbox.addEventListener("touchend", (e) => {
+            if (isPinching && e.touches.length < 2) {
+                isPinching = false;
+                lightboxImg.style.transition =
+                    "transform 0.3s ease, transform-origin 0.3s ease";
+                lightboxImg.style.transform = "scale(1)";
+                // Reset origin slowly so the snap-back looks natural
+                setTimeout(() => {
+                    lightboxImg.style.transformOrigin = "center center";
+                }, 300);
+            }
 
-            const diff = currentX - startX;
-            const threshold = window.innerWidth * 0.2;
+            if (isDragging) {
+                isDragging = false;
+                lightboxWrapper.classList.remove("dragging");
 
-            if (diff < -threshold) {
-                lightboxWrapper.style.transform = "";
-                updateImage((currentIndex + 1) % imgList.length, "right");
-            } else if (diff > threshold) {
-                lightboxWrapper.style.transform = "";
-                updateImage(
-                    (currentIndex - 1 + imgList.length) % imgList.length,
-                    "left",
-                );
-            } else {
-                lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
-                lightboxWrapper.style.opacity = "1";
+                const diff = currentX - startX;
+                const threshold = window.innerWidth * 0.2;
+
+                if (diff < -threshold) {
+                    updateImage((currentIndex + 1) % imgList.length, "right");
+                } else if (diff > threshold) {
+                    updateImage(
+                        (currentIndex - 1 + imgList.length) % imgList.length,
+                        "left",
+                    );
+                } else {
+                    lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
+                    lightboxWrapper.style.opacity = "1";
+                }
             }
             startX = 0;
             currentX = 0;
