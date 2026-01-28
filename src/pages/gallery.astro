@@ -244,6 +244,7 @@ import Layout from "../layouts/Layout.astro";
         transition:
             opacity 0.6s ease,
             visibility 0.6s ease;
+        touch-action: none; /* Prevents default scroll/zoom while lightbox is open */
     }
     .lightbox.show {
         opacity: 1;
@@ -342,7 +343,6 @@ import Layout from "../layouts/Layout.astro";
         .nav-zone {
             width: 50%;
         }
-        /* Hide the visual arrows on iPhone/Mobile view */
         .lightbox-arrow-container {
             display: none;
         }
@@ -401,6 +401,25 @@ import Layout from "../layouts/Layout.astro";
     let currentIndex = 0;
     const imgList = Array.from(thumbImgs).map((img) => img.src);
 
+    // --- SWIPE LOGIC VARS ---
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        if (touchEndX < touchStartX - swipeThreshold) {
+            // Swiped Left -> Show Next
+            const nextIndex = (currentIndex + 1) % imgList.length;
+            updateLightboxImage(nextIndex, "right");
+        }
+        if (touchEndX > touchStartX + swipeThreshold) {
+            // Swiped Right -> Show Prev
+            const prevIndex =
+                (currentIndex - 1 + imgList.length) % imgList.length;
+            updateLightboxImage(prevIndex, "left");
+        }
+    }
+
     function updateLightboxImage(index: number, direction: "left" | "right") {
         if (!lightboxWrapper || !lightboxImg) return;
         const animClass =
@@ -441,6 +460,7 @@ import Layout from "../layouts/Layout.astro";
             updateLightboxImage(prevIndex, "left");
         });
 
+        // Close on backdrop click
         lightbox.addEventListener("click", (e) => {
             if (e.target === lightbox) {
                 lightbox.classList.remove("show");
@@ -448,6 +468,25 @@ import Layout from "../layouts/Layout.astro";
             }
         });
 
+        // --- GESTURE LISTENERS ---
+        lightbox.addEventListener(
+            "touchstart",
+            (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            },
+            { passive: true },
+        );
+
+        lightbox.addEventListener(
+            "touchend",
+            (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            },
+            { passive: true },
+        );
+
+        // KEYBOARD NAVIGATION
         window.addEventListener("keydown", (e) => {
             if (!lightbox.classList.contains("show")) return;
 
