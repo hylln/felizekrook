@@ -413,8 +413,6 @@ import Layout from "../layouts/Layout.astro";
     let isDragging = false;
     let initialPinchDistance = 0;
     let isPinching = false;
-
-    // Double Tap Variables
     let lastTapTime = 0;
     let isDoubleTapZoomed = false;
 
@@ -428,16 +426,12 @@ import Layout from "../layouts/Layout.astro";
         const rect = element.getBoundingClientRect();
         const centerX = (touches[0].clientX + touches[1].clientX) / 2;
         const centerY = (touches[0].clientY + touches[1].clientY) / 2;
-        const xPercent = ((centerX - rect.left) / rect.width) * 100;
-        const yPercent = ((centerY - rect.top) / rect.height) * 100;
-        return `${xPercent}% ${yPercent}%`;
+        return `${((centerX - rect.left) / rect.width) * 100}% ${((centerY - rect.top) / rect.height) * 100}%`;
     }
 
     function getSingleTapCenter(touch: Touch, element: HTMLElement) {
         const rect = element.getBoundingClientRect();
-        const xPercent = ((touch.clientX - rect.left) / rect.width) * 100;
-        const yPercent = ((touch.clientY - rect.top) / rect.height) * 100;
-        return `${xPercent}% ${yPercent}%`;
+        return `${((touch.clientX - rect.left) / rect.width) * 100}% ${((touch.clientY - rect.top) / rect.height) * 100}%`;
     }
 
     function updateImage(index: number, direction: "left" | "right") {
@@ -459,12 +453,10 @@ import Layout from "../layouts/Layout.astro";
                 direction === "right"
                     ? "translate3d(100%, 0, 0)"
                     : "translate3d(-100%, 0, 0)";
-
             lightboxImg.src = imgList[currentIndex];
             lightboxImg.style.transform = "scale(1)";
             lightboxImg.style.transformOrigin = "center center";
             isDoubleTapZoomed = false;
-
             lightboxWrapper.classList.remove(outClass);
 
             requestAnimationFrame(() => {
@@ -472,7 +464,6 @@ import Layout from "../layouts/Layout.astro";
                     lightboxWrapper.style.transition = "";
                     lightboxWrapper.style.opacity = "1";
                     lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
-
                     setTimeout(() => {
                         isAnimating = false;
                         prevZone?.classList.remove("hiding");
@@ -501,17 +492,26 @@ import Layout from "../layouts/Layout.astro";
             document.body.style.overflow = "auto";
         });
 
-        // Touch Interaction Handling
+        // REINSTATED CLICK LISTENERS FOR ARROWS
+        nextZone?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            updateImage((currentIndex + 1) % imgList.length, "right");
+        });
+        prevZone?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            updateImage(
+                (currentIndex - 1 + imgList.length) % imgList.length,
+                "left",
+            );
+        });
+
         lightbox.addEventListener(
             "touchstart",
             (e) => {
                 if (isAnimating) return;
-
-                // Double Tap Detection
                 if (e.touches.length === 1) {
                     const now = Date.now();
                     const timesince = now - lastTapTime;
-
                     if (timesince < 300 && timesince > 0) {
                         e.preventDefault();
                         if (!isDoubleTapZoomed) {
@@ -532,8 +532,6 @@ import Layout from "../layouts/Layout.astro";
                     }
                     lastTapTime = now;
                 }
-
-                // Pinch and Swipe Setup
                 if (e.touches.length === 2) {
                     isPinching = true;
                     isDragging = false;
@@ -557,8 +555,7 @@ import Layout from "../layouts/Layout.astro";
             (e) => {
                 if (isPinching && e.touches.length === 2) {
                     e.preventDefault();
-                    const currentDistance = getDistance(e.touches);
-                    const scale = currentDistance / initialPinchDistance;
+                    const scale = getDistance(e.touches) / initialPinchDistance;
                     lightboxImg.style.transform = `scale(${scale})`;
                     lightboxImg.style.transition = "none";
                 } else if (isDragging && !isPinching) {
@@ -585,21 +582,19 @@ import Layout from "../layouts/Layout.astro";
                     lightboxImg.style.transformOrigin = "center center";
                 }, 300);
             }
-
             if (isDragging) {
                 isDragging = false;
                 lightboxWrapper.classList.remove("dragging");
                 const diff = currentX - startX;
                 const threshold = window.innerWidth * 0.2;
-
-                if (diff < -threshold) {
+                if (diff < -threshold)
                     updateImage((currentIndex + 1) % imgList.length, "right");
-                } else if (diff > threshold) {
+                else if (diff > threshold)
                     updateImage(
                         (currentIndex - 1 + imgList.length) % imgList.length,
                         "left",
                     );
-                } else {
+                else {
                     lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
                     lightboxWrapper.style.opacity = "1";
                 }
