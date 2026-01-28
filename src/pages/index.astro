@@ -11,6 +11,22 @@ import img6 from "../assets/6.jpeg";
 ---
 
 <Layout title="HOME">
+	<svg
+		style="position: absolute; width: 0; height: 0;"
+		aria-hidden="true"
+		focusable="false"
+	>
+		<filter id="cyber-glitch">
+			<feTurbulence
+				type="fractalNoise"
+				baseFrequency="0.01 0.2"
+				numOctaves="3"
+				result="noise"></feTurbulence>
+			<feDisplacementMap in="SourceGraphic" in2="noise" scale="10"
+			></feDisplacementMap>
+		</filter>
+	</svg>
+
 	<header class="hero">
 		<a href="/" class="logo-link">
 			<h1>FELIZE KROOK</h1>
@@ -60,31 +76,19 @@ import img6 from "../assets/6.jpeg";
 					<video
 						autoplay
 						muted
-						loop
 						playsinline
 						id="bg-video-1"
 						class="bg-video is-active"
 					>
 						<source src="/clouds.mp4" type="video/mp4" />
 					</video>
-					<video
-						muted
-						loop
-						playsinline
-						id="bg-video-2"
-						class="bg-video"
-					>
+					<video muted playsinline id="bg-video-2" class="bg-video">
 						<source src="/mountains.mp4" type="video/mp4" />
 					</video>
-					<video
-						muted
-						loop
-						playsinline
-						id="bg-video-3"
-						class="bg-video"
-					>
+					<video muted playsinline id="bg-video-3" class="bg-video">
 						<source src="/waves.mp4" type="video/mp4" />
 					</video>
+
 					<div class="video-overlay" id="glitch-overlay"></div>
 					<div class="scroll-fade-overlay" id="scroll-fade"></div>
 				</div>
@@ -234,7 +238,6 @@ import img6 from "../assets/6.jpeg";
 			overflow-y: scroll;
 			scroll-snap-type: y mandatory;
 			scroll-behavior: smooth;
-			-webkit-overflow-scrolling: touch;
 		}
 		.hero {
 			text-align: center;
@@ -258,6 +261,7 @@ import img6 from "../assets/6.jpeg";
 			margin: 0;
 			color: #000;
 		}
+
 		.logo-link {
 			text-decoration: none;
 			color: inherit;
@@ -284,6 +288,7 @@ import img6 from "../assets/6.jpeg";
 		.header-nav a:hover {
 			opacity: 0.6;
 		}
+
 		.landing-card {
 			position: relative;
 			overflow: hidden;
@@ -297,6 +302,7 @@ import img6 from "../assets/6.jpeg";
 		.is-visible {
 			opacity: 1 !important;
 		}
+
 		.video-background {
 			position: absolute;
 			top: 0;
@@ -320,15 +326,42 @@ import img6 from "../assets/6.jpeg";
 			opacity: 1;
 			z-index: 2;
 		}
+
+		.video-glitch {
+			filter: url(#cyber-glitch) contrast(1.2) brightness(1.1);
+			animation: glitch-switch 0.1s steps(2) infinite;
+		}
+
+		@keyframes glitch-switch {
+			0% {
+				transform: scale(1) skew(0deg);
+				filter: hue-rotate(0deg) contrast(1.2);
+			}
+			50% {
+				transform: scale(1.02) skew(2deg) translateX(5px);
+				filter: hue-rotate(180deg) brightness(1.5);
+			}
+			100% {
+				transform: scale(0.98) skew(-2deg) translateX(-5px);
+				filter: hue-rotate(0deg) contrast(1.2);
+			}
+		}
+
 		.video-overlay {
 			position: absolute;
 			top: 0;
 			left: 0;
 			width: 100%;
 			height: 100%;
-			background: rgba(0, 0, 0, 0.3);
+			background: linear-gradient(
+				rgba(18, 16, 16, 0) 50%,
+				rgba(0, 0, 0, 0.1) 50%
+			);
+			background-size: 100% 2px;
 			z-index: 5;
+			pointer-events: none;
 		}
+
 		.scroll-fade-overlay {
 			position: absolute;
 			top: 0;
@@ -339,7 +372,6 @@ import img6 from "../assets/6.jpeg";
 			opacity: 0;
 			z-index: 6;
 			pointer-events: none;
-			will-change: opacity;
 		}
 
 		.playback-status {
@@ -348,7 +380,6 @@ import img6 from "../assets/6.jpeg";
 			left: 2rem;
 			z-index: 20;
 			opacity: 1;
-			pointer-events: auto;
 			cursor: pointer;
 			transition: opacity 0.3s ease;
 			display: flex;
@@ -357,69 +388,38 @@ import img6 from "../assets/6.jpeg";
 		.playback-status:hover {
 			opacity: 0.6;
 		}
-		.playback-status .pause-icon {
-			display: block;
-		}
-		.playback-status .play-icon {
+		.playback-status.is-paused .pause-icon {
 			display: none;
 		}
-		.playback-status.is-paused .pause-icon {
+		.playback-status:not(.is-paused) .play-icon {
 			display: none;
 		}
 		.playback-status.is-paused .play-icon {
 			display: block;
 		}
 
-		.glitch-active {
-			animation: glitch-fx 0.15s steps(2) infinite;
-			text-shadow:
-				2px 0 #ffffff,
-				-2px 0 #000000;
-			background: rgba(255, 255, 255, 0.15);
-		}
-		@keyframes glitch-fx {
-			0% {
-				clip-path: inset(40% 0 61% 0);
-				transform: translate(-20px, 5px) skew(10deg);
-				filter: grayscale(1) contrast(3) brightness(1.5);
-			}
-			20% {
-				clip-path: inset(92% 0 1% 0);
-				transform: translate(20px, -5px) skew(-5deg);
-				filter: grayscale(1) invert(1);
-			}
-			40% {
-				clip-path: inset(43% 0 1% 0);
-				transform: translate(-15px, 15px);
-				filter: grayscale(1) contrast(2);
-			}
-			60% {
-				clip-path: inset(25% 0 58% 0);
-				transform: translate(15px, -15px) skew(5deg);
-				filter: grayscale(1) brightness(0.5);
-			}
-			80% {
-				clip-path: inset(54% 0 7% 0);
-				transform: translate(-25px, 0);
-				filter: grayscale(1) contrast(5);
-			}
-			100% {
-				clip-path: inset(10% 0 85% 0);
-				transform: translate(0);
-				filter: grayscale(1);
-			}
-		}
+		/* --- NEW COLOR TOGGLE STYLES --- */
 		.landing-content {
 			z-index: 10;
 			text-align: center;
-			color: #fff;
+			color: #fff; /* Default white */
 			pointer-events: none;
 			width: 100%;
+			transition: color 0.5s ease; /* Smooth transition when changing */
 		}
-		.landing-label,
-		.scroll-to-continue {
-			color: #fff !important;
+		.landing-content.is-dark {
+			color: #000; /* Black for mountains */
 		}
+		/* Update arrows and status too if needed */
+		.landing-content.is-dark .arrow-indicator svg line,
+		.landing-content.is-dark .arrow-indicator svg polyline {
+			stroke: #000;
+		}
+		.playback-status.is-dark svg rect,
+		.playback-status.is-dark svg polygon {
+			fill: #000;
+		}
+
 		.landing-arrow-container {
 			margin-top: 2rem;
 			height: 15vh;
@@ -445,7 +445,6 @@ import img6 from "../assets/6.jpeg";
 			justify-content: center;
 			align-items: center;
 			scroll-snap-align: center;
-			scroll-snap-stop: always;
 			padding: 0 2rem;
 			box-sizing: border-box;
 			position: relative;
@@ -498,7 +497,7 @@ import img6 from "../assets/6.jpeg";
 			color: #000;
 			display: block;
 			margin-bottom: 3.5rem;
-			transition: opacity 0.2s ease;
+			transition: opacity 0.6s ease;
 		}
 		.footer-email:hover {
 			opacity: 0.6;
@@ -578,12 +577,6 @@ import img6 from "../assets/6.jpeg";
 				left: 50% !important;
 				transform: translate(-50%, -50%) !important;
 				width: 100%;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-			}
-			.landing-arrow-container {
-				margin-top: 4rem !important;
 			}
 			.project-card {
 				scroll-margin-top: 130px;
@@ -610,35 +603,15 @@ import img6 from "../assets/6.jpeg";
 		const v3 = document.getElementById("bg-video-3") as HTMLVideoElement;
 		const videos = [v1, v2, v3];
 
-		const glitchOverlay = document.getElementById(
-			"glitch-overlay",
-		) as HTMLElement;
-		const landingCard = document.getElementById(
-			"landing-trigger",
-		) as HTMLElement;
-		const scrollFade = document.getElementById(
-			"scroll-fade",
-		) as HTMLElement;
-		const mainContent = document.getElementById(
-			"scroll-container",
-		) as HTMLElement;
-		const landingText = document.getElementById(
-			"landing-text-wrapper",
-		) as HTMLElement;
-		const videoWrapper = document.getElementById(
-			"video-wrapper",
-		) as HTMLElement;
-		const playbackStatus = document.getElementById(
-			"playback-status",
-		) as HTMLElement;
+		const landingCard = document.getElementById("landing-trigger");
+		const scrollFade = document.getElementById("scroll-fade");
+		const mainContent = document.getElementById("scroll-container");
+		const landingText = document.getElementById("landing-text-wrapper");
+		const videoWrapper = document.getElementById("video-wrapper");
+		const playbackStatus = document.getElementById("playback-status");
 
 		let currentIndex = 0;
-		let isLandingVisible = true;
-		let lastTime = performance.now();
-		let accumulatedTime = 0;
-
-		// --- 6 SECOND INTERVAL ---
-		const SWAP_THRESHOLD = 5000;
+		let isTransitioning = false;
 
 		const updateUI = () => {
 			const currentVideo = videos[currentIndex];
@@ -647,56 +620,78 @@ import img6 from "../assets/6.jpeg";
 					playbackStatus.classList.add("is-paused");
 				else playbackStatus.classList.remove("is-paused");
 			}
+
+			// --- NEW COLOR LOGIC ---
+			// If current index is 1 (mountains.mp4), add the dark class
+			if (currentIndex === 1) {
+				landingText?.classList.add("is-dark");
+				playbackStatus?.classList.add("is-dark");
+			} else {
+				landingText?.classList.remove("is-dark");
+				playbackStatus?.classList.remove("is-dark");
+			}
 		};
 
+		// Transition Logic
 		videos.forEach((v) => {
 			v.addEventListener("play", updateUI);
 			v.addEventListener("pause", updateUI);
+			v.addEventListener("timeupdate", () => {
+				if (
+					v.classList.contains("is-active") &&
+					v.currentTime > v.duration - 0.3 &&
+					!isTransitioning
+				) {
+					triggerCyberSwap();
+				}
+			});
 		});
 
-		function masterLoop(now: number) {
-			const deltaTime = now - lastTime;
-			lastTime = now;
-			const currentVideo = videos[currentIndex];
+		function triggerCyberSwap() {
+			if (isTransitioning) return;
+			isTransitioning = true;
 
-			if (!document.hidden && isLandingVisible && !currentVideo.paused) {
-				accumulatedTime += deltaTime;
-				if (accumulatedTime >= SWAP_THRESHOLD) {
-					accumulatedTime = 0;
-					swapVideos();
-				}
-			}
-			requestAnimationFrame(masterLoop);
-		}
+			const oldVideo = videos[currentIndex];
 
-		function swapVideos() {
-			if (!glitchOverlay) return;
-			glitchOverlay.classList.add("glitch-active");
-			const randomGlitchDuration = Math.floor(Math.random() * 250) + 100;
+			oldVideo.classList.add("video-glitch");
 
 			setTimeout(() => {
-				const oldVideo = videos[currentIndex];
 				oldVideo.classList.remove("is-active");
+				oldVideo.pause();
+
 				currentIndex = (currentIndex + 1) % videos.length;
 				const newVideo = videos[currentIndex];
 
 				newVideo.classList.add("is-active");
-				newVideo
-					.play()
-					.then(() => {
-						if (newVideo.readyState >= 2) newVideo.currentTime = 0;
-					})
-					.catch(() => {});
+				newVideo.currentTime = 0;
+				newVideo.play().catch(() => {});
 
-				setTimeout(() => {
-					if (videos[currentIndex] !== oldVideo) oldVideo.pause();
-				}, 1000);
+				newVideo.classList.add("video-glitch");
 
-				setTimeout(() => {
-					glitchOverlay.classList.remove("glitch-active");
-				}, 200);
-			}, randomGlitchDuration);
+				// Update UI colors immediately on swap
+				updateUI();
+			}, 100);
+
+			setTimeout(() => {
+				videos.forEach((v) => v.classList.remove("video-glitch"));
+				isTransitioning = false;
+			}, 300);
 		}
+
+		function randomGlitch() {
+			if (isTransitioning) return;
+			const activeVideo = videos[currentIndex];
+
+			if (Math.random() > 0.92) {
+				activeVideo.classList.add("video-glitch");
+				setTimeout(
+					() => activeVideo.classList.remove("video-glitch"),
+					50 + Math.random() * 150,
+				);
+			}
+			setTimeout(randomGlitch, 500);
+		}
+		randomGlitch();
 
 		function showLanding() {
 			if (videoWrapper) videoWrapper.classList.add("is-visible");
@@ -704,7 +699,6 @@ import img6 from "../assets/6.jpeg";
 			videos[0].play().catch(() => {
 				updateUI();
 			});
-			requestAnimationFrame(masterLoop);
 		}
 
 		if (landingCard) {
@@ -718,13 +712,8 @@ import img6 from "../assets/6.jpeg";
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
-					const wasLandingVisible = isLandingVisible;
-					isLandingVisible = entry.isIntersecting;
-					if (!isLandingVisible) {
-						videos[currentIndex].pause();
-					} else {
-						if (!wasLandingVisible) accumulatedTime = 0;
-						// Force UI refresh on return
+					if (!entry.isIntersecting) videos[currentIndex].pause();
+					else {
 						updateUI();
 						videos[currentIndex].play();
 					}
@@ -759,7 +748,6 @@ import img6 from "../assets/6.jpeg";
 
 		const backToTopBtn = document.getElementById("back-to-top");
 		const scrollWorkBtn = document.getElementById("scroll-to-work");
-
 		if (backToTopBtn)
 			backToTopBtn.addEventListener("click", () => {
 				if (!mainContent) return;
@@ -770,7 +758,7 @@ import img6 from "../assets/6.jpeg";
 				}, 800);
 			});
 
-		if (scrollWorkBtn) {
+		if (scrollWorkBtn)
 			scrollWorkBtn.addEventListener("click", (e) => {
 				e.stopPropagation();
 				const firstProject = document.querySelector(".first-hero");
@@ -780,7 +768,6 @@ import img6 from "../assets/6.jpeg";
 						block: "start",
 					});
 			});
-		}
 
 		const lightbox = document.getElementById("lightbox") as HTMLElement;
 		const lightboxImg = document.getElementById(
