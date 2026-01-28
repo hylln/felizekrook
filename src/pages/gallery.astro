@@ -49,8 +49,44 @@ import Layout from "../layouts/Layout.astro";
 
     <div id="lightbox" class="lightbox">
         <span class="close-lightbox" id="close-btn">&times;</span>
-        <div class="nav-zone left" id="prev-zone"></div>
-        <div class="nav-zone right" id="next-zone"></div>
+
+        <div class="nav-zone left" id="prev-zone">
+            <div class="lightbox-arrow-container prev-arrow">
+                <svg viewBox="0 0 100 20" preserveAspectRatio="none">
+                    <line
+                        x1="100"
+                        y1="10"
+                        x2="0"
+                        y2="10"
+                        stroke="black"
+                        stroke-width="1.6"></line>
+                    <polyline
+                        points="4,4 0,10 4,16"
+                        fill="none"
+                        stroke="black"
+                        stroke-width="1.6"></polyline>
+                </svg>
+            </div>
+        </div>
+
+        <div class="nav-zone right" id="next-zone">
+            <div class="lightbox-arrow-container next-arrow">
+                <svg viewBox="0 0 100 20" preserveAspectRatio="none">
+                    <line
+                        x1="0"
+                        y1="10"
+                        x2="100"
+                        y2="10"
+                        stroke="black"
+                        stroke-width="1.6"></line>
+                    <polyline
+                        points="96,4 100,10 96,16"
+                        fill="none"
+                        stroke="black"
+                        stroke-width="1.6"></polyline>
+                </svg>
+            </div>
+        </div>
 
         <div class="lightbox-content-wrapper" id="lightbox-wrapper">
             <img
@@ -220,13 +256,26 @@ import Layout from "../layouts/Layout.astro";
         font-size: 2.5rem;
         z-index: 3000;
         cursor: pointer;
+        color: #000;
+        transition: opacity 0.3s ease;
+    }
+    .close-lightbox:hover {
+        opacity: 0.6;
     }
     .nav-zone {
         position: absolute;
         top: 0;
         height: 100%;
-        width: 45%;
+        width: 30%; /* Narrowed to give image priority but keep arrows visible */
         z-index: 2010;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.3s ease;
+        opacity: 1;
+    }
+    .nav-zone:hover {
+        opacity: 0.6;
     }
     .nav-zone.left {
         left: 0;
@@ -235,6 +284,11 @@ import Layout from "../layouts/Layout.astro";
     .nav-zone.right {
         right: 0;
         cursor: e-resize;
+    }
+
+    .lightbox-arrow-container {
+        width: 80px;
+        height: 20px;
     }
 
     .lightbox-content-wrapper {
@@ -287,6 +341,9 @@ import Layout from "../layouts/Layout.astro";
         }
         .nav-zone {
             width: 50%;
+        }
+        .lightbox-arrow-container {
+            width: 50px;
         }
     }
 </style>
@@ -381,6 +438,14 @@ import Layout from "../layouts/Layout.astro";
             const prevIndex =
                 (currentIndex - 1 + imgList.length) % imgList.length;
             updateLightboxImage(prevIndex, "left");
+        });
+
+        // Close lightbox when clicking outside the content
+        lightbox.addEventListener("click", (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove("show");
+                document.body.style.overflow = "auto";
+            }
         });
 
         // KEYBOARD NAVIGATION FOR GALLERY
