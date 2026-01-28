@@ -45,7 +45,7 @@ const projects = [
 
 	<header class="hero">
 		<a href="/" class="logo-link">
-			<h1>FELIZE KROOK</h1>
+			<h1 style="transform: translateZ(0);">FELIZE KROOK</h1>
 		</a>
 		<nav class="header-nav">
 			<a href="/gallery">GALLERY</a>
@@ -68,29 +68,26 @@ const projects = [
 							width="10"
 							height="10"
 							viewBox="0 0 10 10"
-						>
-							<rect
+							><rect
 								x="1"
 								y="0"
 								width="1.5"
 								height="10"
-								fill="white"></rect>
-							<rect
+								fill="white"></rect><rect
 								x="7.5"
 								y="0"
 								width="1.5"
 								height="10"
-								fill="white"></rect>
-						</svg>
+								fill="white"></rect></svg
+						>
 						<svg
 							class="play-icon"
 							width="10"
 							height="10"
 							viewBox="0 0 10 10"
+							><polygon points="0,0 10,5 0,10" fill="white"
+							></polygon></svg
 						>
-							<polygon points="0,0 10,5 0,10" fill="white"
-							></polygon>
-						</svg>
 					</div>
 
 					<div class="audio-controls-group">
@@ -115,14 +112,12 @@ const projects = [
 								stroke-width="2"
 								stroke-linecap="round"
 								stroke-linejoin="round"
-							>
-								<polygon
+								><polygon
 									points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
-								></polygon>
-								<path
+								></polygon><path
 									d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"
-								></path>
-							</svg>
+								></path></svg
+							>
 							<svg
 								class="speaker-off-icon"
 								width="14"
@@ -133,13 +128,12 @@ const projects = [
 								stroke-width="2"
 								stroke-linecap="round"
 								stroke-linejoin="round"
-							>
-								<polygon
+								><polygon
 									points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
-								></polygon>
-								<line x1="23" y1="9" x2="17" y2="15"></line>
-								<line x1="17" y1="9" x2="23" y2="15"></line>
-							</svg>
+								></polygon><line x1="23" y1="9" x2="17" y2="15"
+								></line><line x1="17" y1="9" x2="23" y2="15"
+								></line></svg
+							>
 						</button>
 					</div>
 
@@ -158,7 +152,7 @@ const projects = [
 						playsinline
 						id="bg-video-2"
 						class="bg-video"
-						preload="metadata"
+						preload="none"
 					>
 						<source src="/mountains.mp4" type="video/mp4" />
 					</video>
@@ -167,7 +161,7 @@ const projects = [
 						playsinline
 						id="bg-video-3"
 						class="bg-video"
-						preload="metadata"
+						preload="none"
 					>
 						<source src="/waves.mp4" type="video/mp4" />
 					</video>
@@ -185,23 +179,19 @@ const projects = [
 					</div>
 					<div class="landing-arrow-container">
 						<div class="arrow-indicator down-arrow scroll-trigger">
-							<svg
-								viewBox="0 0 20 100"
-								preserveAspectRatio="none"
-							>
-								<line
+							<svg viewBox="0 0 20 100" preserveAspectRatio="none"
+								><line
 									x1="10"
 									y1="0"
 									x2="10"
 									y2="100"
 									stroke="white"
-									stroke-width="0.8"></line>
-								<polyline
+									stroke-width="0.8"></line><polyline
 									points="4,96 10,100 16,96"
 									fill="none"
 									stroke="white"
-									stroke-width="0.8"></polyline>
-							</svg>
+									stroke-width="0.8"></polyline></svg
+							>
 						</div>
 					</div>
 				</div>
@@ -209,7 +199,10 @@ const projects = [
 
 			{
 				projects.map((project) => (
-					<div class="project-card first-hero">
+					<div
+						class="project-card first-hero"
+						style="contain: paint;"
+					>
 						<div class="image-container">
 							<Image
 								src={project.img}
@@ -276,6 +269,7 @@ const projects = [
 			scroll-snap-type: y mandatory;
 			scrollbar-width: none;
 			-ms-overflow-style: none;
+			overscroll-behavior-y: contain; /* Prevents bounce artifacts */
 		}
 		.main-content::-webkit-scrollbar {
 			display: none;
@@ -344,7 +338,8 @@ const projects = [
 			inset: 0;
 			z-index: 1;
 			pointer-events: none;
-			backface-visibility: hidden;
+			will-change: opacity;
+			transform: translateZ(0);
 		}
 		.landing-content {
 			opacity: 0;
@@ -449,26 +444,25 @@ const projects = [
 		}
 
 		.video-glitch {
-			filter: url(#cyber-glitch) contrast(1.2) brightness(1.1);
+			filter: url(#cyber-glitch) contrast(1.1) brightness(1.1);
 			animation: glitch-switch 0.1s steps(2) infinite;
 		}
 		@keyframes glitch-switch {
 			0% {
-				transform: scale(1) skew(0deg);
+				transform: scale(1);
 				filter: hue-rotate(0deg);
 			}
 			50% {
-				transform: scale(1.02) skew(2deg) translateX(5px);
-				filter: hue-rotate(180deg);
+				transform: scale(1.01);
+				filter: hue-rotate(5deg);
 			}
 			100% {
-				transform: scale(0.98) skew(-2deg) translateX(-5px);
-				filter: hue-rotate(0deg);
+				transform: scale(0.99);
 			}
 		}
 		.text-glitch {
 			filter: url(#cyber-glitch);
-			transform: translateX(2px);
+			transform: translateX(1px);
 		}
 
 		.video-overlay {
@@ -476,7 +470,7 @@ const projects = [
 			inset: 0;
 			background: linear-gradient(
 				rgba(18, 16, 16, 0) 50%,
-				rgba(0, 0, 0, 0.1) 50%
+				rgba(0, 0, 0, 0.05) 50%
 			);
 			background-size: 100% 2px;
 			z-index: 5;
@@ -557,7 +551,6 @@ const projects = [
 			padding: 0 2rem;
 			box-sizing: border-box;
 			position: relative;
-			transform: translateZ(0);
 		}
 		.image-container {
 			position: relative;
@@ -762,12 +755,11 @@ const projects = [
 
 		const updateUI = () => {
 			const currentVideo = videos[currentIndex];
-			if (playbackStatus) {
+			if (playbackStatus)
 				playbackStatus.classList.toggle(
 					"is-paused",
 					currentVideo.paused,
 				);
-			}
 			const isDark = currentIndex === 1;
 			[landingText, playbackStatus, audioControlsGroup].forEach((el) =>
 				el?.classList.toggle("is-dark", isDark),
@@ -786,7 +778,6 @@ const projects = [
 		});
 
 		if (volumeSlider && bgMusic) {
-			// Volume input on GPU cycle
 			volumeSlider.addEventListener(
 				"input",
 				(e) => {
@@ -808,6 +799,9 @@ const projects = [
 				.finally(() => {
 					landingText?.classList.add("is-visible");
 					updateUI();
+					// Lazy load next videos after landing is stable
+					v2.setAttribute("preload", "metadata");
+					v3.setAttribute("preload", "metadata");
 				});
 		}
 
@@ -847,30 +841,25 @@ const projects = [
 				videos[currentIndex].paused ||
 				isTransitioning
 			) {
-				setTimeout(attemptGlitch, 500);
+				setTimeout(attemptGlitch, 1000);
 				return;
 			}
 
-			if (Math.random() < 0.1) {
+			if (Math.random() < 0.08) {
 				const activeVideo = videos[currentIndex];
 				activeVideo.classList.add("video-glitch");
 				landingText?.classList.add("text-glitch");
 
-				setTimeout(
-					() => {
-						activeVideo.classList.remove("video-glitch");
-						landingText?.classList.remove("text-glitch");
-						setTimeout(
-							attemptGlitch,
-							Math.random() < 0.05
-								? 50
-								: Math.random() * 3000 + 1000,
-						);
-					},
-					Math.random() * 100 + 50,
-				);
+				setTimeout(() => {
+					activeVideo.classList.remove("video-glitch");
+					landingText?.classList.remove("text-glitch");
+					setTimeout(
+						attemptGlitch,
+						Math.random() < 0.05 ? 50 : Math.random() * 4000 + 2000,
+					);
+				}, 100);
 			} else {
-				setTimeout(attemptGlitch, 500);
+				setTimeout(attemptGlitch, 1000);
 			}
 		}
 		attemptGlitch();
@@ -966,7 +955,6 @@ const projects = [
 			new IntersectionObserver(
 				([entry]) => {
 					const activeVideo = videos[currentIndex];
-					// Throttled play/pause to avoid heavy frame drops on scroll
 					requestAnimationFrame(() => {
 						entry.isIntersecting
 							? !isUserPaused &&
@@ -974,7 +962,7 @@ const projects = [
 							: activeVideo.pause();
 					});
 				},
-				{ root: mainContent, threshold: 0.1 },
+				{ root: mainContent, threshold: 0.05 },
 			).observe(landingCard);
 		}
 
@@ -1041,7 +1029,6 @@ const projects = [
 			mainContent.addEventListener(
 				"scroll",
 				() => {
-					// Throttle scroll updates to screen refresh rate
 					requestAnimationFrame(() => {
 						const progress = Math.min(
 							mainContent.scrollTop / (window.innerHeight * 0.8),
