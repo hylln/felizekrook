@@ -1,5 +1,18 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+// SINGLE SOURCE OF TRUTH: Manage your gallery images here
+const galleryImages = [
+    { id: "01", src: "/2.jpeg" },
+    { id: "02", src: "/1.jpeg" },
+    { id: "03", src: "/4.jpeg" },
+    { id: "04", src: "/5.jpeg" },
+    { id: "05", src: "/6.jpeg" },
+    { id: "06", src: "/3.jpeg" },
+    { id: "07", src: "/7.jpeg" },
+    { id: "08", src: "/8.jpeg" },
+    { id: "09", src: "/9.jpeg" },
+];
 ---
 
 <Layout title="GALLERY">
@@ -20,38 +33,18 @@ import Layout from "../layouts/Layout.astro";
         </nav>
 
         <section class="thumbnail-grid">
-            <div class="thumb-card">
-                <img src="/2.jpeg" alt="Project 01" class="zoom-img" />
-                <div class="thumb-details">01</div>
-            </div>
-            <div class="thumb-card">
-                <img src="/1.jpeg" alt="Project 02" class="zoom-img" />
-                <div class="thumb-details">02</div>
-            </div>
-            <div class="thumb-card">
-                <img src="/4.jpeg" alt="Project 03" class="zoom-img" />
-                <div class="thumb-details">03</div>
-            </div>
-            <div class="thumb-card">
-                <img src="/5.jpeg" alt="Project 04" class="zoom-img" />
-                <div class="thumb-details">04</div>
-            </div>
-            <div class="thumb-card">
-                <img src="/6.jpeg" alt="Project 05" class="zoom-img" />
-                <div class="thumb-details">05</div>
-            </div>
-            <div class="thumb-card">
-                <img src="/3.jpeg" alt="Project 06" class="zoom-img" />
-                <div class="thumb-details">06</div>
-            </div>
-            <div class="thumb-card">
-                <img src="/7.jpeg" alt="Project 07" class="zoom-img" />
-                <div class="thumb-details">07</div>
-            </div>
-            <div class="thumb-card">
-                <img src="/8.jpeg" alt="Project 08" class="zoom-img" />
-                <div class="thumb-details">08</div>
-            </div>
+            {
+                galleryImages.map((image) => (
+                    <div class="thumb-card">
+                        <img
+                            src={image.src}
+                            alt={`Project ${image.id}`}
+                            class="zoom-img"
+                        />
+                        <div class="thumb-details">{image.id}</div>
+                    </div>
+                ))
+            }
         </section>
     </main>
 
@@ -111,7 +104,6 @@ import Layout from "../layouts/Layout.astro";
         scrollbar-gutter: stable;
     }
 
-    /* --- HERO BAR --- */
     .hero {
         text-align: center;
         position: sticky;
@@ -166,7 +158,6 @@ import Layout from "../layouts/Layout.astro";
         opacity: 0.6;
     }
 
-    /* --- GRID STRUCTURE --- */
     .contact-grid {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
@@ -237,7 +228,6 @@ import Layout from "../layouts/Layout.astro";
         letter-spacing: 0.1em;
     }
 
-    /* --- LIGHTBOX (UPDATED FOR SMOOTH EXIT) --- */
     .lightbox {
         position: fixed;
         top: 0;
@@ -253,7 +243,6 @@ import Layout from "../layouts/Layout.astro";
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        /* Transitions both opacity and visibility for the smooth exit */
         transition:
             opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
             visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -321,7 +310,6 @@ import Layout from "../layouts/Layout.astro";
         justify-content: center;
         align-items: center;
         will-change: transform, opacity;
-        /* This wrapper handles swipe logic */
         transition:
             transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
             opacity 0.3s ease;
@@ -338,7 +326,6 @@ import Layout from "../layouts/Layout.astro";
         user-select: none;
         pointer-events: auto;
         transform-origin: center center;
-        /* Initial state for the scale animation */
         transform: scale(0.9);
         transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -513,7 +500,6 @@ import Layout from "../layouts/Layout.astro";
             document.body.style.overflow = "auto";
         });
 
-        // REINSTATED CLICK LISTENERS FOR ARROWS
         nextZone?.addEventListener("click", (e) => {
             e.stopPropagation();
             updateImage((currentIndex + 1) % imgList.length, "right");

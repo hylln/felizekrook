@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 
+//IMPORT IMAGES FROM ASSETS FOLDER
 import angelsong from "../assets/angelsong.mp3";
 import img1 from "../assets/1.jpeg";
 import img2 from "../assets/2.jpeg";
@@ -11,6 +12,20 @@ import img5 from "../assets/5.jpeg";
 import img6 from "../assets/6.jpeg";
 import img7 from "../assets/7.jpeg";
 import img8 from "../assets/8.jpeg";
+import img9 from "../assets/9.jpeg";
+
+//ADDS THE IMAGES TO THE PROJECTS ARRAY
+const projects = [
+	{ id: "01", title: "SKETCHES", img: img2 },
+	{ id: "02", title: "PANTHER", img: img1 },
+	{ id: "03", title: "SKETCHES 2", img: img4 },
+	{ id: "04", title: "FELIZE", img: img5 },
+	{ id: "05", title: "BALENCIAGA", img: img6 },
+	{ id: "06", title: "CHANEL", img: img3 },
+	{ id: "07", title: "BLUE", img: img7 },
+	{ id: "08", title: "FOOTBALL", img: img8 },
+	{ id: "09", title: "FUNNY", img: img9 },
+];
 ---
 
 <Layout title="HOME">
@@ -181,102 +196,24 @@ import img8 from "../assets/8.jpeg";
 				</div>
 			</div>
 
-			<div class="project-card first-hero">
-				<div class="image-container">
-					<Image
-						src={img2}
-						alt="Project 01"
-						class="zoom-img"
-						quality="high"
-						format="webp"
-					/>
-					<div class="details"><span>01</span> SKETCHES</div>
-				</div>
-			</div>
-			<div class="project-card first-hero">
-				<div class="image-container">
-					<Image
-						src={img1}
-						alt="Project 02"
-						class="zoom-img"
-						quality="high"
-						format="webp"
-					/>
-					<div class="details"><span>02</span> PANTHER</div>
-				</div>
-			</div>
-			<div class="project-card first-hero">
-				<div class="image-container">
-					<Image
-						src={img4}
-						alt="Project 03"
-						class="zoom-img"
-						quality="high"
-						format="webp"
-					/>
-					<div class="details"><span>03</span> SKETCHES 2</div>
-				</div>
-			</div>
-			<div class="project-card first-hero">
-				<div class="image-container">
-					<Image
-						src={img5}
-						alt="Project 04"
-						class="zoom-img"
-						quality="high"
-						format="webp"
-					/>
-					<div class="details"><span>04</span> FELIZE</div>
-				</div>
-			</div>
-			<div class="project-card first-hero">
-				<div class="image-container">
-					<Image
-						src={img6}
-						alt="Project 05"
-						class="zoom-img"
-						quality="high"
-						format="webp"
-					/>
-					<div class="details"><span>05</span> BALENCIAGA</div>
-				</div>
-			</div>
-			<div class="project-card first-hero">
-				<div class="image-container">
-					<Image
-						src={img3}
-						alt="Project 06"
-						class="zoom-img"
-						quality="high"
-						format="webp"
-					/>
-					<div class="details"><span>06</span> CHANEL</div>
-				</div>
-			</div>
-			<div class="project-card first-hero">
-				<div class="image-container">
-					<Image
-						src={img7}
-						alt="Project 07"
-						class="zoom-img"
-						quality="high"
-						format="webp"
-					/>
-					<div class="details"><span>07</span> BLUE</div>
-				</div>
-			</div>
-			<div class="project-card first-hero">
-				<div class="image-container">
-					<Image
-						src={img8}
-						alt="Project 08"
-						class="zoom-img"
-						quality="high"
-						format="webp"
-					/>
-					<div class="details"><span>08</span> FOOTBALL</div>
-				</div>
-			</div>
+			{
+				projects.map((project) => (
+					<div class="project-card first-hero">
+						<div class="image-container">
+							<Image
+								src={project.img}
+								alt={project.title}
+								class="zoom-img"
+								quality="high"
+								format="webp"
+							/>
+							<div class="details">
+								<span>{project.id}</span> {project.title}
+							</div>
+						</div>
+					</div>
+				))
+			}
 
 			<div class="project-card footer-card">
 				<div class="footer-content">
@@ -429,7 +366,6 @@ import img8 from "../assets/8.jpeg";
 			z-index: 2;
 		}
 
-		/* Styles for volume slider and toggle container */
 		.audio-controls-group {
 			position: absolute;
 			top: 130px;
@@ -482,7 +418,6 @@ import img8 from "../assets/8.jpeg";
 			display: flex;
 			align-items: center;
 		}
-		/* Increased width to 80px and added margin to prevent thumb cut-off */
 		.audio-controls-group:hover .volume-slider-wrapper {
 			width: 80px;
 			opacity: 1;
@@ -773,7 +708,6 @@ import img8 from "../assets/8.jpeg";
 				top: 160px;
 				right: 1.5rem;
 			}
-			/* Explicitly hide volume slider on mobile */
 			.volume-slider-wrapper {
 				display: none !important;
 			}
@@ -813,7 +747,6 @@ import img8 from "../assets/8.jpeg";
 		let currentIndex = 0;
 		let isTransitioning = false;
 
-		// Touch Interaction Variables
 		let initialPinchDistance = 0;
 		let isPinching = false;
 		let lastTapTime = 0;
@@ -872,7 +805,6 @@ import img8 from "../assets/8.jpeg";
 				toggleMusic();
 			});
 
-		// Volume logic
 		if (volumeSlider && bgMusic) {
 			volumeSlider.addEventListener("input", (e) => {
 				const val = parseFloat((e.target as HTMLInputElement).value);
@@ -958,7 +890,6 @@ import img8 from "../assets/8.jpeg";
 			closeLightbox();
 		});
 
-		// Touch Listeners (Double Tap + Pinch)
 		lightbox.addEventListener(
 			"touchstart",
 			(e) => {
@@ -1053,7 +984,6 @@ import img8 from "../assets/8.jpeg";
 			}, 800);
 		};
 
-		// REINSTATED: Landing Scroll Button Listeners
 		document.querySelectorAll(".scroll-trigger").forEach((trigger) => {
 			trigger.addEventListener("click", (e) => {
 				e.stopPropagation();
