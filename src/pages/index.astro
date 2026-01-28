@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 
-//IMPORT IMAGES FROM ASSETS FOLDER
+// IMPORT IMAGES FROM ASSETS FOLDER
 import angelsong from "../assets/angelsong.mp3";
 import img1 from "../assets/1.jpeg";
 import img2 from "../assets/2.jpeg";
@@ -14,7 +14,6 @@ import img7 from "../assets/7.jpeg";
 import img8 from "../assets/8.jpeg";
 import img9 from "../assets/9.jpeg";
 
-//ADDS THE IMAGES TO THE PROJECTS ARRAY
 const projects = [
 	{ id: "01", title: "SKETCHES", img: img2 },
 	{ id: "02", title: "PANTHER", img: img1 },
@@ -30,9 +29,8 @@ const projects = [
 
 <Layout title="HOME">
 	<svg
-		style="position: absolute; width: 0; height: 0;"
+		style="position: absolute; width: 0; height: 0; pointer-events: none;"
 		aria-hidden="true"
-		focusable="false"
 	>
 		<filter id="cyber-glitch">
 			<feTurbulence
@@ -60,7 +58,7 @@ const projects = [
 		<section class="centered-gallery">
 			<div class="project-card landing-card" id="landing-trigger">
 				<div class="video-background" id="video-wrapper">
-					<audio id="bg-music" loop>
+					<audio id="bg-music" loop preload="auto">
 						<source src={angelsong} type="audio/mpeg" />
 					</audio>
 
@@ -151,13 +149,26 @@ const projects = [
 						playsinline
 						id="bg-video-1"
 						class="bg-video is-active"
+						preload="auto"
 					>
 						<source src="/clouds.mp4" type="video/mp4" />
 					</video>
-					<video muted playsinline id="bg-video-2" class="bg-video">
+					<video
+						muted
+						playsinline
+						id="bg-video-2"
+						class="bg-video"
+						preload="auto"
+					>
 						<source src="/mountains.mp4" type="video/mp4" />
 					</video>
-					<video muted playsinline id="bg-video-3" class="bg-video">
+					<video
+						muted
+						playsinline
+						id="bg-video-3"
+						class="bg-video"
+						preload="auto"
+					>
 						<source src="/waves.mp4" type="video/mp4" />
 					</video>
 
@@ -237,7 +248,7 @@ const projects = [
 		</section>
 	</main>
 
-	<div id="lightbox" class="lightbox">
+	<div id="lightbox" class="lightbox" aria-hidden="true">
 		<span class="close-lightbox" id="close-btn">&times;</span>
 		<div class="lightbox-content-wrapper" id="lightbox-wrapper">
 			<img
@@ -254,6 +265,7 @@ const projects = [
 			overflow: hidden;
 			background-color: #fff;
 			font-family: sans-serif;
+			-webkit-font-smoothing: antialiased;
 			-webkit-text-size-adjust: 100%;
 		}
 		.main-content {
@@ -261,7 +273,13 @@ const projects = [
 			height: 100vh;
 			overflow-y: scroll;
 			scroll-snap-type: y mandatory;
+			scrollbar-width: none;
+			-ms-overflow-style: none;
 		}
+		.main-content::-webkit-scrollbar {
+			display: none;
+		}
+
 		.hero {
 			text-align: center;
 			position: fixed;
@@ -269,12 +287,13 @@ const projects = [
 			top: 0;
 			z-index: 1000;
 			background-color: #ffffff;
-			padding: 2rem 2rem;
+			padding: 2rem;
 			border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			box-sizing: border-box;
+			transform: translateZ(0); /* Force GPU acceleration */
 		}
 		h1 {
 			font-size: clamp(1rem, 2vw, 12rem);
@@ -293,6 +312,7 @@ const projects = [
 		.logo-link:hover {
 			opacity: 0.6;
 		}
+
 		.header-nav {
 			position: absolute;
 			right: 2rem;
@@ -320,10 +340,7 @@ const projects = [
 			opacity: 0;
 			transition: opacity 1.5s ease-in-out;
 			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
+			inset: 0;
 			z-index: 1;
 			pointer-events: none;
 		}
@@ -337,6 +354,7 @@ const projects = [
 			transition:
 				opacity 0.8s ease-in-out,
 				color 0.1s steps(2);
+			will-change: opacity, transform;
 		}
 		.scroll-trigger {
 			cursor: pointer;
@@ -353,12 +371,12 @@ const projects = [
 		}
 		.bg-video {
 			position: absolute;
-			top: 0;
-			left: 0;
+			inset: 0;
 			width: 100%;
 			height: 100%;
 			object-fit: cover;
 			opacity: 0;
+			will-change: opacity, filter;
 		}
 		.bg-video.is-active {
 			opacity: 1;
@@ -374,6 +392,7 @@ const projects = [
 			align-items: center;
 			pointer-events: auto;
 			transition: opacity 0.3s ease;
+			transform: translateZ(0);
 		}
 		.audio-toggle-overlay {
 			background: none;
@@ -400,9 +419,7 @@ const projects = [
 		.audio-toggle-overlay.is-playing .speaker-off-icon {
 			display: none;
 		}
-		.audio-controls-group.is-dark {
-			color: #000;
-		}
+		.audio-controls-group.is-dark,
 		.audio-controls-group.is-dark .audio-toggle-overlay {
 			color: #000;
 		}
@@ -453,10 +470,7 @@ const projects = [
 
 		.video-overlay {
 			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
+			inset: 0;
 			background: linear-gradient(
 				rgba(18, 16, 16, 0) 50%,
 				rgba(0, 0, 0, 0.1) 50%
@@ -467,14 +481,12 @@ const projects = [
 		}
 		.scroll-fade-overlay {
 			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
+			inset: 0;
 			background: #000;
 			opacity: 0;
 			z-index: 6;
 			pointer-events: none;
+			will-change: opacity;
 		}
 		.playback-status {
 			position: absolute;
@@ -490,6 +502,7 @@ const projects = [
 			align-items: center;
 			pointer-events: auto;
 			padding: 10px;
+			transform: translateZ(0);
 		}
 		.playback-status:hover {
 			opacity: 0.6;
@@ -539,7 +552,6 @@ const projects = [
 			padding: 0 2rem;
 			box-sizing: border-box;
 			position: relative;
-			scroll-margin-top: 100px;
 		}
 		.image-container {
 			position: relative;
@@ -554,6 +566,7 @@ const projects = [
 			object-fit: contain;
 			cursor: zoom-in;
 			transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+			will-change: transform;
 		}
 		.zoom-img:hover {
 			transform: scale(1.05);
@@ -620,10 +633,7 @@ const projects = [
 
 		.lightbox {
 			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
+			inset: 0;
 			z-index: 3000;
 			display: flex;
 			justify-content: center;
@@ -669,6 +679,7 @@ const projects = [
 			transform-origin: center center;
 			transform: scale(0.9);
 			transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+			will-change: transform;
 		}
 		.lightbox.show .lightbox-content {
 			transform: scale(1);
@@ -699,13 +710,9 @@ const projects = [
 			.zoom-img:hover {
 				transform: scale(1);
 			}
-			.playback-status {
-				top: 160px;
-				left: 1.5rem;
-			}
+			.playback-status,
 			.audio-controls-group {
 				top: 160px;
-				right: 1.5rem;
 			}
 			.volume-slider-wrapper {
 				display: none !important;
@@ -727,7 +734,6 @@ const projects = [
 		const landingText = document.getElementById("landing-text-wrapper");
 		const videoWrapper = document.getElementById("video-wrapper");
 		const playbackStatus = document.getElementById("playback-status");
-
 		const audioControlsGroup = document.querySelector(
 			".audio-controls-group",
 		);
@@ -735,7 +741,6 @@ const projects = [
 		const volumeSlider = document.getElementById(
 			"volume-slider",
 		) as HTMLInputElement;
-
 		const bgMusic = document.getElementById("bg-music") as HTMLAudioElement;
 		const lightbox = document.getElementById("lightbox") as HTMLElement;
 		const lightboxImg = document.getElementById(
@@ -745,71 +750,45 @@ const projects = [
 
 		let currentIndex = 0;
 		let isTransitioning = false;
-		let isUserPaused = false; // Flag to track if the user intentionally paused the video
-
-		let initialPinchDistance = 0;
-		let isPinching = false;
+		let isUserPaused = false;
 		let lastTapTime = 0;
 		let isDoubleTapZoomed = false;
-
-		function getDistance(touches: TouchList) {
-			const dx = touches[0].clientX - touches[1].clientX;
-			const dy = touches[0].clientY - touches[1].clientY;
-			return Math.sqrt(dx * dx + dy * dy);
-		}
-
-		function getPinchCenter(touches: TouchList, element: HTMLElement) {
-			const rect = element.getBoundingClientRect();
-			const centerX = (touches[0].clientX + touches[1].clientX) / 2;
-			const centerY = (touches[0].clientY + touches[1].clientY) / 2;
-			return `${((centerX - rect.left) / rect.width) * 100}% ${((centerY - rect.top) / rect.height) * 100}%`;
-		}
-
-		function getSingleTapCenter(touch: Touch, element: HTMLElement) {
-			const rect = element.getBoundingClientRect();
-			return `${((touch.clientX - rect.left) / rect.width) * 100}% ${((touch.clientY - rect.top) / rect.height) * 100}%`;
-		}
 
 		const updateUI = () => {
 			const currentVideo = videos[currentIndex];
 			if (playbackStatus) {
-				currentVideo.paused
-					? playbackStatus.classList.add("is-paused")
-					: playbackStatus.classList.remove("is-paused");
+				playbackStatus.classList.toggle(
+					"is-paused",
+					currentVideo.paused,
+				);
 			}
-			if (currentIndex === 1) {
-				landingText?.classList.add("is-dark");
-				playbackStatus?.classList.add("is-dark");
-				audioControlsGroup?.classList.add("is-dark");
-			} else {
-				landingText?.classList.remove("is-dark");
-				playbackStatus?.classList.remove("is-dark");
-				audioControlsGroup?.classList.remove("is-dark");
-			}
+			const isDark = currentIndex === 1;
+			[landingText, playbackStatus, audioControlsGroup].forEach((el) =>
+				el?.classList.toggle("is-dark", isDark),
+			);
 		};
 
 		const toggleMusic = () => {
 			if (!bgMusic) return;
-			if (bgMusic.paused) {
-				bgMusic.play();
-				audioToggle?.classList.add("is-playing");
-			} else {
-				bgMusic.pause();
-				audioToggle?.classList.remove("is-playing");
-			}
+			bgMusic.paused ? bgMusic.play() : bgMusic.pause();
+			audioToggle?.classList.toggle("is-playing", !bgMusic.paused);
 		};
 
-		if (audioToggle)
-			audioToggle.addEventListener("click", (e) => {
-				e.stopPropagation();
-				toggleMusic();
-			});
+		audioToggle?.addEventListener("click", (e) => {
+			e.stopPropagation();
+			toggleMusic();
+		});
 
 		if (volumeSlider && bgMusic) {
-			volumeSlider.addEventListener("input", (e) => {
-				const val = parseFloat((e.target as HTMLInputElement).value);
-				bgMusic.volume = val;
-			});
+			volumeSlider.addEventListener(
+				"input",
+				(e) => {
+					bgMusic.volume = parseFloat(
+						(e.target as HTMLInputElement).value,
+					);
+				},
+				{ passive: true },
+			);
 			volumeSlider.addEventListener("click", (e) => e.stopPropagation());
 		}
 
@@ -836,39 +815,34 @@ const projects = [
 			landingText?.classList.add("text-glitch");
 
 			setTimeout(() => {
-				oldVideo.classList.remove("is-active");
+				oldVideo.classList.remove("is-active", "video-glitch");
 				oldVideo.pause();
 				currentIndex = (currentIndex + 1) % videos.length;
 				const newVideo = videos[currentIndex];
-				newVideo.classList.add("is-active");
+				newVideo.classList.add("is-active", "video-glitch");
 				newVideo.currentTime = 0;
 				newVideo.play().catch(() => {});
 				updateUI();
-				newVideo.classList.add("video-glitch");
 			}, 80);
 
 			setTimeout(() => {
-				videos.forEach((v) => v.classList.remove("video-glitch"));
+				videos[currentIndex].classList.remove("video-glitch");
 				landingText?.classList.remove("text-glitch");
 				isTransitioning = false;
 			}, 250);
 		}
 
 		function attemptGlitch() {
-			const scrollPos = mainContent.scrollTop;
-			if (scrollPos > window.innerHeight * 0.5) {
-				setTimeout(attemptGlitch, 2000);
-				return;
-			}
-
-			const activeVideo = videos[currentIndex];
-			if (activeVideo.paused) {
+			if (
+				mainContent.scrollTop > window.innerHeight * 0.5 ||
+				videos[currentIndex].paused ||
+				isTransitioning
+			) {
 				setTimeout(attemptGlitch, 500);
 				return;
 			}
 
-			const glitchChance = Math.random() < 0.1;
-			if (glitchChance && !isTransitioning) {
+			if (Math.random() < 0.1) {
 				const activeVideo = videos[currentIndex];
 				activeVideo.classList.add("video-glitch");
 				landingText?.classList.add("text-glitch");
@@ -877,14 +851,12 @@ const projects = [
 					() => {
 						activeVideo.classList.remove("video-glitch");
 						landingText?.classList.remove("text-glitch");
-						if (Math.random() < 0.05) {
-							setTimeout(attemptGlitch, 50);
-						} else {
-							setTimeout(
-								attemptGlitch,
-								Math.random() * 3000 + 1000,
-							);
-						}
+						setTimeout(
+							attemptGlitch,
+							Math.random() < 0.05
+								? 50
+								: Math.random() * 3000 + 1000,
+						);
 					},
 					Math.random() * 100 + 50,
 				);
@@ -892,7 +864,6 @@ const projects = [
 				setTimeout(attemptGlitch, 500);
 			}
 		}
-
 		attemptGlitch();
 
 		videos.forEach((v) => {
@@ -903,9 +874,8 @@ const projects = [
 					v.classList.contains("is-active") &&
 					v.currentTime > v.duration - 0.3 &&
 					!isTransitioning
-				) {
+				)
 					triggerCyberSwap();
-				}
 			});
 		});
 
@@ -919,7 +889,6 @@ const projects = [
 			img.addEventListener("click", () => {
 				lightboxImg.src = (img as HTMLImageElement).src;
 				lightboxImg.style.transform = "scale(1)";
-				lightboxImg.style.transformOrigin = "center center";
 				isDoubleTapZoomed = false;
 				lightbox.classList.add("show");
 				document.body.style.overflow = "hidden";
@@ -936,63 +905,18 @@ const projects = [
 			(e) => {
 				if (e.touches.length === 1) {
 					const now = Date.now();
-					const timesince = now - lastTapTime;
-					if (timesince < 300 && timesince > 0) {
+					if (now - lastTapTime < 300) {
 						e.preventDefault();
-						if (!isDoubleTapZoomed) {
-							lightboxImg.style.transformOrigin =
-								getSingleTapCenter(e.touches[0], lightboxImg);
-							lightboxImg.style.transition =
-								"transform 0.3s ease";
-							lightboxImg.style.transform = "scale(2.5)";
-							isDoubleTapZoomed = true;
-						} else {
-							lightboxImg.style.transition =
-								"transform 0.3s ease";
-							lightboxImg.style.transform = "scale(1)";
-							isDoubleTapZoomed = false;
-						}
-						return;
+						isDoubleTapZoomed = !isDoubleTapZoomed;
+						lightboxImg.style.transform = isDoubleTapZoomed
+							? "scale(2.5)"
+							: "scale(1)";
 					}
 					lastTapTime = now;
 				}
-				if (e.touches.length === 2) {
-					isPinching = true;
-					initialPinchDistance = getDistance(e.touches);
-					lightboxImg.style.transformOrigin = getPinchCenter(
-						e.touches,
-						lightboxImg,
-					);
-				}
 			},
 			{ passive: false },
 		);
-
-		lightbox.addEventListener(
-			"touchmove",
-			(e) => {
-				if (isPinching && e.touches.length === 2) {
-					e.preventDefault();
-					const scale = getDistance(e.touches) / initialPinchDistance;
-					lightboxImg.style.transform = `scale(${scale})`;
-					lightboxImg.style.transition = "none";
-				}
-			},
-			{ passive: false },
-		);
-
-		lightbox.addEventListener("touchend", (e) => {
-			if (isPinching && e.touches.length < 2) {
-				isPinching = false;
-				lightboxImg.style.transition =
-					"transform 0.3s ease, transform-origin 0.3s ease";
-				lightboxImg.style.transform = "scale(1)";
-				isDoubleTapZoomed = false;
-				setTimeout(() => {
-					lightboxImg.style.transformOrigin = "center center";
-				}, 300);
-			}
-		});
 
 		lightbox.addEventListener("click", (e) => {
 			if (
@@ -1002,82 +926,43 @@ const projects = [
 				closeLightbox();
 		});
 
-		if (playbackStatus) {
-			playbackStatus.addEventListener("click", (e) => {
-				e.stopPropagation();
-				const activeVideo = videos[currentIndex];
-				if (activeVideo.paused) {
-					isUserPaused = false;
-					activeVideo.play();
-				} else {
-					isUserPaused = true;
-					activeVideo.pause();
-				}
-			});
-		}
+		const handleVideoToggle = (e: Event) => {
+			e.stopPropagation();
+			const activeVideo = videos[currentIndex];
+			isUserPaused = !activeVideo.paused;
+			activeVideo.paused ? activeVideo.play() : activeVideo.pause();
+		};
 
-		if (landingCard) {
-			landingCard.addEventListener("click", () => {
-				const activeVideo = videos[currentIndex];
-				if (activeVideo.paused) {
-					isUserPaused = false;
-					activeVideo.play();
-				} else {
-					isUserPaused = true;
-					activeVideo.pause();
-				}
-			});
-		}
+		playbackStatus?.addEventListener("click", handleVideoToggle);
+		landingCard?.addEventListener("click", handleVideoToggle);
 
 		const triggerBackToTop = () => {
 			mainContent.style.scrollSnapType = "none";
 			const start = mainContent.scrollTop;
 			const duration = 4000;
 			const startTime = performance.now();
+			const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
 
-			function easeOutQuart(x: number): number {
-				return 1 - Math.pow(1 - x, 4);
-			}
-
-			function animate(currentTime: number) {
+			const animate = (currentTime: number) => {
 				const elapsed = currentTime - startTime;
 				const progress = Math.min(elapsed / duration, 1);
-				const easedProgress = easeOutQuart(progress);
-				mainContent.scrollTop = start * (1 - easedProgress);
-
-				if (progress < 1) {
-					window.requestAnimationFrame(animate);
-				} else {
-					mainContent.style.scrollSnapType = "y mandatory";
-				}
-			}
-			window.requestAnimationFrame(animate);
+				mainContent.scrollTop = start * (1 - easeOutQuart(progress));
+				if (progress < 1) requestAnimationFrame(animate);
+				else mainContent.style.scrollSnapType = "y mandatory";
+			};
+			requestAnimationFrame(animate);
 		};
 
-		// FIXED: Intersection Observer specifically observing the scroll container
 		if (landingCard && mainContent) {
-			const observer = new IntersectionObserver(
-				(entries) => {
-					entries.forEach((entry) => {
-						const activeVideo = videos[currentIndex];
-						if (entry.isIntersecting) {
-							// Only play if the user hasn't explicitly paused it
-							if (!isUserPaused) {
-								activeVideo.play().catch(() => {});
-							}
-						} else {
-							// Card is out of view, pause for performance
-							activeVideo.pause();
-						}
-					});
+			new IntersectionObserver(
+				([entry]) => {
+					const activeVideo = videos[currentIndex];
+					entry.isIntersecting
+						? !isUserPaused && activeVideo.play().catch(() => {})
+						: activeVideo.pause();
 				},
-				{
-					root: mainContent, // Use the scroll container as the reference root
-					threshold: 0.1,
-				},
-			);
-
-			observer.observe(landingCard);
+				{ root: mainContent, threshold: 0.1 },
+			).observe(landingCard);
 		}
 
 		document.querySelectorAll(".scroll-trigger").forEach((trigger) => {
@@ -1090,100 +975,81 @@ const projects = [
 		});
 
 		window.addEventListener("keydown", (e) => {
-			if (e.key.toLowerCase() === "m") {
-				toggleMusic();
-			}
+			const key = e.key.toLowerCase();
+			if (key === "m") toggleMusic();
 			if (
-				e.key === "Escape" ||
-				(e.key.toLowerCase() === "f" &&
-					lightbox.classList.contains("show"))
-			) {
-				if (lightbox.classList.contains("show")) {
-					closeLightbox();
-					return;
-				}
-			}
-			if (
-				e.key.toLowerCase() === "f" &&
-				!lightbox.classList.contains("show")
-			) {
-				const cards = Array.from(
+				key === "escape" ||
+				(key === "f" && lightbox.classList.contains("show"))
+			)
+				closeLightbox();
+			if (key === "f" && !lightbox.classList.contains("show")) {
+				const activeCard = Array.from(
 					document.querySelectorAll(".project-card"),
+				).find(
+					(c) =>
+						Math.abs(c.getBoundingClientRect().top) <
+						window.innerHeight / 2,
 				);
-				const activeCard = cards.find((card) => {
-					const rect = card.getBoundingClientRect();
-					return (
-						rect.top >= -window.innerHeight / 2 &&
-						rect.top <= window.innerHeight / 2
-					);
-				});
-				const targetImg = activeCard?.querySelector(
+				const img = activeCard?.querySelector(
 					".zoom-img",
 				) as HTMLImageElement;
-				if (targetImg) {
-					lightboxImg.src = targetImg.src;
-					lightboxImg.style.transform = "scale(1)";
-					lightboxImg.style.transformOrigin = "center center";
-					isDoubleTapZoomed = false;
+				if (img) {
+					lightboxImg.src = img.src;
 					lightbox.classList.add("show");
 					document.body.style.overflow = "hidden";
 				}
 			}
 			if (
-				["ArrowUp", "ArrowDown", " "].includes(e.key) &&
+				["arrowup", "arrowdown", " "].includes(key) &&
 				!lightbox.classList.contains("show")
 			) {
 				e.preventDefault();
 				const cards = Array.from(
 					document.querySelectorAll(".project-card"),
 				);
-				let currentIdx = cards.findIndex((card) => {
-					const rect = card.getBoundingClientRect();
-					return (
-						rect.top >= -window.innerHeight / 2 &&
-						rect.top <= window.innerHeight / 2
-					);
-				});
-				if (e.key === "ArrowDown" || e.key === " ") {
-					if (currentIdx < cards.length - 1) {
-						cards[currentIdx + 1].scrollIntoView({
-							behavior: "smooth",
-							block: "start",
-						});
-					} else if (e.key === " ") {
-						triggerBackToTop();
-					}
-				} else if (e.key === "ArrowUp") {
-					if (currentIdx > 0) {
-						cards[currentIdx - 1].scrollIntoView({
-							behavior: "smooth",
-							block: "start",
-						});
-					}
-				}
+				const cur = cards.findIndex(
+					(c) =>
+						Math.abs(c.getBoundingClientRect().top) <
+						window.innerHeight / 2,
+				);
+				if (
+					(key === "arrowdown" || key === " ") &&
+					cur < cards.length - 1
+				)
+					cards[cur + 1].scrollIntoView({ behavior: "smooth" });
+				else if (key === " " && cur === cards.length - 1)
+					triggerBackToTop();
+				else if (key === "arrowup" && cur > 0)
+					cards[cur - 1].scrollIntoView({ behavior: "smooth" });
 			}
 		});
 
 		if (mainContent && scrollFade && landingText) {
-			mainContent.addEventListener("scroll", () => {
-				const scrollPos = mainContent.scrollTop;
-				const progress = Math.min(
-					scrollPos / (window.innerHeight * 0.8),
-					1,
-				);
-				scrollFade.style.opacity = progress.toString();
-				landingText.style.opacity = (1 - progress * 1.5).toString();
-				if (playbackStatus)
-					playbackStatus.style.opacity = (
-						0.5 *
-						(1 - progress * 2)
-					).toString();
-				if (audioControlsGroup)
-					(audioControlsGroup as HTMLElement).style.opacity = (
-						0.5 *
-						(1 - progress * 2)
-					).toString();
-			});
+			mainContent.addEventListener(
+				"scroll",
+				() => {
+					requestAnimationFrame(() => {
+						const progress = Math.min(
+							mainContent.scrollTop / (window.innerHeight * 0.8),
+							1,
+						);
+						scrollFade.style.opacity = progress.toString();
+						landingText.style.opacity = (
+							1 -
+							progress * 1.5
+						).toString();
+						if (playbackStatus)
+							playbackStatus.style.opacity = (
+								0.5 *
+								(1 - progress * 2)
+							).toString();
+						if (audioControlsGroup)
+							(audioControlsGroup as HTMLElement).style.opacity =
+								(0.5 * (1 - progress * 2)).toString();
+					});
+				},
+				{ passive: true },
+			);
 		}
 
 		document
