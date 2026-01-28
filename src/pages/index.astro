@@ -536,6 +536,7 @@ import img6 from "../assets/6.jpeg";
 			transition: opacity 0.2s ease;
 		}
 
+		/* --- LIGHTBOX TRANSITION FIXES --- */
 		.lightbox {
 			position: fixed;
 			top: 0;
@@ -549,13 +550,17 @@ import img6 from "../assets/6.jpeg";
 			background-color: rgba(255, 255, 255, 0.6);
 			backdrop-filter: blur(2px);
 			opacity: 0;
-			visibility: hidden;
-			transition: opacity 0.6s ease;
+			visibility: hidden; /* This now transitions! */
+			pointer-events: none;
+			transition:
+				opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+				visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 			touch-action: none;
 		}
 		.lightbox.show {
 			opacity: 1;
 			visibility: visible;
+			pointer-events: auto;
 		}
 		.close-lightbox {
 			position: absolute;
@@ -581,6 +586,12 @@ import img6 from "../assets/6.jpeg";
 			user-select: none;
 			pointer-events: auto;
 			transform-origin: center center;
+			/* Added scale transition for close effect */
+			transform: scale(0.9);
+			transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+		}
+		.lightbox.show .lightbox-content {
+			transform: scale(1);
 		}
 
 		@media (max-width: 900px) {
@@ -785,8 +796,6 @@ import img6 from "../assets/6.jpeg";
 			document.querySelectorAll(".zoom-img").forEach((img) => {
 				img.addEventListener("click", () => {
 					lightboxImg.src = (img as HTMLImageElement).src;
-					lightboxImg.style.transform = "scale(1)";
-					lightboxImg.style.transformOrigin = "center center";
 					isDoubleTapZoomed = false;
 					lightbox.classList.add("show");
 					document.body.style.overflow = "hidden";
