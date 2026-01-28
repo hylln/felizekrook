@@ -603,6 +603,10 @@ import img6 from "../assets/6.jpeg";
 		const landingText = document.getElementById("landing-text-wrapper");
 		const videoWrapper = document.getElementById("video-wrapper");
 		const playbackStatus = document.getElementById("playback-status");
+		const lightbox = document.getElementById("lightbox") as HTMLElement;
+		const lightboxImg = document.getElementById(
+			"lightbox-img",
+		) as HTMLImageElement;
 
 		let currentIndex = 0;
 		let isTransitioning = false;
@@ -670,6 +674,10 @@ import img6 from "../assets/6.jpeg";
 		function randomGlitch() {
 			if (isTransitioning) return;
 			const activeVideo = videos[currentIndex];
+
+			// FIX: If the video is paused, do not trigger a glitch and stop the recursive loop
+			if (activeVideo.paused) return;
+
 			if (Math.random() > 0.92) {
 				activeVideo.classList.add("video-glitch");
 				landingText?.classList.add("text-glitch");
@@ -685,7 +693,10 @@ import img6 from "../assets/6.jpeg";
 		}
 
 		videos.forEach((v) => {
-			v.addEventListener("play", updateUI);
+			v.addEventListener("play", () => {
+				updateUI();
+				randomGlitch(); // FIX: Restart the glitch loop when video plays
+			});
 			v.addEventListener("pause", updateUI);
 			v.addEventListener("timeupdate", () => {
 				if (
@@ -700,7 +711,6 @@ import img6 from "../assets/6.jpeg";
 
 		randomGlitch();
 
-		// SHARED SCROLL TRIGGER
 		document.querySelectorAll(".scroll-trigger").forEach((trigger) => {
 			trigger.addEventListener("click", (e) => {
 				e.stopPropagation();
@@ -710,23 +720,37 @@ import img6 from "../assets/6.jpeg";
 			});
 		});
 
-		// --- KEYBOARD NAVIGATION FIX ---
+		const triggerBackToTop = () => {
+			if (!mainContent) return;
+			mainContent.style.scrollSnapType = "none";
+			mainContent.scrollTo({ top: 0, behavior: "smooth" });
+			setTimeout(() => {
+				mainContent.style.scrollSnapType = "y mandatory";
+			}, 800);
+		};
+
 		window.addEventListener("keydown", (e) => {
-			if (["ArrowUp", "ArrowDown"].includes(e.key)) {
-				e.preventDefault(); // Stop default stuttery scroll
+			if (e.key === "Escape") {
+				if (lightbox.classList.contains("show")) {
+					lightbox.classList.remove("show");
+					document.body.style.overflow = "auto";
+				}
+			}
+
+			if (
+				["ArrowUp", "ArrowDown", " "].includes(e.key) &&
+				!lightbox.classList.contains("show")
+			) {
+				e.preventDefault();
 
 				const cards = Array.from(
 					document.querySelectorAll(".project-card"),
 				);
-				const containerTop = mainContent.scrollTop;
-
-				// Find current card based on center position
 				let currentIdx = cards.findIndex((card) => {
 					const rect = card.getBoundingClientRect();
 					return rect.top >= -10 && rect.top <= 10;
 				});
 
-				// If not perfectly aligned, find the nearest one
 				if (currentIdx === -1) {
 					currentIdx = cards.findIndex(
 						(card) =>
@@ -735,11 +759,15 @@ import img6 from "../assets/6.jpeg";
 					);
 				}
 
-				if (e.key === "ArrowDown" && currentIdx < cards.length - 1) {
-					cards[currentIdx + 1].scrollIntoView({
-						behavior: "smooth",
-						block: "start",
-					});
+				if (e.key === "ArrowDown" || e.key === " ") {
+					if (currentIdx < cards.length - 1) {
+						cards[currentIdx + 1].scrollIntoView({
+							behavior: "smooth",
+							block: "start",
+						});
+					} else if (e.key === " ") {
+						triggerBackToTop();
+					}
 				} else if (e.key === "ArrowUp" && currentIdx > 0) {
 					cards[currentIdx - 1].scrollIntoView({
 						behavior: "smooth",
@@ -798,19 +826,8 @@ import img6 from "../assets/6.jpeg";
 
 		document
 			.getElementById("back-to-top")
-			?.addEventListener("click", () => {
-				if (!mainContent) return;
-				mainContent.style.scrollSnapType = "none";
-				mainContent.scrollTo({ top: 0, behavior: "smooth" });
-				setTimeout(() => {
-					mainContent.style.scrollSnapType = "y mandatory";
-				}, 800);
-			});
+			?.addEventListener("click", triggerBackToTop);
 
-		const lightbox = document.getElementById("lightbox") as HTMLElement;
-		const lightboxImg = document.getElementById(
-			"lightbox-img",
-		) as HTMLImageElement;
 		if (lightbox && lightboxImg) {
 			document.querySelectorAll(".zoom-img").forEach((img) => {
 				img.addEventListener("click", () => {
