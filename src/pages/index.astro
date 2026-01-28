@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 
+import angelsong from "../assets/angelsong.mp3";
 import img1 from "../assets/1.jpeg";
 import img2 from "../assets/2.jpeg";
 import img3 from "../assets/3.jpeg";
@@ -44,6 +45,10 @@ import img8 from "../assets/8.jpeg";
 		<section class="centered-gallery">
 			<div class="project-card landing-card" id="landing-trigger">
 				<div class="video-background" id="video-wrapper">
+					<audio id="bg-music" loop>
+						<source src={angelsong} type="audio/mpeg" />
+					</audio>
+
 					<div id="playback-status" class="playback-status">
 						<svg
 							class="pause-icon"
@@ -74,6 +79,42 @@ import img8 from "../assets/8.jpeg";
 							></polygon>
 						</svg>
 					</div>
+
+					<button id="audio-toggle" class="audio-toggle-overlay">
+						<svg
+							class="speaker-on-icon"
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+							></polygon>
+							<path
+								d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"
+							></path>
+						</svg>
+						<svg
+							class="speaker-off-icon"
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+							></polygon>
+							<line x1="23" y1="9" x2="17" y2="15"></line>
+							<line x1="17" y1="9" x2="23" y2="15"></line>
+						</svg>
+					</button>
 
 					<video
 						autoplay
@@ -374,6 +415,40 @@ import img8 from "../assets/8.jpeg";
 			z-index: 2;
 		}
 
+		.audio-toggle-overlay {
+			position: absolute;
+			top: 130px;
+			right: 2rem;
+			z-index: 100;
+			background: none;
+			border: none;
+			padding: 10px;
+			cursor: pointer;
+			color: #fff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			pointer-events: auto;
+			transition:
+				opacity 0.3s ease,
+				color 0.1s steps(2);
+		}
+		.audio-toggle-overlay:hover {
+			opacity: 0.6;
+		}
+		.audio-toggle-overlay .speaker-on-icon {
+			display: none;
+		}
+		.audio-toggle-overlay.is-playing .speaker-on-icon {
+			display: block;
+		}
+		.audio-toggle-overlay.is-playing .speaker-off-icon {
+			display: none;
+		}
+		.audio-toggle-overlay.is-dark {
+			color: #000;
+		}
+
 		.video-glitch {
 			filter: url(#cyber-glitch) contrast(1.2) brightness(1.1);
 			animation: glitch-switch 0.1s steps(2) infinite;
@@ -564,7 +639,6 @@ import img8 from "../assets/8.jpeg";
 			transition: opacity 0.2s ease;
 		}
 
-		/* --- LIGHTBOX TRANSITION FIXES --- */
 		.lightbox {
 			position: fixed;
 			top: 0;
@@ -578,7 +652,7 @@ import img8 from "../assets/8.jpeg";
 			background-color: rgba(255, 255, 255, 0.6);
 			backdrop-filter: blur(2px);
 			opacity: 0;
-			visibility: hidden; /* This now transitions! */
+			visibility: hidden;
 			pointer-events: none;
 			transition:
 				opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
@@ -614,7 +688,6 @@ import img8 from "../assets/8.jpeg";
 			user-select: none;
 			pointer-events: auto;
 			transform-origin: center center;
-			/* Added scale transition for close effect */
 			transform: scale(0.9);
 			transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 		}
@@ -651,6 +724,10 @@ import img8 from "../assets/8.jpeg";
 				top: 160px;
 				left: 1.5rem;
 			}
+			.audio-toggle-overlay {
+				top: 160px;
+				right: 1.5rem;
+			}
 		}
 	</style>
 
@@ -668,6 +745,8 @@ import img8 from "../assets/8.jpeg";
 		const landingText = document.getElementById("landing-text-wrapper");
 		const videoWrapper = document.getElementById("video-wrapper");
 		const playbackStatus = document.getElementById("playback-status");
+		const audioToggle = document.getElementById("audio-toggle");
+		const bgMusic = document.getElementById("bg-music") as HTMLAudioElement;
 		const lightbox = document.getElementById("lightbox") as HTMLElement;
 		const lightboxImg = document.getElementById(
 			"lightbox-img",
@@ -677,7 +756,7 @@ import img8 from "../assets/8.jpeg";
 		let currentIndex = 0;
 		let isTransitioning = false;
 
-		// Interaction Variables
+		// Touch Interaction Variables
 		let initialPinchDistance = 0;
 		let isPinching = false;
 		let lastTapTime = 0;
@@ -711,20 +790,36 @@ import img8 from "../assets/8.jpeg";
 			if (currentIndex === 1) {
 				landingText?.classList.add("is-dark");
 				playbackStatus?.classList.add("is-dark");
+				audioToggle?.classList.add("is-dark");
 			} else {
 				landingText?.classList.remove("is-dark");
 				playbackStatus?.classList.remove("is-dark");
+				audioToggle?.classList.remove("is-dark");
 			}
 		};
+
+		const toggleMusic = () => {
+			if (!bgMusic) return;
+			if (bgMusic.paused) {
+				bgMusic.play();
+				audioToggle?.classList.add("is-playing");
+			} else {
+				bgMusic.pause();
+				audioToggle?.classList.remove("is-playing");
+			}
+		};
+
+		if (audioToggle)
+			audioToggle.addEventListener("click", (e) => {
+				e.stopPropagation();
+				toggleMusic();
+			});
 
 		function showLanding() {
 			videoWrapper?.classList.add("is-visible");
 			v1.play()
-				.then(() => {
-					landingText?.classList.add("is-visible");
-					updateUI();
-				})
-				.catch(() => {
+				.catch(() => {})
+				.finally(() => {
 					landingText?.classList.add("is-visible");
 					updateUI();
 				});
@@ -761,29 +856,8 @@ import img8 from "../assets/8.jpeg";
 			}, 250);
 		}
 
-		function randomGlitch() {
-			if (isTransitioning) return;
-			const activeVideo = videos[currentIndex];
-			if (activeVideo.paused) return;
-			if (Math.random() > 0.92) {
-				activeVideo.classList.add("video-glitch");
-				landingText?.classList.add("text-glitch");
-				setTimeout(
-					() => {
-						activeVideo.classList.remove("video-glitch");
-						landingText?.classList.remove("text-glitch");
-					},
-					50 + Math.random() * 150,
-				);
-			}
-			setTimeout(randomGlitch, 500);
-		}
-
 		videos.forEach((v) => {
-			v.addEventListener("play", () => {
-				updateUI();
-				randomGlitch();
-			});
+			v.addEventListener("play", updateUI);
 			v.addEventListener("pause", updateUI);
 			v.addEventListener("timeupdate", () => {
 				if (
@@ -796,190 +870,98 @@ import img8 from "../assets/8.jpeg";
 			});
 		});
 
-		document.querySelectorAll(".scroll-trigger").forEach((trigger) => {
-			trigger.addEventListener("click", (e) => {
-				e.stopPropagation();
-				document
-					.querySelector(".first-hero")
-					?.scrollIntoView({ behavior: "smooth", block: "start" });
-			});
-		});
-
-		const triggerBackToTop = () => {
-			if (!mainContent) return;
-			mainContent.style.scrollSnapType = "none";
-			mainContent.scrollTo({ top: 0, behavior: "smooth" });
-			setTimeout(() => {
-				mainContent.style.scrollSnapType = "y mandatory";
-			}, 800);
-		};
-
 		const closeLightbox = () => {
 			lightbox.classList.remove("show");
 			document.body.style.overflow = "auto";
+			isDoubleTapZoomed = false;
 		};
 
-		// Lightbox Listeners
-		if (lightbox && lightboxImg) {
-			document.querySelectorAll(".zoom-img").forEach((img) => {
-				img.addEventListener("click", () => {
-					lightboxImg.src = (img as HTMLImageElement).src;
-					isDoubleTapZoomed = false;
-					lightbox.classList.add("show");
-					document.body.style.overflow = "hidden";
-				});
+		document.querySelectorAll(".zoom-img").forEach((img) => {
+			img.addEventListener("click", () => {
+				lightboxImg.src = (img as HTMLImageElement).src;
+				lightboxImg.style.transform = "scale(1)";
+				lightboxImg.style.transformOrigin = "center center";
+				isDoubleTapZoomed = false;
+				lightbox.classList.add("show");
+				document.body.style.overflow = "hidden";
 			});
+		});
 
-			closeBtn?.addEventListener("click", (e) => {
-				e.stopPropagation();
-				closeLightbox();
-			});
+		closeBtn?.addEventListener("click", (e) => {
+			e.stopPropagation();
+			closeLightbox();
+		});
 
-			lightbox.addEventListener(
-				"touchstart",
-				(e) => {
-					if (e.touches.length === 1) {
-						const now = Date.now();
-						const timesince = now - lastTapTime;
-						if (timesince < 300 && timesince > 0) {
-							e.preventDefault();
-							if (!isDoubleTapZoomed) {
-								lightboxImg.style.transformOrigin =
-									getSingleTapCenter(
-										e.touches[0],
-										lightboxImg,
-									);
-								lightboxImg.style.transition =
-									"transform 0.3s ease";
-								lightboxImg.style.transform = "scale(2.5)";
-								isDoubleTapZoomed = true;
-							} else {
-								lightboxImg.style.transition =
-									"transform 0.3s ease";
-								lightboxImg.style.transform = "scale(1)";
-								isDoubleTapZoomed = false;
-							}
-							return;
-						}
-						lastTapTime = now;
-					}
-					if (e.touches.length === 2) {
-						isPinching = true;
-						initialPinchDistance = getDistance(e.touches);
-						lightboxImg.style.transformOrigin = getPinchCenter(
-							e.touches,
-							lightboxImg,
-						);
-					}
-				},
-				{ passive: false },
-			);
-
-			lightbox.addEventListener(
-				"touchmove",
-				(e) => {
-					if (isPinching && e.touches.length === 2) {
+		// Touch Listeners (Double Tap + Pinch)
+		lightbox.addEventListener(
+			"touchstart",
+			(e) => {
+				if (e.touches.length === 1) {
+					const now = Date.now();
+					const timesince = now - lastTapTime;
+					if (timesince < 300 && timesince > 0) {
 						e.preventDefault();
-						const scale =
-							getDistance(e.touches) / initialPinchDistance;
-						lightboxImg.style.transform = `scale(${scale})`;
-						lightboxImg.style.transition = "none";
+						if (!isDoubleTapZoomed) {
+							lightboxImg.style.transformOrigin =
+								getSingleTapCenter(e.touches[0], lightboxImg);
+							lightboxImg.style.transition =
+								"transform 0.3s ease";
+							lightboxImg.style.transform = "scale(2.5)";
+							isDoubleTapZoomed = true;
+						} else {
+							lightboxImg.style.transition =
+								"transform 0.3s ease";
+							lightboxImg.style.transform = "scale(1)";
+							isDoubleTapZoomed = false;
+						}
+						return;
 					}
-				},
-				{ passive: false },
-			);
-
-			lightbox.addEventListener("touchend", (e) => {
-				if (isPinching && e.touches.length < 2) {
-					isPinching = false;
-					lightboxImg.style.transition =
-						"transform 0.3s ease, transform-origin 0.3s ease";
-					lightboxImg.style.transform = "scale(1)";
-					isDoubleTapZoomed = false;
-					setTimeout(() => {
-						lightboxImg.style.transformOrigin = "center center";
-					}, 300);
+					lastTapTime = now;
 				}
-			});
-
-			lightbox.addEventListener("click", (e) => {
-				if (
-					e.target === lightbox ||
-					(e.target as HTMLElement).id === "lightbox-wrapper"
-				)
-					closeLightbox();
-			});
-		}
-
-		window.addEventListener("keydown", (e) => {
-			if (
-				e.key === "Escape" ||
-				(e.key.toLowerCase() === "f" &&
-					lightbox.classList.contains("show"))
-			) {
-				if (lightbox.classList.contains("show")) {
-					closeLightbox();
-					return;
-				}
-			}
-
-			if (
-				e.key.toLowerCase() === "f" &&
-				!lightbox.classList.contains("show")
-			) {
-				const cards = Array.from(
-					document.querySelectorAll(".project-card"),
-				);
-				const activeCard = cards.find((card) => {
-					const rect = card.getBoundingClientRect();
-					return rect.top >= -50 && rect.top <= 50;
-				});
-				const targetImg = activeCard?.querySelector(
-					".zoom-img",
-				) as HTMLImageElement;
-				if (targetImg) {
-					lightboxImg.src = targetImg.src;
-					lightbox.classList.add("show");
-					document.body.style.overflow = "hidden";
-				}
-			}
-
-			if (
-				["ArrowUp", "ArrowDown", " "].includes(e.key) &&
-				!lightbox.classList.contains("show")
-			) {
-				e.preventDefault();
-				const cards = Array.from(
-					document.querySelectorAll(".project-card"),
-				);
-				let currentIdx = cards.findIndex((card) => {
-					const rect = card.getBoundingClientRect();
-					return rect.top >= -10 && rect.top <= 10;
-				});
-				if (currentIdx === -1) {
-					currentIdx = cards.findIndex(
-						(card) =>
-							card.getBoundingClientRect().top >
-							-window.innerHeight / 2,
+				if (e.touches.length === 2) {
+					isPinching = true;
+					initialPinchDistance = getDistance(e.touches);
+					lightboxImg.style.transformOrigin = getPinchCenter(
+						e.touches,
+						lightboxImg,
 					);
 				}
+			},
+			{ passive: false },
+		);
 
-				if (e.key === "ArrowDown" || e.key === " ") {
-					if (currentIdx < cards.length - 1) {
-						cards[currentIdx + 1].scrollIntoView({
-							behavior: "smooth",
-							block: "start",
-						});
-					} else if (e.key === " ") {
-						triggerBackToTop();
-					}
-				} else if (e.key === "ArrowUp" && currentIdx > 0) {
-					cards[currentIdx - 1].scrollIntoView({
-						behavior: "smooth",
-						block: "start",
-					});
+		lightbox.addEventListener(
+			"touchmove",
+			(e) => {
+				if (isPinching && e.touches.length === 2) {
+					e.preventDefault();
+					const scale = getDistance(e.touches) / initialPinchDistance;
+					lightboxImg.style.transform = `scale(${scale})`;
+					lightboxImg.style.transition = "none";
 				}
+			},
+			{ passive: false },
+		);
+
+		lightbox.addEventListener("touchend", (e) => {
+			if (isPinching && e.touches.length < 2) {
+				isPinching = false;
+				lightboxImg.style.transition =
+					"transform 0.3s ease, transform-origin 0.3s ease";
+				lightboxImg.style.transform = "scale(1)";
+				isDoubleTapZoomed = false;
+				setTimeout(() => {
+					lightboxImg.style.transformOrigin = "center center";
+				}, 300);
 			}
+		});
+
+		lightbox.addEventListener("click", (e) => {
+			if (
+				e.target === lightbox ||
+				(e.target as HTMLElement).id === "lightbox-wrapper"
+			)
+				closeLightbox();
 		});
 
 		if (playbackStatus) {
@@ -997,20 +979,98 @@ import img8 from "../assets/8.jpeg";
 			});
 		}
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						videos[currentIndex].play().catch(() => {});
-					} else {
-						videos[currentIndex].pause();
-					}
-				});
-			},
-			{ threshold: 0.1 },
-		);
+		const triggerBackToTop = () => {
+			mainContent.style.scrollSnapType = "none";
+			mainContent.scrollTo({ top: 0, behavior: "smooth" });
+			setTimeout(() => {
+				mainContent.style.scrollSnapType = "y mandatory";
+			}, 800);
+		};
 
-		if (landingCard) observer.observe(landingCard);
+		// REINSTATED: Landing Scroll Button Listeners
+		document.querySelectorAll(".scroll-trigger").forEach((trigger) => {
+			trigger.addEventListener("click", (e) => {
+				e.stopPropagation();
+				document
+					.querySelector(".first-hero")
+					?.scrollIntoView({ behavior: "smooth", block: "start" });
+			});
+		});
+
+		window.addEventListener("keydown", (e) => {
+			if (e.key.toLowerCase() === "m") {
+				toggleMusic();
+			}
+			if (
+				e.key === "Escape" ||
+				(e.key.toLowerCase() === "f" &&
+					lightbox.classList.contains("show"))
+			) {
+				if (lightbox.classList.contains("show")) {
+					closeLightbox();
+					return;
+				}
+			}
+			if (
+				e.key.toLowerCase() === "f" &&
+				!lightbox.classList.contains("show")
+			) {
+				const cards = Array.from(
+					document.querySelectorAll(".project-card"),
+				);
+				const activeCard = cards.find((card) => {
+					const rect = card.getBoundingClientRect();
+					return (
+						rect.top >= -window.innerHeight / 2 &&
+						rect.top <= window.innerHeight / 2
+					);
+				});
+				const targetImg = activeCard?.querySelector(
+					".zoom-img",
+				) as HTMLImageElement;
+				if (targetImg) {
+					lightboxImg.src = targetImg.src;
+					lightboxImg.style.transform = "scale(1)";
+					lightboxImg.style.transformOrigin = "center center";
+					isDoubleTapZoomed = false;
+					lightbox.classList.add("show");
+					document.body.style.overflow = "hidden";
+				}
+			}
+			if (
+				["ArrowUp", "ArrowDown", " "].includes(e.key) &&
+				!lightbox.classList.contains("show")
+			) {
+				e.preventDefault();
+				const cards = Array.from(
+					document.querySelectorAll(".project-card"),
+				);
+				let currentIdx = cards.findIndex((card) => {
+					const rect = card.getBoundingClientRect();
+					return (
+						rect.top >= -window.innerHeight / 2 &&
+						rect.top <= window.innerHeight / 2
+					);
+				});
+				if (e.key === "ArrowDown" || e.key === " ") {
+					if (currentIdx < cards.length - 1) {
+						cards[currentIdx + 1].scrollIntoView({
+							behavior: "smooth",
+							block: "start",
+						});
+					} else if (e.key === " ") {
+						triggerBackToTop();
+					}
+				} else if (e.key === "ArrowUp") {
+					if (currentIdx > 0) {
+						cards[currentIdx - 1].scrollIntoView({
+							behavior: "smooth",
+							block: "start",
+						});
+					}
+				}
+			}
+		});
 
 		if (mainContent && scrollFade && landingText) {
 			mainContent.addEventListener("scroll", () => {
@@ -1023,6 +1083,11 @@ import img8 from "../assets/8.jpeg";
 				landingText.style.opacity = (1 - progress * 1.5).toString();
 				if (playbackStatus)
 					playbackStatus.style.opacity = (
+						0.5 *
+						(1 - progress * 2)
+					).toString();
+				if (audioToggle)
+					audioToggle.style.opacity = (
 						0.5 *
 						(1 - progress * 2)
 					).toString();
