@@ -220,7 +220,14 @@ import img6 from "../assets/6.jpeg";
 	</main>
 
 	<div id="lightbox" class="lightbox">
-		<img class="lightbox-content" id="lightbox-img" alt="Fullscreen View" />
+		<span class="close-lightbox" id="close-btn">&times;</span>
+		<div class="lightbox-content-wrapper" id="lightbox-wrapper">
+			<img
+				class="lightbox-content"
+				id="lightbox-img"
+				alt="Fullscreen View"
+			/>
+		</div>
 	</div>
 
 	<style>
@@ -339,7 +346,6 @@ import img6 from "../assets/6.jpeg";
 			z-index: 2;
 		}
 
-		/* GLITCH */
 		.video-glitch {
 			filter: url(#cyber-glitch) contrast(1.2) brightness(1.1);
 			animation: glitch-switch 0.1s steps(2) infinite;
@@ -545,16 +551,36 @@ import img6 from "../assets/6.jpeg";
 			opacity: 0;
 			visibility: hidden;
 			transition: opacity 0.6s ease;
-			cursor: zoom-out;
+			touch-action: none;
 		}
 		.lightbox.show {
 			opacity: 1;
 			visibility: visible;
 		}
+		.close-lightbox {
+			position: absolute;
+			top: 2rem;
+			right: 2rem;
+			font-size: 2.5rem;
+			z-index: 4000;
+			cursor: pointer;
+			color: #000;
+			line-height: 1;
+		}
+		.lightbox-content-wrapper {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 		.lightbox-content {
 			max-width: 90%;
 			max-height: 85vh;
 			object-fit: contain;
+			user-select: none;
+			pointer-events: auto;
+			transform-origin: center center;
 		}
 
 		@media (max-width: 900px) {
@@ -607,9 +633,34 @@ import img6 from "../assets/6.jpeg";
 		const lightboxImg = document.getElementById(
 			"lightbox-img",
 		) as HTMLImageElement;
+		const closeBtn = document.getElementById("close-btn");
 
 		let currentIndex = 0;
 		let isTransitioning = false;
+
+		// Interaction Variables
+		let initialPinchDistance = 0;
+		let isPinching = false;
+		let lastTapTime = 0;
+		let isDoubleTapZoomed = false;
+
+		function getDistance(touches: TouchList) {
+			const dx = touches[0].clientX - touches[1].clientX;
+			const dy = touches[0].clientY - touches[1].clientY;
+			return Math.sqrt(dx * dx + dy * dy);
+		}
+
+		function getPinchCenter(touches: TouchList, element: HTMLElement) {
+			const rect = element.getBoundingClientRect();
+			const centerX = (touches[0].clientX + touches[1].clientX) / 2;
+			const centerY = (touches[0].clientY + touches[1].clientY) / 2;
+			return `${((centerX - rect.left) / rect.width) * 100}% ${((centerY - rect.top) / rect.height) * 100}%`;
+		}
+
+		function getSingleTapCenter(touch: Touch, element: HTMLElement) {
+			const rect = element.getBoundingClientRect();
+			return `${((touch.clientX - rect.left) / rect.width) * 100}% ${((touch.clientY - rect.top) / rect.height) * 100}%`;
+		}
 
 		const updateUI = () => {
 			const currentVideo = videos[currentIndex];
@@ -674,9 +725,7 @@ import img6 from "../assets/6.jpeg";
 		function randomGlitch() {
 			if (isTransitioning) return;
 			const activeVideo = videos[currentIndex];
-
 			if (activeVideo.paused) return;
-
 			if (Math.random() > 0.92) {
 				activeVideo.classList.add("video-glitch");
 				landingText?.classList.add("text-glitch");
@@ -708,8 +757,6 @@ import img6 from "../assets/6.jpeg";
 			});
 		});
 
-		randomGlitch();
-
 		document.querySelectorAll(".scroll-trigger").forEach((trigger) => {
 			trigger.addEventListener("click", (e) => {
 				e.stopPropagation();
@@ -733,8 +780,101 @@ import img6 from "../assets/6.jpeg";
 			document.body.style.overflow = "auto";
 		};
 
+		// Lightbox Listeners
+		if (lightbox && lightboxImg) {
+			document.querySelectorAll(".zoom-img").forEach((img) => {
+				img.addEventListener("click", () => {
+					lightboxImg.src = (img as HTMLImageElement).src;
+					lightboxImg.style.transform = "scale(1)";
+					lightboxImg.style.transformOrigin = "center center";
+					isDoubleTapZoomed = false;
+					lightbox.classList.add("show");
+					document.body.style.overflow = "hidden";
+				});
+			});
+
+			closeBtn?.addEventListener("click", (e) => {
+				e.stopPropagation();
+				closeLightbox();
+			});
+
+			lightbox.addEventListener(
+				"touchstart",
+				(e) => {
+					if (e.touches.length === 1) {
+						const now = Date.now();
+						const timesince = now - lastTapTime;
+						if (timesince < 300 && timesince > 0) {
+							e.preventDefault();
+							if (!isDoubleTapZoomed) {
+								lightboxImg.style.transformOrigin =
+									getSingleTapCenter(
+										e.touches[0],
+										lightboxImg,
+									);
+								lightboxImg.style.transition =
+									"transform 0.3s ease";
+								lightboxImg.style.transform = "scale(2.5)";
+								isDoubleTapZoomed = true;
+							} else {
+								lightboxImg.style.transition =
+									"transform 0.3s ease";
+								lightboxImg.style.transform = "scale(1)";
+								isDoubleTapZoomed = false;
+							}
+							return;
+						}
+						lastTapTime = now;
+					}
+					if (e.touches.length === 2) {
+						isPinching = true;
+						initialPinchDistance = getDistance(e.touches);
+						lightboxImg.style.transformOrigin = getPinchCenter(
+							e.touches,
+							lightboxImg,
+						);
+					}
+				},
+				{ passive: false },
+			);
+
+			lightbox.addEventListener(
+				"touchmove",
+				(e) => {
+					if (isPinching && e.touches.length === 2) {
+						e.preventDefault();
+						const scale =
+							getDistance(e.touches) / initialPinchDistance;
+						lightboxImg.style.transform = `scale(${scale})`;
+						lightboxImg.style.transition = "none";
+					}
+				},
+				{ passive: false },
+			);
+
+			lightbox.addEventListener("touchend", (e) => {
+				if (isPinching && e.touches.length < 2) {
+					isPinching = false;
+					lightboxImg.style.transition =
+						"transform 0.3s ease, transform-origin 0.3s ease";
+					lightboxImg.style.transform = "scale(1)";
+					isDoubleTapZoomed = false;
+					setTimeout(() => {
+						lightboxImg.style.transformOrigin = "center center";
+					}, 300);
+				}
+			});
+
+			lightbox.addEventListener("click", (e) => {
+				if (
+					e.target === lightbox ||
+					(e.target as HTMLElement).id === "lightbox-wrapper"
+				)
+					closeLightbox();
+			});
+		}
+
 		window.addEventListener("keydown", (e) => {
-			// Toggle Lightbox with Escape or F (if open)
 			if (
 				e.key === "Escape" ||
 				(e.key.toLowerCase() === "f" &&
@@ -746,7 +886,6 @@ import img6 from "../assets/6.jpeg";
 				}
 			}
 
-			// --- F KEY LOGIC ---
 			if (
 				e.key.toLowerCase() === "f" &&
 				!lightbox.classList.contains("show")
@@ -754,12 +893,10 @@ import img6 from "../assets/6.jpeg";
 				const cards = Array.from(
 					document.querySelectorAll(".project-card"),
 				);
-				// Find card currently in view
 				const activeCard = cards.find((card) => {
 					const rect = card.getBoundingClientRect();
 					return rect.top >= -50 && rect.top <= 50;
 				});
-
 				const targetImg = activeCard?.querySelector(
 					".zoom-img",
 				) as HTMLImageElement;
@@ -775,7 +912,6 @@ import img6 from "../assets/6.jpeg";
 				!lightbox.classList.contains("show")
 			) {
 				e.preventDefault();
-
 				const cards = Array.from(
 					document.querySelectorAll(".project-card"),
 				);
@@ -783,7 +919,6 @@ import img6 from "../assets/6.jpeg";
 					const rect = card.getBoundingClientRect();
 					return rect.top >= -10 && rect.top <= 10;
 				});
-
 				if (currentIdx === -1) {
 					currentIdx = cards.findIndex(
 						(card) =>
@@ -860,18 +995,5 @@ import img6 from "../assets/6.jpeg";
 		document
 			.getElementById("back-to-top")
 			?.addEventListener("click", triggerBackToTop);
-
-		if (lightbox && lightboxImg) {
-			document.querySelectorAll(".zoom-img").forEach((img) => {
-				img.addEventListener("click", () => {
-					lightboxImg.src = (img as HTMLImageElement).src;
-					lightbox.classList.add("show");
-					document.body.style.overflow = "hidden";
-				});
-			});
-			lightbox.addEventListener("click", () => {
-				closeLightbox();
-			});
-		}
 	</script>
 </Layout>
