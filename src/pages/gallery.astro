@@ -266,7 +266,7 @@ import Layout from "../layouts/Layout.astro";
         position: absolute;
         top: 0;
         height: 100%;
-        width: 30%; /* Narrowed to give image priority but keep arrows visible */
+        width: 30%;
         z-index: 2010;
         display: flex;
         align-items: center;
@@ -342,8 +342,9 @@ import Layout from "../layouts/Layout.astro";
         .nav-zone {
             width: 50%;
         }
+        /* Hide the visual arrows on iPhone/Mobile view */
         .lightbox-arrow-container {
-            width: 50px;
+            display: none;
         }
     }
 </style>
@@ -440,7 +441,6 @@ import Layout from "../layouts/Layout.astro";
             updateLightboxImage(prevIndex, "left");
         });
 
-        // Close lightbox when clicking outside the content
         lightbox.addEventListener("click", (e) => {
             if (e.target === lightbox) {
                 lightbox.classList.remove("show");
@@ -448,7 +448,6 @@ import Layout from "../layouts/Layout.astro";
             }
         });
 
-        // KEYBOARD NAVIGATION FOR GALLERY
         window.addEventListener("keydown", (e) => {
             if (!lightbox.classList.contains("show")) return;
 
