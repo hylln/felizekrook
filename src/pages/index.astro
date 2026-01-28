@@ -862,6 +862,14 @@ const projects = [
 				return;
 			}
 
+			const activeVideo = videos[currentIndex];
+
+			// NEW: Only proceed if the video is actually playing
+			if (activeVideo.paused) {
+				setTimeout(attemptGlitch, 500); // Check again in half a second
+				return;
+			}
+
 			// 2. Probability roll (e.g., 15% chance to glitch every check)
 			const glitchChance = Math.random() < 0.1;
 
