@@ -675,7 +675,6 @@ import img6 from "../assets/6.jpeg";
 			if (isTransitioning) return;
 			const activeVideo = videos[currentIndex];
 
-			// FIX: If the video is paused, do not trigger a glitch and stop the recursive loop
 			if (activeVideo.paused) return;
 
 			if (Math.random() > 0.92) {
@@ -695,7 +694,7 @@ import img6 from "../assets/6.jpeg";
 		videos.forEach((v) => {
 			v.addEventListener("play", () => {
 				updateUI();
-				randomGlitch(); // FIX: Restart the glitch loop when video plays
+				randomGlitch();
 			});
 			v.addEventListener("pause", updateUI);
 			v.addEventListener("timeupdate", () => {
@@ -729,11 +728,45 @@ import img6 from "../assets/6.jpeg";
 			}, 800);
 		};
 
+		const closeLightbox = () => {
+			lightbox.classList.remove("show");
+			document.body.style.overflow = "auto";
+		};
+
 		window.addEventListener("keydown", (e) => {
-			if (e.key === "Escape") {
+			// Toggle Lightbox with Escape or F (if open)
+			if (
+				e.key === "Escape" ||
+				(e.key.toLowerCase() === "f" &&
+					lightbox.classList.contains("show"))
+			) {
 				if (lightbox.classList.contains("show")) {
-					lightbox.classList.remove("show");
-					document.body.style.overflow = "auto";
+					closeLightbox();
+					return;
+				}
+			}
+
+			// --- F KEY LOGIC ---
+			if (
+				e.key.toLowerCase() === "f" &&
+				!lightbox.classList.contains("show")
+			) {
+				const cards = Array.from(
+					document.querySelectorAll(".project-card"),
+				);
+				// Find card currently in view
+				const activeCard = cards.find((card) => {
+					const rect = card.getBoundingClientRect();
+					return rect.top >= -50 && rect.top <= 50;
+				});
+
+				const targetImg = activeCard?.querySelector(
+					".zoom-img",
+				) as HTMLImageElement;
+				if (targetImg) {
+					lightboxImg.src = targetImg.src;
+					lightbox.classList.add("show");
+					document.body.style.overflow = "hidden";
 				}
 			}
 
@@ -837,8 +870,7 @@ import img6 from "../assets/6.jpeg";
 				});
 			});
 			lightbox.addEventListener("click", () => {
-				lightbox.classList.remove("show");
-				document.body.style.overflow = "auto";
+				closeLightbox();
 			});
 		}
 	</script>
