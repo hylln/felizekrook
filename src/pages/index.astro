@@ -813,8 +813,21 @@ const projects = [
 			volumeSlider.addEventListener("click", (e) => e.stopPropagation());
 		}
 
+		// ... existing variable declarations (v1, v2, v3, etc.)
+
 		function showLanding() {
 			videoWrapper?.classList.add("is-visible");
+
+			// START FIX: Pre-warm all videos for iOS
+			videos.forEach((v, idx) => {
+				if (idx !== 0) {
+					v.play()
+						.then(() => v.pause())
+						.catch(() => {});
+				}
+			});
+			// END FIX
+
 			v1.play()
 				.catch(() => {})
 				.finally(() => {
@@ -831,18 +844,26 @@ const projects = [
 		function triggerCyberSwap() {
 			if (isTransitioning) return;
 			isTransitioning = true;
+
 			const oldVideo = videos[currentIndex];
 			oldVideo.classList.add("video-glitch");
 			landingText?.classList.add("text-glitch");
 
+			// Pre-calculate next index
+			const nextIndex = (currentIndex + 1) % videos.length;
+			const newVideo = videos[nextIndex];
+
+			// Important: Tell the next video to start loading/playing slightly BEFORE the swap
+			newVideo.play().catch(() => {});
+
 			setTimeout(() => {
 				oldVideo.classList.remove("is-active");
 				oldVideo.pause();
-				currentIndex = (currentIndex + 1) % videos.length;
-				const newVideo = videos[currentIndex];
+
+				currentIndex = nextIndex;
 				newVideo.classList.add("is-active");
 				newVideo.currentTime = 0;
-				newVideo.play().catch(() => {});
+
 				updateUI();
 				newVideo.classList.add("video-glitch");
 			}, 80);
