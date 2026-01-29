@@ -451,6 +451,26 @@ const projects = [
 			transform: translateX(2px);
 		}
 
+		.text-glitch-h {
+			/* Horizontal */
+			filter: url(#cyber-glitch);
+			transform: translateX(10px) skewX(5deg);
+		}
+
+		.text-glitch-v {
+			/* Vertical */
+			filter: url(#cyber-glitch);
+			transform: translateY(-5px) scaleY(1.1);
+		}
+
+		.text-glitch-color {
+			/* Color Split/Intensity */
+			filter: url(#cyber-glitch) saturate(5) contrast(2);
+			text-shadow:
+				2px 0 red,
+				-2px 0 blue;
+		}
+
 		.video-overlay {
 			position: absolute;
 			top: 0;
@@ -889,43 +909,46 @@ const projects = [
 		}
 		function attemptGlitch() {
 			const scrollPos = mainContent.scrollTop;
-
-			// 1. Stop if we've scrolled past the hero or if video is paused
 			const activeVideo = videos[currentIndex];
+
 			if (
 				scrollPos > window.innerHeight * 0.5 ||
 				activeVideo.paused ||
 				isTransitioning
 			) {
-				setTimeout(attemptGlitch, 1000); // Check again in a second
+				setTimeout(attemptGlitch, 1000);
 				return;
 			}
 
-			// 2. The Roll: 8% base chance to glitch
-			const glitchChance = Math.random() < 0.08;
+			if (Math.random() < 0.08) {
+				// Pick a random text glitch type
+				const glitchTypes = [
+					"text-glitch",
+					"text-glitch-h",
+					"text-glitch-v",
+					"text-glitch-color",
+				];
+				const randomType =
+					glitchTypes[Math.floor(Math.random() * glitchTypes.length)];
 
-			if (glitchChance) {
-				// Trigger Visuals
 				activeVideo.classList.add("video-glitch");
-				landingText?.classList.add("text-glitch");
+				landingText?.classList.add(randomType);
 
-				// Glitch Duration: How long the "shake" lasts (50ms to 200ms)
 				const duration = Math.random() * 150 + 50;
 
 				setTimeout(() => {
 					activeVideo.classList.remove("video-glitch");
-					landingText?.classList.remove("text-glitch");
+					glitchTypes.forEach((t) =>
+						landingText?.classList.remove(t),
+					);
 
-					// 3. THE CHAIN: Small chance (8%) to glitch again immediately
 					if (Math.random() < 0.08) {
-						setTimeout(attemptGlitch, 40); // Rapid fire
+						setTimeout(attemptGlitch, 40);
 					} else {
-						// Standard wait before next roll (1 to 5 seconds)
 						setTimeout(attemptGlitch, Math.random() * 4000 + 1000);
 					}
 				}, duration);
 			} else {
-				// Didn't glitch? Roll again in a half-second
 				setTimeout(attemptGlitch, 500);
 			}
 		}
