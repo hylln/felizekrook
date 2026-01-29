@@ -856,38 +856,43 @@ const projects = [
 
 		function attemptGlitch() {
 			const scrollPos = mainContent.scrollTop;
-			if (scrollPos > window.innerHeight * 0.5) {
-				setTimeout(attemptGlitch, 2000);
-				return;
-			}
 
+			// 1. Stop if we've scrolled past the hero or if video is paused
 			const activeVideo = videos[currentIndex];
-			if (activeVideo.paused) {
+			if (
+				scrollPos > window.innerHeight * 0.5 ||
+				activeVideo.paused ||
+				isTransitioning
+			) {
+				setTimeout(attemptGlitch, 1000); // Check again in a second
 				return;
 			}
 
+			// 2. The Roll: 10% base chance to glitch
 			const glitchChance = Math.random() < 0.1;
-			if (glitchChance && !isTransitioning) {
-				const activeVideo = videos[currentIndex];
+
+			if (glitchChance) {
+				// Trigger Visuals
 				activeVideo.classList.add("video-glitch");
 				landingText?.classList.add("text-glitch");
 
-				setTimeout(
-					() => {
-						activeVideo.classList.remove("video-glitch");
-						landingText?.classList.remove("text-glitch");
-						if (Math.random() < 0.05) {
-							setTimeout(attemptGlitch, 50);
-						} else {
-							setTimeout(
-								attemptGlitch,
-								Math.random() * 3000 + 1000,
-							);
-						}
-					},
-					Math.random() * 100 + 50,
-				);
+				// Glitch Duration: How long the "shake" lasts (50ms to 200ms)
+				const duration = Math.random() * 150 + 50;
+
+				setTimeout(() => {
+					activeVideo.classList.remove("video-glitch");
+					landingText?.classList.remove("text-glitch");
+
+					// 3. THE CHAIN: Small chance (25%) to glitch again immediately
+					if (Math.random() < 0.25) {
+						setTimeout(attemptGlitch, 40); // Rapid fire
+					} else {
+						// Standard wait before next roll (1 to 5 seconds)
+						setTimeout(attemptGlitch, Math.random() * 4000 + 1000);
+					}
+				}, duration);
 			} else {
+				// Didn't glitch? Roll again in a half-second
 				setTimeout(attemptGlitch, 500);
 			}
 		}
