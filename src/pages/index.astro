@@ -815,18 +815,22 @@ const projects = [
 
 		// ... existing variable declarations (v1, v2, v3, etc.)
 		function showLanding() {
-			videoWrapper?.classList.add("is-visible");
-
-			// Instead of play/pause, we just ensure they are muted and preloading
+			// 1. Prepare all videos immediately (Keeps your iPhone fix)
 			videos.forEach((v) => {
 				v.muted = true;
 				v.preload = "auto";
 				v.load();
 			});
 
+			// 2. Attempt to play the first video
 			v1.play()
-				.catch(() => {})
+				.catch((err) => {
+					console.warn("Autoplay blocked or failed:", err);
+				})
 				.finally(() => {
+					// 3. Reveal everything at once only when the play command is processed
+					// This prevents the text from appearing before the video container is ready
+					videoWrapper?.classList.add("is-visible");
 					landingText?.classList.add("is-visible");
 					updateUI();
 				});
