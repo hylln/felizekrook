@@ -868,8 +868,8 @@ const projects = [
 				return;
 			}
 
-			// 2. The Roll: 10% base chance to glitch
-			const glitchChance = Math.random() < 0.1;
+			// 2. The Roll: 8% base chance to glitch
+			const glitchChance = Math.random() < 0.08;
 
 			if (glitchChance) {
 				// Trigger Visuals
@@ -883,8 +883,8 @@ const projects = [
 					activeVideo.classList.remove("video-glitch");
 					landingText?.classList.remove("text-glitch");
 
-					// 3. THE CHAIN: Small chance (25%) to glitch again immediately
-					if (Math.random() < 0.25) {
+					// 3. THE CHAIN: Small chance (8%) to glitch again immediately
+					if (Math.random() < 0.08) {
 						setTimeout(attemptGlitch, 40); // Rapid fire
 					} else {
 						// Standard wait before next roll (1 to 5 seconds)
