@@ -814,19 +814,15 @@ const projects = [
 		}
 
 		// ... existing variable declarations (v1, v2, v3, etc.)
-
 		function showLanding() {
 			videoWrapper?.classList.add("is-visible");
 
-			// START FIX: Pre-warm all videos for iOS
-			videos.forEach((v, idx) => {
-				if (idx !== 0) {
-					v.play()
-						.then(() => v.pause())
-						.catch(() => {});
-				}
+			// Instead of play/pause, we just ensure they are muted and preloading
+			videos.forEach((v) => {
+				v.muted = true;
+				v.preload = "auto";
+				v.load();
 			});
-			// END FIX
 
 			v1.play()
 				.catch(() => {})
@@ -846,35 +842,47 @@ const projects = [
 			isTransitioning = true;
 
 			const oldVideo = videos[currentIndex];
-			oldVideo.classList.add("video-glitch");
-			landingText?.classList.add("text-glitch");
-
-			// Pre-calculate next index
 			const nextIndex = (currentIndex + 1) % videos.length;
 			const newVideo = videos[nextIndex];
 
-			// Important: Tell the next video to start loading/playing slightly BEFORE the swap
-			newVideo.play().catch(() => {});
+			// 1. Start the visual glitch
+			oldVideo.classList.add("video-glitch");
+			landingText?.classList.add("text-glitch");
 
-			setTimeout(() => {
-				oldVideo.classList.remove("is-active");
-				oldVideo.pause();
+			// 2. Prepare the new video BEFORE the swap
+			newVideo.currentTime = 0;
 
-				currentIndex = nextIndex;
-				newVideo.classList.add("is-active");
-				newVideo.currentTime = 0;
+			// 3. Chain the play promise to prevent the "pause-freeze" bug
+			const playPromise = newVideo.play();
 
-				updateUI();
-				newVideo.classList.add("video-glitch");
-			}, 80);
+			if (playPromise !== undefined) {
+				playPromise
+					.then(() => {
+						// Only swap once we are sure the new video is actually playing
+						setTimeout(() => {
+							oldVideo.classList.remove("is-active");
+							oldVideo.pause();
 
+							currentIndex = nextIndex;
+							newVideo.classList.add("is-active");
+							newVideo.classList.add("video-glitch");
+							updateUI();
+						}, 80);
+					})
+					.catch((error) => {
+						console.error("Auto-play failed:", error);
+						// Fallback: Swap anyway so the site doesn't break
+						isTransitioning = false;
+					});
+			}
+
+			// 4. Clean up glitch effects
 			setTimeout(() => {
 				videos.forEach((v) => v.classList.remove("video-glitch"));
 				landingText?.classList.remove("text-glitch");
 				isTransitioning = false;
-			}, 250);
+			}, 350); // Slightly longer to cover the load time
 		}
-
 		function attemptGlitch() {
 			const scrollPos = mainContent.scrollTop;
 
