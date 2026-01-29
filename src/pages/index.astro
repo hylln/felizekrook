@@ -335,7 +335,7 @@ const projects = [
 			pointer-events: none;
 			width: 100%;
 			transition:
-				opacity 0.8s ease-in-out,
+				opacity 1.5s ease-in-out,
 				color 0.1s steps(2);
 		}
 		.scroll-trigger {
@@ -863,7 +863,6 @@ const projects = [
 
 			const activeVideo = videos[currentIndex];
 			if (activeVideo.paused) {
-				setTimeout(attemptGlitch, 500);
 				return;
 			}
 
