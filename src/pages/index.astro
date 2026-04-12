@@ -2,52 +2,32 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 
-//IMPORT IMAGES FROM ASSETS FOLDER
+//IMPORTERA BILDER FRÅN ASSETS FOLDER
 import angelsong from "../assets/angelsong.mp3";
-import img1 from "../assets/1.jpeg";
-import img2 from "../assets/2.jpeg";
-import img3 from "../assets/3.jpeg";
-import img4 from "../assets/4.jpeg";
-import img5 from "../assets/5.jpeg";
-import img6 from "../assets/6.jpeg";
-import img7 from "../assets/7.jpeg";
-import img8 from "../assets/8.jpeg";
-import img9 from "../assets/9.jpeg";
+import img10 from "../assets/10.jpeg";
+import img11 from "../assets/11.jpeg";
+import img12 from "../assets/12.jpeg";
+import img13 from "../assets/13.jpeg";
+import img14 from "../assets/14.jpeg";
+import img15 from "../assets/15.jpeg";
+import img16 from "../assets/16.jpeg";
 
-//ADDS THE IMAGES TO THE PROJECTS ARRAY
+//LÄGGER TILL BILDERNA I ARRAYEN
 const projects = [
-	{ id: "01", title: "SKETCHES", img: img2 },
-	{ id: "02", title: "PANTHER", img: img1 },
-	{ id: "03", title: "SKETCHES 2", img: img4 },
-	{ id: "04", title: "FELIZE", img: img5 },
-	{ id: "05", title: "BALENCIAGA", img: img6 },
-	{ id: "06", title: "CHANEL", img: img3 },
-	{ id: "07", title: "BLUE", img: img7 },
-	{ id: "08", title: "FOOTBALL", img: img8 },
-	{ id: "09", title: "FUNNY", img: img9 },
+	{ id: "01", title: "", img: img10 },
+	{ id: "02", title: "", img: img11 },
+	{ id: "03", title: "", img: img12 },
+	{ id: "04", title: "", img: img13 },
+	{ id: "05", title: "", img: img14 },
+	{ id: "06", title: "", img: img15 },
+	{ id: "07", title: "", img: img16 },
 ];
 ---
 
 <Layout title="HOME">
-	<svg
-		style="position: absolute; width: 0; height: 0;"
-		aria-hidden="true"
-		focusable="false"
-	>
-		<filter id="cyber-glitch">
-			<feTurbulence
-				type="fractalNoise"
-				baseFrequency="0.01 0.2"
-				numOctaves="3"
-				result="noise"></feTurbulence>
-			<feDisplacementMap in="SourceGraphic" in2="noise" scale="10"
-			></feDisplacementMap>
-		</filter>
-	</svg>
-
 	<header class="hero">
 		<a href="/" class="logo-link">
-			<h1>FELIZE KROOK</h1>
+			<h1></h1>
 		</a>
 		<nav class="header-nav">
 			<a href="/gallery">GALLERY</a>
@@ -148,17 +128,12 @@ const projects = [
 					<video
 						autoplay
 						muted
+						loop
 						playsinline
 						id="bg-video-1"
 						class="bg-video is-active"
 					>
-						<source src="/clouds.mp4" type="video/mp4" />
-					</video>
-					<video muted playsinline id="bg-video-2" class="bg-video">
-						<source src="/mountains.mp4" type="video/mp4" />
-					</video>
-					<video muted playsinline id="bg-video-3" class="bg-video">
-						<source src="/waves.mp4" type="video/mp4" />
+						<source src="/flowers.mp4" type="video/mp4" />
 					</video>
 
 					<div class="video-overlay" id="glitch-overlay"></div>
@@ -334,9 +309,7 @@ const projects = [
 			color: #fff;
 			pointer-events: none;
 			width: 100%;
-			transition:
-				opacity 1.5s ease-in-out,
-				color 0.1s steps(2);
+			transition: opacity 1.5s ease-in-out;
 		}
 		.scroll-trigger {
 			cursor: pointer;
@@ -384,9 +357,7 @@ const projects = [
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			transition:
-				opacity 0.3s ease,
-				color 0.1s steps(2);
+			transition: opacity 0.3s ease;
 		}
 		.audio-toggle-overlay:hover {
 			opacity: 0.6;
@@ -399,12 +370,6 @@ const projects = [
 		}
 		.audio-toggle-overlay.is-playing .speaker-off-icon {
 			display: none;
-		}
-		.audio-controls-group.is-dark {
-			color: #000;
-		}
-		.audio-controls-group.is-dark .audio-toggle-overlay {
-			color: #000;
 		}
 
 		.volume-slider-wrapper {
@@ -426,49 +391,6 @@ const projects = [
 			width: 70px;
 			cursor: pointer;
 			accent-color: currentColor;
-		}
-
-		.video-glitch {
-			filter: url(#cyber-glitch) contrast(1.2) brightness(1.1);
-			animation: glitch-switch 0.1s steps(2) infinite;
-		}
-		@keyframes glitch-switch {
-			0% {
-				transform: scale(1) skew(0deg);
-				filter: hue-rotate(0deg) contrast(1.2);
-			}
-			50% {
-				transform: scale(1.02) skew(2deg) translateX(5px);
-				filter: hue-rotate(180deg) brightness(1.5);
-			}
-			100% {
-				transform: scale(0.98) skew(-2deg) translateX(-5px);
-				filter: hue-rotate(0deg) contrast(1.2);
-			}
-		}
-		.text-glitch {
-			filter: url(#cyber-glitch);
-			transform: translateX(2px);
-		}
-
-		.text-glitch-h {
-			/* Horizontal */
-			filter: url(#cyber-glitch);
-			transform: translateX(10px) skewX(5deg);
-		}
-
-		.text-glitch-v {
-			/* Vertical */
-			filter: url(#cyber-glitch);
-			transform: translateY(-5px) scaleY(1.1);
-		}
-
-		.text-glitch-color {
-			/* Color Split/Intensity */
-			filter: url(#cyber-glitch) saturate(5) contrast(2);
-			text-shadow:
-				2px 0 red,
-				-2px 0 blue;
 		}
 
 		.video-overlay {
@@ -503,9 +425,7 @@ const projects = [
 			z-index: 100;
 			opacity: 1;
 			cursor: pointer;
-			transition:
-				opacity 0.3s ease,
-				color 0.1s steps(2);
+			transition: opacity 0.3s ease;
 			display: flex;
 			align-items: center;
 			pointer-events: auto;
@@ -523,18 +443,6 @@ const projects = [
 		.playback-status.is-paused .play-icon {
 			display: block;
 		}
-		.landing-content.is-dark {
-			color: #000;
-		}
-		.landing-content.is-dark .arrow-indicator svg line,
-		.landing-content.is-dark .arrow-indicator svg polyline {
-			stroke: #000;
-		}
-		.playback-status.is-dark svg rect,
-		.playback-status.is-dark svg polygon {
-			fill: #000;
-			transition: fill 0.1s steps(2);
-		}
 
 		.landing-arrow-container {
 			margin-top: 2rem;
@@ -547,7 +455,6 @@ const projects = [
 			height: 100%;
 			width: 20px;
 		}
-
 		.project-card {
 			width: 100%;
 			height: 100vh;
@@ -735,10 +642,6 @@ const projects = [
 
 	<script>
 		const v1 = document.getElementById("bg-video-1") as HTMLVideoElement;
-		const v2 = document.getElementById("bg-video-2") as HTMLVideoElement;
-		const v3 = document.getElementById("bg-video-3") as HTMLVideoElement;
-		const videos = [v1, v2, v3];
-
 		const landingCard = document.getElementById("landing-trigger");
 		const scrollFade = document.getElementById("scroll-fade");
 		const mainContent = document.getElementById(
@@ -747,15 +650,10 @@ const projects = [
 		const landingText = document.getElementById("landing-text-wrapper");
 		const videoWrapper = document.getElementById("video-wrapper");
 		const playbackStatus = document.getElementById("playback-status");
-
-		const audioControlsGroup = document.querySelector(
-			".audio-controls-group",
-		);
 		const audioToggle = document.getElementById("audio-toggle");
 		const volumeSlider = document.getElementById(
 			"volume-slider",
 		) as HTMLInputElement;
-
 		const bgMusic = document.getElementById("bg-music") as HTMLAudioElement;
 		const lightbox = document.getElementById("lightbox") as HTMLElement;
 		const lightboxImg = document.getElementById(
@@ -763,48 +661,14 @@ const projects = [
 		) as HTMLImageElement;
 		const closeBtn = document.getElementById("close-btn");
 
-		let currentIndex = 0;
-		let isTransitioning = false;
-		let isUserPaused = false; // Flag to track if the user intentionally paused the video
-
-		let initialPinchDistance = 0;
-		let isPinching = false;
+		let isUserPaused = false;
 		let lastTapTime = 0;
-		let isDoubleTapZoomed = false;
-
-		function getDistance(touches: TouchList) {
-			const dx = touches[0].clientX - touches[1].clientX;
-			const dy = touches[0].clientY - touches[1].clientY;
-			return Math.sqrt(dx * dx + dy * dy);
-		}
-
-		function getPinchCenter(touches: TouchList, element: HTMLElement) {
-			const rect = element.getBoundingClientRect();
-			const centerX = (touches[0].clientX + touches[1].clientX) / 2;
-			const centerY = (touches[0].clientY + touches[1].clientY) / 2;
-			return `${((centerX - rect.left) / rect.width) * 100}% ${((centerY - rect.top) / rect.height) * 100}%`;
-		}
-
-		function getSingleTapCenter(touch: Touch, element: HTMLElement) {
-			const rect = element.getBoundingClientRect();
-			return `${((touch.clientX - rect.left) / rect.width) * 100}% ${((touch.clientY - rect.top) / rect.height) * 100}%`;
-		}
 
 		const updateUI = () => {
-			const currentVideo = videos[currentIndex];
 			if (playbackStatus) {
-				currentVideo.paused
+				v1.paused
 					? playbackStatus.classList.add("is-paused")
 					: playbackStatus.classList.remove("is-paused");
-			}
-			if (currentIndex === 1) {
-				landingText?.classList.add("is-dark");
-				playbackStatus?.classList.add("is-dark");
-				audioControlsGroup?.classList.add("is-dark");
-			} else {
-				landingText?.classList.remove("is-dark");
-				playbackStatus?.classList.remove("is-dark");
-				audioControlsGroup?.classList.remove("is-dark");
 			}
 		};
 
@@ -824,163 +688,38 @@ const projects = [
 				e.stopPropagation();
 				toggleMusic();
 			});
-
 		if (volumeSlider && bgMusic) {
 			volumeSlider.addEventListener("input", (e) => {
-				const val = parseFloat((e.target as HTMLInputElement).value);
-				bgMusic.volume = val;
+				bgMusic.volume = parseFloat(
+					(e.target as HTMLInputElement).value,
+				);
 			});
 			volumeSlider.addEventListener("click", (e) => e.stopPropagation());
 		}
 
-		// ... existing variable declarations (v1, v2, v3, etc.)
 		function showLanding() {
-			// 1. Prepare all videos immediately (Keeps your iPhone fix)
-			videos.forEach((v) => {
-				v.muted = true;
-				v.preload = "auto";
-				v.load();
+			v1.play().finally(() => {
+				videoWrapper?.classList.add("is-visible");
+				landingText?.classList.add("is-visible");
+				updateUI();
 			});
-
-			// 2. Attempt to play the first video
-			v1.play()
-				.catch((err) => {
-					console.warn("Autoplay blocked or failed:", err);
-				})
-				.finally(() => {
-					// 3. Reveal everything at once only when the play command is processed
-					// This prevents the text from appearing before the video container is ready
-					videoWrapper?.classList.add("is-visible");
-					landingText?.classList.add("is-visible");
-					updateUI();
-				});
 		}
 
 		if (v1) {
 			v1.addEventListener("playing", showLanding, { once: true });
 			if (v1.readyState >= 3) showLanding();
+			v1.addEventListener("play", updateUI);
+			v1.addEventListener("pause", updateUI);
 		}
-
-		function triggerCyberSwap() {
-			if (isTransitioning) return;
-			isTransitioning = true;
-
-			const oldVideo = videos[currentIndex];
-			const nextIndex = (currentIndex + 1) % videos.length;
-			const newVideo = videos[nextIndex];
-
-			// 1. Start the visual glitch
-			oldVideo.classList.add("video-glitch");
-			landingText?.classList.add("text-glitch");
-
-			// 2. Prepare the new video BEFORE the swap
-			newVideo.currentTime = 0;
-
-			// 3. Chain the play promise to prevent the "pause-freeze" bug
-			const playPromise = newVideo.play();
-
-			if (playPromise !== undefined) {
-				playPromise
-					.then(() => {
-						// Only swap once we are sure the new video is actually playing
-						setTimeout(() => {
-							oldVideo.classList.remove("is-active");
-							oldVideo.pause();
-
-							currentIndex = nextIndex;
-							newVideo.classList.add("is-active");
-							newVideo.classList.add("video-glitch");
-							updateUI();
-						}, 80);
-					})
-					.catch((error) => {
-						console.error("Auto-play failed:", error);
-						// Fallback: Swap anyway so the site doesn't break
-						isTransitioning = false;
-					});
-			}
-
-			// 4. Clean up glitch effects
-			setTimeout(() => {
-				videos.forEach((v) => v.classList.remove("video-glitch"));
-				landingText?.classList.remove("text-glitch");
-				isTransitioning = false;
-			}, 350); // Slightly longer to cover the load time
-		}
-		function attemptGlitch() {
-			const scrollPos = mainContent.scrollTop;
-			const activeVideo = videos[currentIndex];
-
-			if (
-				scrollPos > window.innerHeight * 0.5 ||
-				activeVideo.paused ||
-				isTransitioning
-			) {
-				setTimeout(attemptGlitch, 1000);
-				return;
-			}
-
-			if (Math.random() < 0.08) {
-				// Pick a random text glitch type
-				const glitchTypes = [
-					"text-glitch",
-					"text-glitch-h",
-					"text-glitch-v",
-					"text-glitch-color",
-				];
-				const randomType =
-					glitchTypes[Math.floor(Math.random() * glitchTypes.length)];
-
-				activeVideo.classList.add("video-glitch");
-				landingText?.classList.add(randomType);
-
-				const duration = Math.random() * 150 + 50;
-
-				setTimeout(() => {
-					activeVideo.classList.remove("video-glitch");
-					glitchTypes.forEach((t) =>
-						landingText?.classList.remove(t),
-					);
-
-					if (Math.random() < 0.08) {
-						setTimeout(attemptGlitch, 40);
-					} else {
-						setTimeout(attemptGlitch, Math.random() * 4000 + 1000);
-					}
-				}, duration);
-			} else {
-				setTimeout(attemptGlitch, 500);
-			}
-		}
-
-		attemptGlitch();
-
-		videos.forEach((v) => {
-			v.addEventListener("play", updateUI);
-			v.addEventListener("pause", updateUI);
-			v.addEventListener("timeupdate", () => {
-				if (
-					v.classList.contains("is-active") &&
-					v.currentTime > v.duration - 0.3 &&
-					!isTransitioning
-				) {
-					triggerCyberSwap();
-				}
-			});
-		});
 
 		const closeLightbox = () => {
 			lightbox.classList.remove("show");
 			document.body.style.overflow = "auto";
-			isDoubleTapZoomed = false;
 		};
 
 		document.querySelectorAll(".zoom-img").forEach((img) => {
 			img.addEventListener("click", () => {
 				lightboxImg.src = (img as HTMLImageElement).src;
-				lightboxImg.style.transform = "scale(1)";
-				lightboxImg.style.transformOrigin = "center center";
-				isDoubleTapZoomed = false;
 				lightbox.classList.add("show");
 				document.body.style.overflow = "hidden";
 			});
@@ -990,70 +729,6 @@ const projects = [
 			e.stopPropagation();
 			closeLightbox();
 		});
-
-		lightbox.addEventListener(
-			"touchstart",
-			(e) => {
-				if (e.touches.length === 1) {
-					const now = Date.now();
-					const timesince = now - lastTapTime;
-					if (timesince < 300 && timesince > 0) {
-						e.preventDefault();
-						if (!isDoubleTapZoomed) {
-							lightboxImg.style.transformOrigin =
-								getSingleTapCenter(e.touches[0], lightboxImg);
-							lightboxImg.style.transition =
-								"transform 0.3s ease";
-							lightboxImg.style.transform = "scale(2.5)";
-							isDoubleTapZoomed = true;
-						} else {
-							lightboxImg.style.transition =
-								"transform 0.3s ease";
-							lightboxImg.style.transform = "scale(1)";
-							isDoubleTapZoomed = false;
-						}
-						return;
-					}
-					lastTapTime = now;
-				}
-				if (e.touches.length === 2) {
-					isPinching = true;
-					initialPinchDistance = getDistance(e.touches);
-					lightboxImg.style.transformOrigin = getPinchCenter(
-						e.touches,
-						lightboxImg,
-					);
-				}
-			},
-			{ passive: false },
-		);
-
-		lightbox.addEventListener(
-			"touchmove",
-			(e) => {
-				if (isPinching && e.touches.length === 2) {
-					e.preventDefault();
-					const scale = getDistance(e.touches) / initialPinchDistance;
-					lightboxImg.style.transform = `scale(${scale})`;
-					lightboxImg.style.transition = "none";
-				}
-			},
-			{ passive: false },
-		);
-
-		lightbox.addEventListener("touchend", (e) => {
-			if (isPinching && e.touches.length < 2) {
-				isPinching = false;
-				lightboxImg.style.transition =
-					"transform 0.3s ease, transform-origin 0.3s ease";
-				lightboxImg.style.transform = "scale(1)";
-				isDoubleTapZoomed = false;
-				setTimeout(() => {
-					lightboxImg.style.transformOrigin = "center center";
-				}, 300);
-			}
-		});
-
 		lightbox.addEventListener("click", (e) => {
 			if (
 				e.target === lightbox ||
@@ -1065,78 +740,47 @@ const projects = [
 		if (playbackStatus) {
 			playbackStatus.addEventListener("click", (e) => {
 				e.stopPropagation();
-				const activeVideo = videos[currentIndex];
-				if (activeVideo.paused) {
+				if (v1.paused) {
 					isUserPaused = false;
-					activeVideo.play();
+					v1.play();
 				} else {
 					isUserPaused = true;
-					activeVideo.pause();
+					v1.pause();
 				}
 			});
 		}
 
 		if (landingCard) {
 			landingCard.addEventListener("click", () => {
-				const activeVideo = videos[currentIndex];
-				if (activeVideo.paused) {
+				if (v1.paused) {
 					isUserPaused = false;
-					activeVideo.play();
+					v1.play();
 				} else {
 					isUserPaused = true;
-					activeVideo.pause();
+					v1.pause();
 				}
 			});
 		}
 
 		const triggerBackToTop = () => {
 			mainContent.style.scrollSnapType = "none";
-			const start = mainContent.scrollTop;
-			const duration = 4000;
-			const startTime = performance.now();
-
-			function easeOutQuart(x: number): number {
-				return 1 - Math.pow(1 - x, 4);
-			}
-
-			function animate(currentTime: number) {
-				const elapsed = currentTime - startTime;
-				const progress = Math.min(elapsed / duration, 1);
-				const easedProgress = easeOutQuart(progress);
-				mainContent.scrollTop = start * (1 - easedProgress);
-
-				if (progress < 1) {
-					window.requestAnimationFrame(animate);
-				} else {
-					mainContent.style.scrollSnapType = "y mandatory";
-				}
-			}
-			window.requestAnimationFrame(animate);
+			mainContent.scrollTo({ top: 0, behavior: "smooth" });
+			setTimeout(() => {
+				mainContent.style.scrollSnapType = "y mandatory";
+			}, 800);
 		};
 
-		// FIXED: Intersection Observer specifically observing the scroll container
 		if (landingCard && mainContent) {
 			const observer = new IntersectionObserver(
 				(entries) => {
 					entries.forEach((entry) => {
-						const activeVideo = videos[currentIndex];
 						if (entry.isIntersecting) {
-							// Only play if the user hasn't explicitly paused it
-							if (!isUserPaused) {
-								activeVideo.play().catch(() => {});
-							}
-						} else {
-							// Card is out of view, pause for performance
-							activeVideo.pause();
-						}
+							if (!isUserPaused) v1.play().catch(() => {});
+						} else v1.pause();
 					});
 				},
-				{
-					root: mainContent, // Use the scroll container as the reference root
-					threshold: 0.1,
-				},
+				{ root: mainContent, threshold: 0.1 },
 			);
-
 			observer.observe(landingCard);
 		}
 
@@ -1149,81 +793,6 @@ const projects = [
 			});
 		});
 
-		window.addEventListener("keydown", (e) => {
-			if (e.key.toLowerCase() === "m") {
-				toggleMusic();
-			}
-			if (
-				e.key === "Escape" ||
-				(e.key.toLowerCase() === "f" &&
-					lightbox.classList.contains("show"))
-			) {
-				if (lightbox.classList.contains("show")) {
-					closeLightbox();
-					return;
-				}
-			}
-			if (
-				e.key.toLowerCase() === "f" &&
-				!lightbox.classList.contains("show")
-			) {
-				const cards = Array.from(
-					document.querySelectorAll(".project-card"),
-				);
-				const activeCard = cards.find((card) => {
-					const rect = card.getBoundingClientRect();
-					return (
-						rect.top >= -window.innerHeight / 2 &&
-						rect.top <= window.innerHeight / 2
-					);
-				});
-				const targetImg = activeCard?.querySelector(
-					".zoom-img",
-				) as HTMLImageElement;
-				if (targetImg) {
-					lightboxImg.src = targetImg.src;
-					lightboxImg.style.transform = "scale(1)";
-					lightboxImg.style.transformOrigin = "center center";
-					isDoubleTapZoomed = false;
-					lightbox.classList.add("show");
-					document.body.style.overflow = "hidden";
-				}
-			}
-			if (
-				["ArrowUp", "ArrowDown", " "].includes(e.key) &&
-				!lightbox.classList.contains("show")
-			) {
-				e.preventDefault();
-				const cards = Array.from(
-					document.querySelectorAll(".project-card"),
-				);
-				let currentIdx = cards.findIndex((card) => {
-					const rect = card.getBoundingClientRect();
-					return (
-						rect.top >= -window.innerHeight / 2 &&
-						rect.top <= window.innerHeight / 2
-					);
-				});
-				if (e.key === "ArrowDown" || e.key === " ") {
-					if (currentIdx < cards.length - 1) {
-						cards[currentIdx + 1].scrollIntoView({
-							behavior: "smooth",
-							block: "start",
-						});
-					} else if (e.key === " ") {
-						triggerBackToTop();
-					}
-				} else if (e.key === "ArrowUp") {
-					if (currentIdx > 0) {
-						cards[currentIdx - 1].scrollIntoView({
-							behavior: "smooth",
-							block: "start",
-						});
-					}
-				}
-			}
-		});
-
 		if (mainContent && scrollFade && landingText) {
 			mainContent.addEventListener("scroll", () => {
 				const scrollPos = mainContent.scrollTop;
@@ -1233,16 +802,6 @@ const projects = [
 				);
 				scrollFade.style.opacity = progress.toString();
 				landingText.style.opacity = (1 - progress * 1.5).toString();
-				if (playbackStatus)
-					playbackStatus.style.opacity = (
-						0.5 *
-						(1 - progress * 2)
-					).toString();
-				if (audioControlsGroup)
-					(audioControlsGroup as HTMLElement).style.opacity = (
-						0.5 *
-						(1 - progress * 2)
-					).toString();
 			});
 		}
 
