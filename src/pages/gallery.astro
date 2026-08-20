@@ -670,7 +670,7 @@ const galleryImages = [
                 isDragging = false;
                 lightboxWrapper.classList.remove("dragging");
                 const diff = currentX - startX;
-                const threshold = window.innerWidth * 0.2;
+                const threshold = 50;
                 if (diff < -threshold)
                     updateImage((currentIndex + 1) % imgList.length, "right");
                 else if (diff > threshold)

@@ -902,7 +902,7 @@ const projects = [
 				isDragging = false;
 				lightboxWrapper.classList.remove("dragging");
 				const diff = currentY - startY;
-				const threshold = window.innerHeight * 0.2;
+				const threshold = 50;
 				if (diff < -threshold) {
 					updateImage((currentIndex + 1) % imgList.length, "down");
 				} else if (diff > threshold) {
