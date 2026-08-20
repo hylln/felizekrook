@@ -1,54 +1,44 @@
 {
   "projects": [
     {
-      "id": "01",
-      "title": "",
-      "image": "/images/projects/01/19.jpeg"
+      "id": "02",
+      "image": "/images/projects/projects/0/image.jpeg"
     },
     {
-      "id": "02",
-      "title": "",
-      "image": "/images/projects/02/10.jpeg"
+      "id": "01",
+      "image": "/images/projects/projects/1/image.jpeg"
     },
     {
       "id": "03",
-      "title": "",
-      "image": "/images/projects/03/11.jpeg"
+      "image": "/images/projects/projects/2/image.jpeg"
     },
     {
       "id": "04",
-      "title": "",
-      "image": "/images/projects/04/12.jpeg"
+      "image": "/images/projects/projects/3/image.jpeg"
     },
     {
       "id": "05",
-      "title": "",
-      "image": "/images/projects/05/13.jpeg"
+      "image": "/images/projects/projects/4/image.jpeg"
     },
     {
       "id": "06",
-      "title": "",
-      "image": "/images/projects/06/18.jpeg"
+      "image": "/images/projects/projects/5/image.jpeg"
     },
     {
       "id": "07",
-      "title": "",
-      "image": "/images/projects/07/14.jpeg"
+      "image": "/images/projects/projects/6/image.jpeg"
     },
     {
       "id": "08",
-      "title": "",
-      "image": "/images/projects/08/15.jpeg"
+      "image": "/images/projects/projects/7/image.jpeg"
     },
     {
       "id": "09",
-      "title": "",
-      "image": "/images/projects/09/16.jpeg"
+      "image": "/images/projects/projects/8/image.jpeg"
     },
     {
       "id": "10",
-      "title": "",
-      "image": "/images/projects/10/17.jpeg"
+      "image": "/images/projects/projects/9/image.jpeg"
     }
   ]
 }
