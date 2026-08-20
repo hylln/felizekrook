@@ -6,11 +6,13 @@ export default config({
   storage: isProd
     ? {
         kind: 'cloud',
-        project: 'hylln/felizekrook',
       }
     : {
         kind: 'local',
       },
+  cloud: {
+    project: 'felizekrook/felizekrook',
+  },
   collections: {
     projects: collection({
       label: 'Projects',
