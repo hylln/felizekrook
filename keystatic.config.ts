@@ -35,7 +35,13 @@ export default config({
           }),
           {
             label: 'Portfolio Projects',
-            itemLabel: (node) => node.fields.id.value || 'Untitled Project',
+            itemLabel: (node) => {
+              const id = node.fields.id.value || '';
+              const title = node.fields.title.value || '';
+              const image = node.fields.image.value || '';
+              const filename = typeof image === 'string' ? image.split('/').pop() : '';
+              return `[ID: ${id}] ${title ? `"${title}"` : filename || 'No image chosen'}`;
+            },
           }
         ),
       },
