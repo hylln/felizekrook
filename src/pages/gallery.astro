@@ -688,7 +688,10 @@ const galleryImages = [
         });
 
         lightbox.addEventListener("click", (e) => {
-            if (e.target === lightbox) {
+            if (
+                e.target === lightbox ||
+                (e.target as HTMLElement).id === "lightbox-wrapper"
+            ) {
                 lightbox.classList.remove("show");
                 document.body.style.overflow = "auto";
             }
