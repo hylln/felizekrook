@@ -686,6 +686,61 @@ const galleryImages = [
             }
         });
 
+        let accumDeltaX = 0;
+        let wheelTimeout: any = null;
+        let wheelSwipeTriggered = false;
+
+        lightbox.addEventListener("wheel", (e) => {
+            if (isAnimating) return;
+
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                e.preventDefault();
+
+                if (wheelSwipeTriggered) return;
+
+                accumDeltaX += e.deltaX;
+
+                lightboxWrapper.style.transform = `translate3d(${-accumDeltaX}px, 0, 0)`;
+                lightboxWrapper.style.opacity = Math.max(
+                    0.5,
+                    1 - Math.abs(accumDeltaX) / window.innerWidth
+                ).toString();
+                lightboxWrapper.classList.add("dragging");
+
+                const threshold = 100;
+
+                if (accumDeltaX > threshold) {
+                    wheelSwipeTriggered = true;
+                    lightboxWrapper.classList.remove("dragging");
+                    updateImage((currentIndex + 1) % imgList.length, "right");
+                    resetAccumWheel();
+                } else if (accumDeltaX < -threshold) {
+                    wheelSwipeTriggered = true;
+                    lightboxWrapper.classList.remove("dragging");
+                    updateImage((currentIndex - 1 + imgList.length) % imgList.length, "left");
+                    resetAccumWheel();
+                }
+
+                if (wheelTimeout) clearTimeout(wheelTimeout);
+                wheelTimeout = setTimeout(() => {
+                    if (!wheelSwipeTriggered) {
+                        lightboxWrapper.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+                        lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
+                        lightboxWrapper.style.opacity = "1";
+                        setTimeout(() => {
+                            lightboxWrapper.style.transition = "";
+                        }, 300);
+                    }
+                    resetAccumWheel();
+                }, 150);
+            }
+        }, { passive: false });
+
+        function resetAccumWheel() {
+            accumDeltaX = 0;
+            wheelSwipeTriggered = false;
+        }
+
         window.addEventListener("keydown", (e) => {
             if (!lightbox.classList.contains("show")) return;
             if (e.key === "ArrowRight")
