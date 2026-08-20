@@ -50,3 +50,68 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		display: block;
 	}
 </style>
+
+<script>
+	function initHeaderScroll() {
+		const hero = document.querySelector(".hero") as HTMLElement;
+		if (!hero) return;
+
+		const isMobile = () => window.innerWidth <= 900;
+
+		hero.style.transition = "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)";
+
+		let lastScrollTop = 0;
+		let accumulatedScroll = 0;
+		const hideThreshold = 30;
+
+		function handleScroll(scrollTop: number) {
+			if (!isMobile()) {
+				hero.style.transform = "translateY(0)";
+				return;
+			}
+
+			const diff = scrollTop - lastScrollTop;
+			
+			if ((diff > 0 && accumulatedScroll >= 0) || (diff < 0 && accumulatedScroll <= 0)) {
+				accumulatedScroll += diff;
+			} else {
+				accumulatedScroll = diff;
+			}
+
+			if (scrollTop > 80 && diff > 0 && accumulatedScroll > hideThreshold) {
+				hero.style.transform = "translateY(-100%)";
+			} else if (diff < 0 && accumulatedScroll < -hideThreshold) {
+				hero.style.transform = "translateY(0)";
+			}
+			
+			if (scrollTop <= 10) {
+				hero.style.transform = "translateY(0)";
+			}
+
+			lastScrollTop = scrollTop;
+		}
+
+		const scrollContainer = document.getElementById("scroll-container");
+		if (scrollContainer) {
+			scrollContainer.addEventListener("scroll", () => {
+				handleScroll(scrollContainer.scrollTop);
+			});
+		} else {
+			window.addEventListener("scroll", () => {
+				handleScroll(window.scrollY || document.documentElement.scrollTop);
+			});
+		}
+
+		window.addEventListener("resize", () => {
+			if (!isMobile()) {
+				hero.style.transform = "translateY(0)";
+			}
+		});
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initHeaderScroll);
+	} else {
+		initHeaderScroll();
+	}
+</script>
