@@ -46,8 +46,9 @@ function makeHandler(_config) {
 }
 
 const isProd = process.env.NODE_ENV === "production";
+const hasGithubCreds = !!(process.env.KEYSTATIC_GITHUB_CLIENT_ID || process.env.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG || process.env.KEYSTATIC_SECRET);
 const config = config$1({
-  storage: isProd ? {
+  storage: isProd && hasGithubCreds ? {
     kind: "github",
     repo: {
       owner: "hylln",

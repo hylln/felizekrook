@@ -1,9 +1,14 @@
 import { config, collection, fields } from '@keystatic/core';
 
 const isProd = process.env.NODE_ENV === 'production';
+const hasGithubCreds = !!(
+  process.env.KEYSTATIC_GITHUB_CLIENT_ID ||
+  process.env.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG ||
+  process.env.KEYSTATIC_SECRET
+);
 
 export default config({
-  storage: isProd
+  storage: (isProd && hasGithubCreds)
     ? {
         kind: 'github',
         repo: {
