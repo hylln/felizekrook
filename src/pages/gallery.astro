@@ -1,17 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-// LOAD DATA DYNAMICALLY FROM KEYSTATIC CMS JSON FILES
-const projectFiles = import.meta.glob('/src/content/projects/*.json', { eager: true });
-const galleryImages = Object.entries(projectFiles)
-    .map(([path, file]: [string, any]) => {
-        const id = path.split('/').pop()?.replace('.json', '') || '';
-        return {
-            ...file,
-            id: file.id || id
-        };
-    })
-    .sort((a, b) => a.id.localeCompare(b.id));
+import portfolioData from "../content/portfolio.json";
+const galleryImages = portfolioData.projects;
 ---
 
 <Layout title="GALLERY">
