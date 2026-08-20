@@ -24,18 +24,21 @@ const galleryImages = portfolioData.projects;
 
         <section class="gallery-grid">
             {
-                galleryImages.map((image) => (
-                    <div class="gallery-item">
-                        <img
-                            src={image.image}
-                            alt={`Project ${image.id}`}
-                            class="zoom-img"
-                        />
-                        <div class="details">
-                            <span>{image.id}</span>
+                galleryImages.map((image, index) => {
+                    const displayId = String(index + 1).padStart(2, '0');
+                    return (
+                        <div class="gallery-item">
+                            <img
+                                src={image.image}
+                                alt={`Project ${displayId}`}
+                                class="zoom-img"
+                            />
+                            <div class="details">
+                                <span>{displayId}</span>
+                            </div>
                         </div>
-                    </div>
-                ))
+                    );
+                })
             }
         </section>
     </main>

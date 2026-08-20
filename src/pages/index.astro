@@ -156,20 +156,23 @@ const projects = portfolioData.projects;
 			</div>
 
 			{
-				projects.map((project) => (
-					<div class="project-card first-hero">
-						<div class="image-container">
-							<img
-								src={project.image}
-								alt={project.title || `Project ${project.id}`}
-								class="zoom-img"
-							/>
-							<div class="details">
-								<span>{project.id}</span> {project.title}
+				projects.map((project, index) => {
+					const displayId = String(index + 1).padStart(2, '0');
+					return (
+						<div class="project-card first-hero">
+							<div class="image-container">
+								<img
+									src={project.image}
+									alt={project.title || `Project ${displayId}`}
+									class="zoom-img"
+								/>
+								<div class="details">
+									<span>{displayId}</span> {project.title}
+								</div>
 							</div>
 						</div>
-					</div>
-				))
+					);
+				})
 			}
 
 			<div class="project-card footer-card">
