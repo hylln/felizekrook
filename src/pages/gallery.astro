@@ -339,7 +339,7 @@ const galleryImages = [
         pointer-events: auto;
         transform-origin: center center;
         transform: scale(0.9);
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
     }
 
     .lightbox.show .lightbox-content {
@@ -526,6 +526,8 @@ const galleryImages = [
                 direction === "right"
                     ? "translate3d(100%, 0, 0)"
                     : "translate3d(-100%, 0, 0)";
+            lightboxImg.style.visibility = "hidden";
+            lightboxImg.style.opacity = "0";
             lightboxImg.src = imgList[currentIndex];
             updateLightboxArrows();
             lightboxImg.style.transform = "scale(1)";
@@ -549,11 +551,17 @@ const galleryImages = [
     }
 
     if (lightbox && lightboxWrapper && lightboxImg) {
-        lightboxImg.addEventListener("load", updateLightboxArrows);
+        lightboxImg.addEventListener("load", () => {
+            lightboxImg.style.visibility = "visible";
+            lightboxImg.style.opacity = "1";
+            updateLightboxArrows();
+        });
 
         thumbImgs.forEach((img, i) =>
             img.addEventListener("click", () => {
                 currentIndex = i;
+                lightboxImg.style.visibility = "hidden";
+                lightboxImg.style.opacity = "0";
                 lightboxImg.src = imgList[currentIndex];
                 lightboxImg.style.transform = "scale(1)";
                 lightboxImg.style.transformOrigin = "center center";
