@@ -281,11 +281,8 @@ const galleryImages = [
         position: absolute;
         top: 0;
         height: 100%;
-        width: 30%;
+        width: 35%;
         z-index: 2010;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         cursor: pointer;
         transition:
             opacity 0.2s ease,
@@ -306,9 +303,12 @@ const galleryImages = [
     }
 
     .lightbox-arrow-container {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
         width: 80px;
         opacity: 1;
-        transition: opacity 0.3s;
+        transition: opacity 0.3s, left 0.3s ease, right 0.3s ease;
     }
 
     .nav-zone:hover .lightbox-arrow-container {
@@ -332,7 +332,7 @@ const galleryImages = [
     }
 
     .lightbox-content {
-        max-width: 85%;
+        max-width: calc(100% - 280px);
         max-height: 80vh;
         object-fit: contain;
         user-select: none;
@@ -383,6 +383,9 @@ const galleryImages = [
         }
         .nav-zone {
             display: none;
+        }
+        .lightbox-content {
+            max-width: 90%;
         }
     }
 
@@ -439,6 +442,44 @@ const galleryImages = [
     const imgList = Array.from(thumbImgs).map((img) => img.src);
     let isAnimating = false;
 
+    function getLightboxImageMargin() {
+        if (!lightboxImg || !lightboxImg.naturalWidth) return 140;
+
+        const W = window.innerWidth;
+        const H = window.innerHeight;
+        const imgW = lightboxImg.naturalWidth;
+        const imgH = lightboxImg.naturalHeight;
+
+        const maxW = W - 280;
+        const maxH = H * 0.80;
+
+        const imageRatio = imgW / imgH;
+
+        let w = maxW;
+        let h = w / imageRatio;
+
+        if (h > maxH) {
+            h = maxH;
+            w = h * imageRatio;
+        }
+
+        return Math.max(140, (W - w) / 2);
+    }
+
+    function updateLightboxArrows() {
+        const prevArrow = document.querySelector(".prev-arrow") as HTMLElement;
+        const nextArrow = document.querySelector(".next-arrow") as HTMLElement;
+
+        if (lightboxImg && prevArrow && nextArrow) {
+            const margin = getLightboxImageMargin();
+            let arrowOffset = margin - 45 - 80;
+            arrowOffset = Math.max(20, arrowOffset);
+
+            prevArrow.style.left = `${arrowOffset}px`;
+            nextArrow.style.right = `${arrowOffset}px`;
+        }
+    }
+
     // Interaction Variables
     let startX = 0;
     let currentX = 0;
@@ -486,6 +527,7 @@ const galleryImages = [
                     ? "translate3d(100%, 0, 0)"
                     : "translate3d(-100%, 0, 0)";
             lightboxImg.src = imgList[currentIndex];
+            updateLightboxArrows();
             lightboxImg.style.transform = "scale(1)";
             lightboxImg.style.transformOrigin = "center center";
             isDoubleTapZoomed = false;
@@ -507,6 +549,8 @@ const galleryImages = [
     }
 
     if (lightbox && lightboxWrapper && lightboxImg) {
+        lightboxImg.addEventListener("load", updateLightboxArrows);
+
         thumbImgs.forEach((img, i) =>
             img.addEventListener("click", () => {
                 currentIndex = i;
@@ -516,6 +560,7 @@ const galleryImages = [
                 isDoubleTapZoomed = false;
                 lightbox.classList.add("show");
                 document.body.style.overflow = "hidden";
+                updateLightboxArrows();
             }),
         );
 
@@ -669,7 +714,10 @@ const galleryImages = [
             .querySelectorAll(".gallery-item")
             .forEach((c) => revealObserver.observe(c));
     });
-    window.addEventListener("resize", resizeAll);
+    window.addEventListener("resize", () => {
+        resizeAll();
+        updateLightboxArrows();
+    });
 
     // Handle cached images and instant rendering
     document.querySelectorAll(".gallery-item").forEach((item) => {
