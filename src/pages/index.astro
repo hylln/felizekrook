@@ -1,33 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Image } from "astro:assets";
 
-//IMPORTERA BILDER FRÅN ASSETS FOLDER
+//IMPORTERA LÅTEN FRÅN ASSETS FOLDER
 import angelsong from "../assets/angelsong.mp3";
-import img10 from "../assets/10.jpeg";
-import img11 from "../assets/11.jpeg";
-import img12 from "../assets/12.jpeg";
-import img13 from "../assets/13.jpeg";
-import img14 from "../assets/14.jpeg";
-import img15 from "../assets/15.jpeg";
-import img16 from "../assets/16.jpeg";
-import img17 from "../assets/17.jpeg";
-import img18 from "../assets/18.jpeg";
-import img19 from "../assets/19.jpeg";
 
-//LÄGGER TILL BILDERNA I ARRAYEN
-const projects = [
-	{ id: "01", title: "", img: img19 },
-	{ id: "02", title: "", img: img10 },
-	{ id: "03", title: "", img: img11 },
-	{ id: "04", title: "", img: img12 },
-	{ id: "05", title: "", img: img13 },
-	{ id: "06", title: "", img: img18 },
-	{ id: "07", title: "", img: img14 },
-	{ id: "08", title: "", img: img15 },
-	{ id: "09", title: "", img: img16 },
-	{ id: "10", title: "", img: img17 },
-];
+// LOAD DATA DYNAMICALLY FROM KEYSTATIC CMS JSON FILES
+const projectFiles = import.meta.glob('/src/content/projects/*.json', { eager: true });
+const projects = Object.values(projectFiles)
+	.map((file: any) => file)
+	.sort((a, b) => a.id.localeCompare(b.id));
 ---
 
 <Layout title="HOME">
@@ -181,12 +162,10 @@ const projects = [
 				projects.map((project) => (
 					<div class="project-card first-hero">
 						<div class="image-container">
-							<Image
-								src={project.img}
-								alt={project.title}
+							<img
+								src={project.image}
+								alt={project.title || `Project ${project.id}`}
 								class="zoom-img"
-								quality="high"
-								format="webp"
 							/>
 							<div class="details">
 								<span>{project.id}</span> {project.title}

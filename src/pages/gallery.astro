@@ -1,18 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-const galleryImages = [
-    { id: "01", src: "/19.jpeg" },
-    { id: "02", src: "/10.jpeg" },
-    { id: "03", src: "/11.jpeg" },
-    { id: "04", src: "/12.jpeg" },
-    { id: "05", src: "/13.jpeg" },
-    { id: "06", src: "/18.jpeg" },
-    { id: "07", src: "/14.jpeg" },
-    { id: "08", src: "/15.jpeg" },
-    { id: "09", src: "/16.jpeg" },
-    { id: "10", src: "/17.jpeg" },
-];
+// LOAD DATA DYNAMICALLY FROM KEYSTATIC CMS JSON FILES
+const projectFiles = import.meta.glob('/src/content/projects/*.json', { eager: true });
+const galleryImages = Object.values(projectFiles)
+    .map((file: any) => file)
+    .sort((a, b) => a.id.localeCompare(b.id));
 ---
 
 <Layout title="GALLERY">
@@ -37,7 +30,7 @@ const galleryImages = [
                 galleryImages.map((image) => (
                     <div class="gallery-item">
                         <img
-                            src={image.src}
+                            src={image.image}
                             alt={`Project ${image.id}`}
                             class="zoom-img"
                         />
