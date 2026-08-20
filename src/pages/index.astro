@@ -592,6 +592,23 @@ const projects = [
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			will-change: transform, opacity;
+			transition:
+				transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+				opacity 0.3s ease;
+		}
+		.lightbox-content-wrapper.dragging {
+			transition: none !important;
+		}
+
+		.slide-out-top {
+			transform: translate3d(0, -100%, 0) !important;
+			opacity: 0 !important;
+		}
+
+		.slide-out-bottom {
+			transform: translate3d(0, 100%, 0) !important;
+			opacity: 0 !important;
 		}
 		.lightbox-content {
 			max-width: 90%;
@@ -723,9 +740,49 @@ const projects = [
 			document.body.style.overflow = "auto";
 		};
 
-		document.querySelectorAll(".zoom-img").forEach((img) => {
+		const zoomImgs = document.querySelectorAll(".zoom-img") as NodeListOf<HTMLImageElement>;
+		const imgList = Array.from(zoomImgs).map((img) => img.src);
+		let currentIndex = 0;
+		let isAnimating = false;
+
+		const lightboxWrapper = document.getElementById("lightbox-wrapper") as HTMLElement;
+
+		function updateImage(index: number, direction: "up" | "down") {
+			if (!lightboxImg || isAnimating) return;
+			isAnimating = true;
+
+			const outClass =
+				direction === "down" ? "slide-out-top" : "slide-out-bottom";
+			lightboxWrapper.classList.add(outClass);
+
+			setTimeout(() => {
+				currentIndex = index;
+				lightboxWrapper.style.transition = "none";
+				lightboxWrapper.style.opacity = "0";
+				lightboxWrapper.style.transform =
+					direction === "down"
+						? "translate3d(0, 100%, 0)"
+						: "translate3d(0, -100%, 0)";
+				lightboxImg.src = imgList[currentIndex];
+				lightboxWrapper.classList.remove(outClass);
+
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						lightboxWrapper.style.transition = "";
+						lightboxWrapper.style.opacity = "1";
+						lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
+						setTimeout(() => {
+							isAnimating = false;
+						}, 400);
+					});
+				});
+			}, 350);
+		}
+
+		zoomImgs.forEach((img, i) => {
 			img.addEventListener("click", () => {
-				lightboxImg.src = (img as HTMLImageElement).src;
+				currentIndex = i;
+				lightboxImg.src = imgList[currentIndex];
 				lightbox.classList.add("show");
 				document.body.style.overflow = "hidden";
 			});
@@ -741,6 +798,162 @@ const projects = [
 				(e.target as HTMLElement).id === "lightbox-wrapper"
 			)
 				closeLightbox();
+		});
+
+		// Wheel scroll touchpad gestures (Vertical Swipe)
+		let accumDeltaY = 0;
+		let wheelTimeout: any = null;
+		let wheelSwipeTriggered = false;
+
+		lightbox.addEventListener("wheel", (e) => {
+			if (isAnimating) return;
+
+			if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+				e.preventDefault();
+
+				if (wheelSwipeTriggered) return;
+
+				accumDeltaY += e.deltaY;
+
+				lightboxWrapper.style.transform = `translate3d(0, ${-accumDeltaY}px, 0)`;
+				lightboxWrapper.style.opacity = Math.max(
+					0.5,
+					1 - Math.abs(accumDeltaY) / window.innerHeight
+				).toString();
+				lightboxWrapper.classList.add("dragging");
+
+				const threshold = 100;
+
+				if (accumDeltaY > threshold) {
+					wheelSwipeTriggered = true;
+					lightboxWrapper.classList.remove("dragging");
+					updateImage((currentIndex + 1) % imgList.length, "down");
+					resetAccumWheel();
+				} else if (accumDeltaY < -threshold) {
+					wheelSwipeTriggered = true;
+					lightboxWrapper.classList.remove("dragging");
+					updateImage((currentIndex - 1 + imgList.length) % imgList.length, "up");
+					resetAccumWheel();
+				}
+
+				if (wheelTimeout) clearTimeout(wheelTimeout);
+				wheelTimeout = setTimeout(() => {
+					if (!wheelSwipeTriggered) {
+						lightboxWrapper.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+						lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
+						lightboxWrapper.style.opacity = "1";
+						setTimeout(() => {
+							lightboxWrapper.style.transition = "";
+						}, 300);
+					}
+					resetAccumWheel();
+				}, 150);
+			}
+		}, { passive: false });
+
+		function resetAccumWheel() {
+			accumDeltaY = 0;
+			wheelSwipeTriggered = false;
+		}
+
+		// Touch swipe gestures (Vertical Swipe)
+		let startY = 0;
+		let currentY = 0;
+		let isDragging = false;
+
+		lightbox.addEventListener(
+			"touchstart",
+			(e) => {
+				if (isAnimating) return;
+				if (e.touches.length === 1) {
+					startY = e.touches[0].clientY;
+					currentY = startY;
+					isDragging = true;
+					lightboxWrapper.classList.add("dragging");
+				}
+			},
+			{ passive: false }
+		);
+
+		lightbox.addEventListener(
+			"touchmove",
+			(e) => {
+				if (isDragging && e.touches.length === 1) {
+					currentY = e.touches[0].clientY;
+					const diff = currentY - startY;
+					lightboxWrapper.style.transform = `translate3d(0, ${diff}px, 0)`;
+					lightboxWrapper.style.opacity = Math.max(
+						0.5,
+						1 - Math.abs(diff) / window.innerHeight
+					).toString();
+				}
+			},
+			{ passive: false }
+		);
+
+		lightbox.addEventListener("touchend", () => {
+			if (isDragging) {
+				isDragging = false;
+				lightboxWrapper.classList.remove("dragging");
+				const diff = currentY - startY;
+				const threshold = window.innerHeight * 0.2;
+				if (diff < -threshold) {
+					updateImage((currentIndex + 1) % imgList.length, "down");
+				} else if (diff > threshold) {
+					updateImage((currentIndex - 1 + imgList.length) % imgList.length, "up");
+				} else {
+					lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
+					lightboxWrapper.style.opacity = "1";
+				}
+			}
+			startY = 0;
+			currentY = 0;
+		});
+
+		// Keyboard vertical navigation
+		window.addEventListener("keydown", (e) => {
+			if (lightbox.classList.contains("show")) {
+				if (e.key === "ArrowDown" || e.key === " ") {
+					e.preventDefault();
+					updateImage((currentIndex + 1) % imgList.length, "down");
+				} else if (e.key === "ArrowUp") {
+					e.preventDefault();
+					updateImage((currentIndex - 1 + imgList.length) % imgList.length, "up");
+				} else if (e.key === "Escape") {
+					e.preventDefault();
+					closeLightbox();
+				}
+			} else {
+				if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === " ") {
+					e.preventDefault();
+
+					const cards = Array.from(document.querySelectorAll(".project-card"));
+					let activeIdx = cards.findIndex((card) => {
+						const rect = card.getBoundingClientRect();
+						return rect.top >= -50 && rect.top <= 50;
+					});
+
+					if (activeIdx === -1) {
+						let minDiff = Infinity;
+						cards.forEach((card, idx) => {
+							const rect = card.getBoundingClientRect();
+							const diff = Math.abs(rect.top);
+							if (diff < minDiff) {
+								minDiff = diff;
+								activeIdx = idx;
+							}
+						});
+					}
+
+					if (e.key === "ArrowDown" || e.key === " ") {
+						const nextIdx = Math.min(cards.length - 1, activeIdx + 1);
+						cards[nextIdx].scrollIntoView({ behavior: "smooth", block: "start" });
+					} else if (e.key === "ArrowUp") {
+						const prevIdx = Math.max(0, activeIdx - 1);
+						cards[prevIdx].scrollIntoView({ behavior: "smooth", block: "start" });
+					}
+				}
+			}
 		});
 
 		if (playbackStatus) {
