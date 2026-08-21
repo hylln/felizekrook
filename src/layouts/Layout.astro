@@ -58,86 +58,64 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 
 	/* Stabilize header layout and GPU rendering to prevent frame-drops */
 	.hero {
+		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 		will-change: transform;
-		transform: translate3d(0, 0, 0);
+	}
+
+	.hero.header-hidden {
+		transform: translateY(-100%);
 	}
 </style>
 
 <script>
 	function initHeaderScroll() {
-		const hero = document.querySelector(".hero") as HTMLElement;
-		if (!hero) return;
+		const header = document.querySelector(".hero") as HTMLElement;
+		if (!header) return;
 
 		const isMobile = () => window.innerWidth <= 900;
 
-		hero.style.transition = "transform 0.4s ease-out";
+		let lastScrollY = 0;
 
-		let lastScrollTop = 0;
-		let accumulatedScroll = 0;
-		const hideThreshold = 30;
-
-		function handleScroll(scrollTop: number, maxScrollTop: number) {
+		function handleScroll(currentScrollY: number, maxScrollY?: number) {
 			if (!isMobile()) {
-				hero.style.transition = "transform 0.4s ease-out";
-				hero.style.transform = "translateY(0)";
+				header.classList.remove("header-hidden");
 				return;
 			}
 
 			// Automatically show header when scrolled to the absolute bottom of the page
-			if (scrollTop >= maxScrollTop - 10) {
-				hero.style.transition = "transform 0.4s ease-out";
-				hero.style.transform = "translateY(0)";
-				lastScrollTop = scrollTop;
+			if (maxScrollY !== undefined && currentScrollY >= maxScrollY - 10) {
+				header.classList.remove("header-hidden");
+				lastScrollY = currentScrollY;
 				return;
 			}
 
-			const diff = scrollTop - lastScrollTop;
-			
-			if ((diff > 0 && accumulatedScroll >= 0) || (diff < 0 && accumulatedScroll <= 0)) {
-				accumulatedScroll += diff;
-			} else {
-				accumulatedScroll = diff;
+			// Hide when scrolling down, show immediately when scrolling up
+			if (currentScrollY > lastScrollY && currentScrollY > 50) {
+				header.classList.add("header-hidden");
+			} else if (currentScrollY < lastScrollY) {
+				header.classList.remove("header-hidden");
 			}
 
-			if (scrollTop > 80 && diff > 0 && accumulatedScroll > hideThreshold) {
-				// Exit transition: starts slowly, speeds up as it exits
-				hero.style.transition = "transform 0.4s ease-in";
-				hero.style.transform = "translateY(-100%)";
-			} else if (diff < 0 && accumulatedScroll < -hideThreshold) {
-				// Entry transition: enters quickly, decelerates gently into place
-				hero.style.transition = "transform 0.4s ease-out";
-				hero.style.transform = "translateY(0)";
-			}
-			
-			if (scrollTop <= 10) {
-				hero.style.transition = "transform 0.4s ease-out";
-				hero.style.transform = "translateY(0)";
-			}
-
-			lastScrollTop = scrollTop;
+			lastScrollY = Math.max(0, currentScrollY);
 		}
 
 		const scrollContainer = document.getElementById("scroll-container");
 		if (scrollContainer) {
 			scrollContainer.addEventListener("scroll", () => {
-				const maxScrollTop =
-					scrollContainer.scrollHeight - scrollContainer.clientHeight;
-				handleScroll(scrollContainer.scrollTop, maxScrollTop);
-			});
+				const maxScrollY = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+				handleScroll(scrollContainer.scrollTop, maxScrollY);
+			}, { passive: true });
 		} else {
 			window.addEventListener("scroll", () => {
-				const maxScrollTop =
-					document.documentElement.scrollHeight - window.innerHeight;
-				handleScroll(
-					window.scrollY || document.documentElement.scrollTop,
-					maxScrollTop,
-				);
-			});
+				const currentScrollY = window.scrollY || document.documentElement.scrollTop;
+				const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
+				handleScroll(currentScrollY, maxScrollY);
+			}, { passive: true });
 		}
 
 		window.addEventListener("resize", () => {
 			if (!isMobile()) {
-				hero.style.transform = "translateY(0)";
+				header.classList.remove("header-hidden");
 			}
 		});
 	}
