@@ -23,7 +23,7 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 	</body>
 </html>
 
-<style>
+<style is:global>
 	:root {
 		--bg: #ffffff;
 		--text: #000000;
@@ -41,6 +41,7 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		color: var(--text);
 		font-family: "Inter", sans-serif;
 		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
 		padding: var(--gutter);
 	}
 
@@ -54,6 +55,21 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		max-width: 100%;
 		height: auto;
 		display: block;
+	}
+
+	/* Fix text rendering shift/jitter during header scroll animation on mobile devices */
+	.hero,
+	.hero * {
+		-webkit-font-smoothing: antialiased !important;
+		-moz-osx-font-smoothing: grayscale !important;
+		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004); /* Forces subpixel rendering stability */
+	}
+
+	.hero {
+		will-change: transform;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		transform: translate3d(0, 0, 0);
 	}
 </style>
 
