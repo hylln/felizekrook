@@ -23,7 +23,7 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 	</body>
 </html>
 
-<style is:global>
+<style>
 	:root {
 		--bg: #ffffff;
 		--text: #000000;
@@ -41,7 +41,6 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		color: var(--text);
 		font-family: "Inter", sans-serif;
 		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
 		padding: var(--gutter);
 	}
 
@@ -55,21 +54,6 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		max-width: 100%;
 		height: auto;
 		display: block;
-	}
-
-	/* Fix text rendering shift/jitter during header scroll animation on mobile devices */
-	.hero,
-	.hero * {
-		-webkit-font-smoothing: antialiased !important;
-		-moz-osx-font-smoothing: grayscale !important;
-		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004); /* Forces subpixel rendering stability */
-	}
-
-	.hero {
-		will-change: transform;
-		backface-visibility: hidden;
-		-webkit-backface-visibility: hidden;
-		transform: translate3d(0, 0, 0);
 	}
 </style>
 
@@ -100,19 +84,26 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 			}
 
 			const diff = scrollTop - lastScrollTop;
-			
-			if ((diff > 0 && accumulatedScroll >= 0) || (diff < 0 && accumulatedScroll <= 0)) {
+
+			if (
+				(diff > 0 && accumulatedScroll >= 0) ||
+				(diff < 0 && accumulatedScroll <= 0)
+			) {
 				accumulatedScroll += diff;
 			} else {
 				accumulatedScroll = diff;
 			}
 
-			if (scrollTop > 80 && diff > 0 && accumulatedScroll > hideThreshold) {
+			if (
+				scrollTop > 80 &&
+				diff > 0 &&
+				accumulatedScroll > hideThreshold
+			) {
 				hero.style.transform = "translateY(-100%)";
 			} else if (diff < 0 && accumulatedScroll < -hideThreshold) {
 				hero.style.transform = "translateY(0)";
 			}
-			
+
 			if (scrollTop <= 10) {
 				hero.style.transform = "translateY(0)";
 			}
@@ -123,13 +114,18 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		const scrollContainer = document.getElementById("scroll-container");
 		if (scrollContainer) {
 			scrollContainer.addEventListener("scroll", () => {
-				const maxScrollTop = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+				const maxScrollTop =
+					scrollContainer.scrollHeight - scrollContainer.clientHeight;
 				handleScroll(scrollContainer.scrollTop, maxScrollTop);
 			});
 		} else {
 			window.addEventListener("scroll", () => {
-				const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
-				handleScroll(window.scrollY || document.documentElement.scrollTop, maxScrollTop);
+				const maxScrollTop =
+					document.documentElement.scrollHeight - window.innerHeight;
+				handleScroll(
+					window.scrollY || document.documentElement.scrollTop,
+					maxScrollTop,
+				);
 			});
 		}
 
