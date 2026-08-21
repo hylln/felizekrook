@@ -23,7 +23,7 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 	</body>
 </html>
 
-<style>
+<style is:global>
 	:root {
 		--bg: #ffffff;
 		--text: #000000;
@@ -55,6 +55,12 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		height: auto;
 		display: block;
 	}
+
+	/* Stabilize header layout and GPU rendering to prevent frame-drops */
+	.hero {
+		will-change: transform;
+		transform: translate3d(0, 0, 0);
+	}
 </style>
 
 <script>
@@ -64,7 +70,7 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 
 		const isMobile = () => window.innerWidth <= 900;
 
-		hero.style.transition = "transform 0.4s ease-in-out";
+		hero.style.transition = "transform 0.4s ease-out";
 
 		let lastScrollTop = 0;
 		let accumulatedScroll = 0;
@@ -72,39 +78,39 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 
 		function handleScroll(scrollTop: number, maxScrollTop: number) {
 			if (!isMobile()) {
+				hero.style.transition = "transform 0.4s ease-out";
 				hero.style.transform = "translateY(0)";
 				return;
 			}
 
 			// Automatically show header when scrolled to the absolute bottom of the page
 			if (scrollTop >= maxScrollTop - 10) {
+				hero.style.transition = "transform 0.4s ease-out";
 				hero.style.transform = "translateY(0)";
 				lastScrollTop = scrollTop;
 				return;
 			}
 
 			const diff = scrollTop - lastScrollTop;
-
-			if (
-				(diff > 0 && accumulatedScroll >= 0) ||
-				(diff < 0 && accumulatedScroll <= 0)
-			) {
+			
+			if ((diff > 0 && accumulatedScroll >= 0) || (diff < 0 && accumulatedScroll <= 0)) {
 				accumulatedScroll += diff;
 			} else {
 				accumulatedScroll = diff;
 			}
 
-			if (
-				scrollTop > 80 &&
-				diff > 0 &&
-				accumulatedScroll > hideThreshold
-			) {
+			if (scrollTop > 80 && diff > 0 && accumulatedScroll > hideThreshold) {
+				// Exit transition: starts slowly, speeds up as it exits
+				hero.style.transition = "transform 0.4s ease-in";
 				hero.style.transform = "translateY(-100%)";
 			} else if (diff < 0 && accumulatedScroll < -hideThreshold) {
+				// Entry transition: enters quickly, decelerates gently into place
+				hero.style.transition = "transform 0.4s ease-out";
 				hero.style.transform = "translateY(0)";
 			}
-
+			
 			if (scrollTop <= 10) {
+				hero.style.transition = "transform 0.4s ease-out";
 				hero.style.transform = "translateY(0)";
 			}
 
