@@ -63,55 +63,62 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 	}
 
 	.hero.header-hidden {
-		transform: translateY(-100%);
+		transform: translateY(-100%) !important;
 	}
 </style>
 
 <script>
 	function initHeaderScroll() {
+		const scrollContainer = document.getElementById("scroll-container") || window;
 		const header = document.querySelector(".hero") as HTMLElement;
 		if (!header) return;
 
 		const isMobile = () => window.innerWidth <= 900;
 
-		let lastScrollY = 0;
+		let lastScrollTop = 0;
 
-		function handleScroll(currentScrollY: number, maxScrollY?: number) {
+		const getScrollPos = () => {
+			return scrollContainer === window
+				? window.scrollY
+				: (scrollContainer as HTMLElement).scrollTop;
+		};
+
+		const handleHeaderScroll = () => {
 			if (!isMobile()) {
 				header.classList.remove("header-hidden");
 				return;
 			}
 
-			// Automatically show header when scrolled to the absolute bottom of the page
-			if (maxScrollY !== undefined && currentScrollY >= maxScrollY - 10) {
+			const currentScroll = getScrollPos();
+			const maxScroll = scrollContainer === window
+				? document.documentElement.scrollHeight - window.innerHeight
+				: (scrollContainer as HTMLElement).scrollHeight - (scrollContainer as HTMLElement).clientHeight;
+
+			// If near the top, always show header
+			if (currentScroll <= 30) {
 				header.classList.remove("header-hidden");
-				lastScrollY = currentScrollY;
+				lastScrollTop = currentScroll;
 				return;
 			}
 
-			// Hide when scrolling down, show immediately when scrolling up
-			if (currentScrollY > lastScrollY && currentScrollY > 50) {
+			// Automatically show header when scrolled to the absolute bottom of the page
+			if (currentScroll >= maxScroll - 10) {
+				header.classList.remove("header-hidden");
+				lastScrollTop = currentScroll;
+				return;
+			}
+
+			// Hide when scrolling down, show when scrolling up
+			if (currentScroll > lastScrollTop + 10) {
 				header.classList.add("header-hidden");
-			} else if (currentScrollY < lastScrollY) {
+			} else if (currentScroll < lastScrollTop - 10) {
 				header.classList.remove("header-hidden");
 			}
 
-			lastScrollY = Math.max(0, currentScrollY);
-		}
+			lastScrollTop = currentScroll;
+		};
 
-		const scrollContainer = document.getElementById("scroll-container");
-		if (scrollContainer) {
-			scrollContainer.addEventListener("scroll", () => {
-				const maxScrollY = scrollContainer.scrollHeight - scrollContainer.clientHeight;
-				handleScroll(scrollContainer.scrollTop, maxScrollY);
-			}, { passive: true });
-		} else {
-			window.addEventListener("scroll", () => {
-				const currentScrollY = window.scrollY || document.documentElement.scrollTop;
-				const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
-				handleScroll(currentScrollY, maxScrollY);
-			}, { passive: true });
-		}
+		scrollContainer.addEventListener("scroll", handleHeaderScroll, { passive: true });
 
 		window.addEventListener("resize", () => {
 			if (!isMobile()) {
