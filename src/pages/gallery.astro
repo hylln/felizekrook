@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Analytics from "@vercel/analytics/astro";
 
 import portfolioData from "../content/portfolio.json";
 const galleryImages = portfolioData.projects;
@@ -15,6 +16,7 @@ const galleryImages = portfolioData.projects;
             <a href="/about">ABOUT</a>
             <a href="/contact">CONTACT</a>
         </nav>
+        <Analytics />
     </header>
 
     <main class="contact-grid">
@@ -25,7 +27,7 @@ const galleryImages = portfolioData.projects;
         <section class="gallery-grid">
             {
                 galleryImages.map((image, index) => {
-                    const displayId = String(index + 1).padStart(2, '0');
+                    const displayId = String(index + 1).padStart(2, "0");
                     return (
                         <div class="gallery-item">
                             <img
@@ -214,7 +216,9 @@ const galleryImages = portfolioData.projects;
         display: block;
         object-fit: unset;
         cursor: zoom-in;
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        transition:
+            transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity 0.3s ease;
     }
 
     .gallery-item:hover .zoom-img {
@@ -301,7 +305,10 @@ const galleryImages = portfolioData.projects;
         transform: translateY(-50%);
         width: 80px;
         opacity: 1;
-        transition: opacity 0.3s, left 0.3s ease, right 0.3s ease;
+        transition:
+            opacity 0.3s,
+            left 0.3s ease,
+            right 0.3s ease;
     }
 
     .nav-zone:hover .lightbox-arrow-container {
@@ -332,7 +339,9 @@ const galleryImages = portfolioData.projects;
         pointer-events: auto;
         transform-origin: center center;
         transform: scale(0.9);
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        transition:
+            transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity 0.3s ease;
     }
 
     .lightbox.show .lightbox-content {
@@ -451,7 +460,7 @@ const galleryImages = portfolioData.projects;
         const imgH = lightboxImg.naturalHeight;
 
         const maxW = W - 280;
-        const maxH = H * 0.80;
+        const maxH = H * 0.8;
 
         const imageRatio = imgW / imgH;
 
@@ -701,51 +710,64 @@ const galleryImages = portfolioData.projects;
         let wheelTimeout: any = null;
         let wheelSwipeTriggered = false;
 
-        lightbox.addEventListener("wheel", (e) => {
-            if (isAnimating) return;
+        lightbox.addEventListener(
+            "wheel",
+            (e) => {
+                if (isAnimating) return;
 
-            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-                e.preventDefault();
+                if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                    e.preventDefault();
 
-                if (wheelSwipeTriggered) return;
+                    if (wheelSwipeTriggered) return;
 
-                accumDeltaX += e.deltaX;
+                    accumDeltaX += e.deltaX;
 
-                lightboxWrapper.style.transform = `translate3d(${-accumDeltaX}px, 0, 0)`;
-                lightboxWrapper.style.opacity = Math.max(
-                    0.5,
-                    1 - Math.abs(accumDeltaX) / window.innerWidth
-                ).toString();
-                lightboxWrapper.classList.add("dragging");
+                    lightboxWrapper.style.transform = `translate3d(${-accumDeltaX}px, 0, 0)`;
+                    lightboxWrapper.style.opacity = Math.max(
+                        0.5,
+                        1 - Math.abs(accumDeltaX) / window.innerWidth,
+                    ).toString();
+                    lightboxWrapper.classList.add("dragging");
 
-                const threshold = 100;
+                    const threshold = 100;
 
-                if (accumDeltaX > threshold) {
-                    wheelSwipeTriggered = true;
-                    lightboxWrapper.classList.remove("dragging");
-                    updateImage((currentIndex + 1) % imgList.length, "right");
-                    resetAccumWheel();
-                } else if (accumDeltaX < -threshold) {
-                    wheelSwipeTriggered = true;
-                    lightboxWrapper.classList.remove("dragging");
-                    updateImage((currentIndex - 1 + imgList.length) % imgList.length, "left");
-                    resetAccumWheel();
-                }
-
-                if (wheelTimeout) clearTimeout(wheelTimeout);
-                wheelTimeout = setTimeout(() => {
-                    if (!wheelSwipeTriggered) {
-                        lightboxWrapper.style.transition = "transform 0.3s ease, opacity 0.3s ease";
-                        lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
-                        lightboxWrapper.style.opacity = "1";
-                        setTimeout(() => {
-                            lightboxWrapper.style.transition = "";
-                        }, 300);
+                    if (accumDeltaX > threshold) {
+                        wheelSwipeTriggered = true;
+                        lightboxWrapper.classList.remove("dragging");
+                        updateImage(
+                            (currentIndex + 1) % imgList.length,
+                            "right",
+                        );
+                        resetAccumWheel();
+                    } else if (accumDeltaX < -threshold) {
+                        wheelSwipeTriggered = true;
+                        lightboxWrapper.classList.remove("dragging");
+                        updateImage(
+                            (currentIndex - 1 + imgList.length) %
+                                imgList.length,
+                            "left",
+                        );
+                        resetAccumWheel();
                     }
-                    resetAccumWheel();
-                }, 150);
-            }
-        }, { passive: false });
+
+                    if (wheelTimeout) clearTimeout(wheelTimeout);
+                    wheelTimeout = setTimeout(() => {
+                        if (!wheelSwipeTriggered) {
+                            lightboxWrapper.style.transition =
+                                "transform 0.3s ease, opacity 0.3s ease";
+                            lightboxWrapper.style.transform =
+                                "translate3d(0, 0, 0)";
+                            lightboxWrapper.style.opacity = "1";
+                            setTimeout(() => {
+                                lightboxWrapper.style.transition = "";
+                            }, 300);
+                        }
+                        resetAccumWheel();
+                    }, 150);
+                }
+            },
+            { passive: false },
+        );
 
         function resetAccumWheel() {
             accumDeltaX = 0;

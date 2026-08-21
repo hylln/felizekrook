@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Analytics from "@vercel/analytics/astro";
 ---
 
 <Layout title="CONTACT">
@@ -12,6 +13,7 @@ import Layout from "../layouts/Layout.astro";
             <a href="/about">ABOUT</a>
             <a href="/contact">CONTACT</a>
         </nav>
+        <Analytics />
     </header>
 
     <main class="contact-grid">
