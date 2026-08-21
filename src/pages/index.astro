@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Analytics from "@vercel/analytics/astro";
 
 //IMPORTERA LÅTEN FRÅN ASSETS FOLDER
 import angelsong from "../assets/angelsong.mp3";
@@ -18,6 +19,7 @@ const projects = portfolioData.projects;
 			<a href="/about">ABOUT</a>
 			<a href="/contact">CONTACT</a>
 		</nav>
+		<Analytics />
 	</header>
 
 	<main class="main-content" id="scroll-container">
@@ -157,13 +159,15 @@ const projects = portfolioData.projects;
 
 			{
 				projects.map((project, index) => {
-					const displayId = String(index + 1).padStart(2, '0');
+					const displayId = String(index + 1).padStart(2, "0");
 					return (
 						<div class="project-card first-hero">
 							<div class="image-container">
 								<img
 									src={project.image}
-									alt={project.title || `Project ${displayId}`}
+									alt={
+										project.title || `Project ${displayId}`
+									}
 									class="zoom-img"
 								/>
 								<div class="details">
@@ -641,7 +645,8 @@ const projects = portfolioData.projects;
 			.volume-slider-wrapper {
 				display: none !important;
 			}
-			.project-card:not(.landing-card):not(.footer-card) .image-container {
+			.project-card:not(.landing-card):not(.footer-card)
+				.image-container {
 				transform: translateY(-9vh);
 			}
 			.project-card {
@@ -727,12 +732,16 @@ const projects = portfolioData.projects;
 			document.body.style.overflow = "auto";
 		};
 
-		const zoomImgs = document.querySelectorAll(".zoom-img") as NodeListOf<HTMLImageElement>;
+		const zoomImgs = document.querySelectorAll(
+			".zoom-img",
+		) as NodeListOf<HTMLImageElement>;
 		const imgList = Array.from(zoomImgs).map((img) => img.src);
 		let currentIndex = 0;
 		let isAnimating = false;
 
-		const lightboxWrapper = document.getElementById("lightbox-wrapper") as HTMLElement;
+		const lightboxWrapper = document.getElementById(
+			"lightbox-wrapper",
+		) as HTMLElement;
 
 		function updateImage(index: number, direction: "up" | "down") {
 			if (!lightboxImg || isAnimating) return;
@@ -757,7 +766,8 @@ const projects = portfolioData.projects;
 					requestAnimationFrame(() => {
 						lightboxWrapper.style.transition = "";
 						lightboxWrapper.style.opacity = "1";
-						lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
+						lightboxWrapper.style.transform =
+							"translate3d(0, 0, 0)";
 						setTimeout(() => {
 							isAnimating = false;
 						}, 400);
@@ -792,51 +802,64 @@ const projects = portfolioData.projects;
 		let wheelTimeout: any = null;
 		let wheelSwipeTriggered = false;
 
-		lightbox.addEventListener("wheel", (e) => {
-			if (isAnimating) return;
+		lightbox.addEventListener(
+			"wheel",
+			(e) => {
+				if (isAnimating) return;
 
-			if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-				e.preventDefault();
+				if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+					e.preventDefault();
 
-				if (wheelSwipeTriggered) return;
+					if (wheelSwipeTriggered) return;
 
-				accumDeltaY += e.deltaY;
+					accumDeltaY += e.deltaY;
 
-				lightboxWrapper.style.transform = `translate3d(0, ${-accumDeltaY}px, 0)`;
-				lightboxWrapper.style.opacity = Math.max(
-					0.5,
-					1 - Math.abs(accumDeltaY) / window.innerHeight
-				).toString();
-				lightboxWrapper.classList.add("dragging");
+					lightboxWrapper.style.transform = `translate3d(0, ${-accumDeltaY}px, 0)`;
+					lightboxWrapper.style.opacity = Math.max(
+						0.5,
+						1 - Math.abs(accumDeltaY) / window.innerHeight,
+					).toString();
+					lightboxWrapper.classList.add("dragging");
 
-				const threshold = 100;
+					const threshold = 100;
 
-				if (accumDeltaY > threshold) {
-					wheelSwipeTriggered = true;
-					lightboxWrapper.classList.remove("dragging");
-					updateImage((currentIndex + 1) % imgList.length, "down");
-					resetAccumWheel();
-				} else if (accumDeltaY < -threshold) {
-					wheelSwipeTriggered = true;
-					lightboxWrapper.classList.remove("dragging");
-					updateImage((currentIndex - 1 + imgList.length) % imgList.length, "up");
-					resetAccumWheel();
-				}
-
-				if (wheelTimeout) clearTimeout(wheelTimeout);
-				wheelTimeout = setTimeout(() => {
-					if (!wheelSwipeTriggered) {
-						lightboxWrapper.style.transition = "transform 0.3s ease, opacity 0.3s ease";
-						lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
-						lightboxWrapper.style.opacity = "1";
-						setTimeout(() => {
-							lightboxWrapper.style.transition = "";
-						}, 300);
+					if (accumDeltaY > threshold) {
+						wheelSwipeTriggered = true;
+						lightboxWrapper.classList.remove("dragging");
+						updateImage(
+							(currentIndex + 1) % imgList.length,
+							"down",
+						);
+						resetAccumWheel();
+					} else if (accumDeltaY < -threshold) {
+						wheelSwipeTriggered = true;
+						lightboxWrapper.classList.remove("dragging");
+						updateImage(
+							(currentIndex - 1 + imgList.length) %
+								imgList.length,
+							"up",
+						);
+						resetAccumWheel();
 					}
-					resetAccumWheel();
-				}, 150);
-			}
-		}, { passive: false });
+
+					if (wheelTimeout) clearTimeout(wheelTimeout);
+					wheelTimeout = setTimeout(() => {
+						if (!wheelSwipeTriggered) {
+							lightboxWrapper.style.transition =
+								"transform 0.3s ease, opacity 0.3s ease";
+							lightboxWrapper.style.transform =
+								"translate3d(0, 0, 0)";
+							lightboxWrapper.style.opacity = "1";
+							setTimeout(() => {
+								lightboxWrapper.style.transition = "";
+							}, 300);
+						}
+						resetAccumWheel();
+					}, 150);
+				}
+			},
+			{ passive: false },
+		);
 
 		function resetAccumWheel() {
 			accumDeltaY = 0;
@@ -859,7 +882,7 @@ const projects = portfolioData.projects;
 					lightboxWrapper.classList.add("dragging");
 				}
 			},
-			{ passive: false }
+			{ passive: false },
 		);
 
 		lightbox.addEventListener(
@@ -871,11 +894,11 @@ const projects = portfolioData.projects;
 					lightboxWrapper.style.transform = `translate3d(0, ${diff}px, 0)`;
 					lightboxWrapper.style.opacity = Math.max(
 						0.5,
-						1 - Math.abs(diff) / window.innerHeight
+						1 - Math.abs(diff) / window.innerHeight,
 					).toString();
 				}
 			},
-			{ passive: false }
+			{ passive: false },
 		);
 
 		lightbox.addEventListener("touchend", () => {
@@ -887,7 +910,10 @@ const projects = portfolioData.projects;
 				if (diff < -threshold) {
 					updateImage((currentIndex + 1) % imgList.length, "down");
 				} else if (diff > threshold) {
-					updateImage((currentIndex - 1 + imgList.length) % imgList.length, "up");
+					updateImage(
+						(currentIndex - 1 + imgList.length) % imgList.length,
+						"up",
+					);
 				} else {
 					lightboxWrapper.style.transform = "translate3d(0, 0, 0)";
 					lightboxWrapper.style.opacity = "1";
@@ -905,16 +931,25 @@ const projects = portfolioData.projects;
 					updateImage((currentIndex + 1) % imgList.length, "down");
 				} else if (e.key === "ArrowUp") {
 					e.preventDefault();
-					updateImage((currentIndex - 1 + imgList.length) % imgList.length, "up");
+					updateImage(
+						(currentIndex - 1 + imgList.length) % imgList.length,
+						"up",
+					);
 				} else if (e.key === "Escape") {
 					e.preventDefault();
 					closeLightbox();
 				}
 			} else {
-				if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === " ") {
+				if (
+					e.key === "ArrowDown" ||
+					e.key === "ArrowUp" ||
+					e.key === " "
+				) {
 					e.preventDefault();
 
-					const cards = Array.from(document.querySelectorAll(".project-card"));
+					const cards = Array.from(
+						document.querySelectorAll(".project-card"),
+					);
 					let activeIdx = cards.findIndex((card) => {
 						const rect = card.getBoundingClientRect();
 						return rect.top >= -50 && rect.top <= 50;
@@ -933,11 +968,20 @@ const projects = portfolioData.projects;
 					}
 
 					if (e.key === "ArrowDown" || e.key === " ") {
-						const nextIdx = Math.min(cards.length - 1, activeIdx + 1);
-						cards[nextIdx].scrollIntoView({ behavior: "smooth", block: "start" });
+						const nextIdx = Math.min(
+							cards.length - 1,
+							activeIdx + 1,
+						);
+						cards[nextIdx].scrollIntoView({
+							behavior: "smooth",
+							block: "start",
+						});
 					} else if (e.key === "ArrowUp") {
 						const prevIdx = Math.max(0, activeIdx - 1);
-						cards[prevIdx].scrollIntoView({ behavior: "smooth", block: "start" });
+						cards[prevIdx].scrollIntoView({
+							behavior: "smooth",
+							block: "start",
+						});
 					}
 				}
 			}
