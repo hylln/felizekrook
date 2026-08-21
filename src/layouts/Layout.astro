@@ -70,9 +70,16 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		let accumulatedScroll = 0;
 		const hideThreshold = 30;
 
-		function handleScroll(scrollTop: number) {
+		function handleScroll(scrollTop: number, maxScrollTop: number) {
 			if (!isMobile()) {
 				hero.style.transform = "translateY(0)";
+				return;
+			}
+
+			// Automatically show header when scrolled to the absolute bottom of the page
+			if (scrollTop >= maxScrollTop - 10) {
+				hero.style.transform = "translateY(0)";
+				lastScrollTop = scrollTop;
 				return;
 			}
 
@@ -100,11 +107,13 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		const scrollContainer = document.getElementById("scroll-container");
 		if (scrollContainer) {
 			scrollContainer.addEventListener("scroll", () => {
-				handleScroll(scrollContainer.scrollTop);
+				const maxScrollTop = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+				handleScroll(scrollContainer.scrollTop, maxScrollTop);
 			});
 		} else {
 			window.addEventListener("scroll", () => {
-				handleScroll(window.scrollY || document.documentElement.scrollTop);
+				const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+				handleScroll(window.scrollY || document.documentElement.scrollTop, maxScrollTop);
 			});
 		}
 
