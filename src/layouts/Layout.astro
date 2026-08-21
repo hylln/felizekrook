@@ -58,7 +58,7 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 
 	/* Stabilize header layout and GPU rendering to prevent frame-drops */
 	.hero {
-		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 		will-change: transform;
 	}
 
@@ -69,62 +69,56 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 
 <script>
 	function initHeaderScroll() {
-		const scrollContainer = document.getElementById("scroll-container") || window;
+		const landingHero = document.getElementById("landing-trigger");
+		const scrollContainer = document.getElementById("scroll-container");
 		const header = document.querySelector(".hero") as HTMLElement;
-		if (!header) return;
+		const footerCard = document.querySelector(".footer-card");
 
 		const isMobile = () => window.innerWidth <= 900;
 
-		let lastScrollTop = 0;
+		if (landingHero && scrollContainer && header) {
+			let isLandingVisible = true;
+			let isFooterVisible = false;
 
-		const getScrollPos = () => {
-			return scrollContainer === window
-				? window.scrollY
-				: (scrollContainer as HTMLElement).scrollTop;
-		};
+			const updateHeaderVisibility = () => {
+				if (!isMobile()) {
+					header.classList.remove("header-hidden");
+					return;
+				}
 
-		const handleHeaderScroll = () => {
-			if (!isMobile()) {
-				header.classList.remove("header-hidden");
-				return;
+				if (isLandingVisible || isFooterVisible) {
+					header.classList.remove("header-hidden");
+				} else {
+					header.classList.add("header-hidden");
+				}
+			};
+
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (entry.target === landingHero) {
+							isLandingVisible = entry.isIntersecting;
+						} else if (entry.target === footerCard) {
+							isFooterVisible = entry.isIntersecting;
+						}
+					});
+					updateHeaderVisibility();
+				},
+				{
+					root: scrollContainer,
+					threshold: 0.15,
+				}
+			);
+
+			observer.observe(landingHero);
+			if (footerCard) {
+				observer.observe(footerCard);
 			}
 
-			const currentScroll = getScrollPos();
-			const maxScroll = scrollContainer === window
-				? document.documentElement.scrollHeight - window.innerHeight
-				: (scrollContainer as HTMLElement).scrollHeight - (scrollContainer as HTMLElement).clientHeight;
-
-			// If near the top, always show header
-			if (currentScroll <= 30) {
-				header.classList.remove("header-hidden");
-				lastScrollTop = currentScroll;
-				return;
-			}
-
-			// Automatically show header when scrolled to the absolute bottom of the page
-			if (currentScroll >= maxScroll - 10) {
-				header.classList.remove("header-hidden");
-				lastScrollTop = currentScroll;
-				return;
-			}
-
-			// Hide when scrolling down, show when scrolling up
-			if (currentScroll > lastScrollTop + 10) {
-				header.classList.add("header-hidden");
-			} else if (currentScroll < lastScrollTop - 10) {
-				header.classList.remove("header-hidden");
-			}
-
-			lastScrollTop = currentScroll;
-		};
-
-		scrollContainer.addEventListener("scroll", handleHeaderScroll, { passive: true });
-
-		window.addEventListener("resize", () => {
-			if (!isMobile()) {
-				header.classList.remove("header-hidden");
-			}
-		});
+			window.addEventListener("resize", () => {
+				updateHeaderVisibility();
+			});
+		}
 	}
 
 	if (document.readyState === "loading") {
