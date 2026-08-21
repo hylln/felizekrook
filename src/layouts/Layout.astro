@@ -1,4 +1,6 @@
 ---
+import Analytics from '@vercel/analytics/astro';
+
 // 1. Define the props to receive the title from individual pages
 const { title } = Astro.props;
 
@@ -17,6 +19,7 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 		<meta name="generator" content={Astro.generator} />
 
 		<title>{fullTitle}</title>
+		<Analytics />
 	</head>
 	<body>
 		<slot />
