@@ -11,4 +11,9 @@ export default defineConfig({
   redirects: {
     '/admin': '/keystatic',
   },
+  vite: {
+    optimizeDeps: {
+      exclude: ['@keystatic/astro'],
+    },
+  },
 });
