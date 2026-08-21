@@ -69,54 +69,69 @@ const fullTitle = title ? `${title} | ${siteName}` : siteName;
 
 <script>
 	function initHeaderScroll() {
-		const landingHero = document.getElementById("landing-trigger");
 		const scrollContainer = document.getElementById("scroll-container");
 		const header = document.querySelector(".hero") as HTMLElement;
-		const footerCard = document.querySelector(".footer-card");
 
 		const isMobile = () => window.innerWidth <= 900;
 
-		if (landingHero && scrollContainer && header) {
-			let isLandingVisible = true;
-			let isFooterVisible = false;
+		if (header) {
+			let lastScrollTop = 0;
+			const threshold = 10; // Scroll distance threshold to trigger state change
 
-			const updateHeaderVisibility = () => {
+			// Determine scroll target and helper functions
+			const target = scrollContainer || window;
+
+			const getScrollTop = () => {
+				return scrollContainer 
+					? scrollContainer.scrollTop 
+					: (window.scrollY || document.documentElement.scrollTop);
+			};
+
+			const getMaxScroll = () => {
+				return scrollContainer
+					? scrollContainer.scrollHeight - scrollContainer.clientHeight
+					: document.documentElement.scrollHeight - window.innerHeight;
+			};
+
+			const handleScroll = () => {
 				if (!isMobile()) {
 					header.classList.remove("header-hidden");
 					return;
 				}
 
-				if (isLandingVisible || isFooterVisible) {
+				const currentScroll = getScrollTop();
+				const maxScroll = getMaxScroll();
+
+				// If at the top, always show header
+				if (currentScroll <= 10) {
 					header.classList.remove("header-hidden");
-				} else {
+					lastScrollTop = currentScroll;
+					return;
+				}
+
+				// Automatically show header when scrolled to the absolute bottom of the page
+				if (currentScroll >= maxScroll - 10) {
+					header.classList.remove("header-hidden");
+					lastScrollTop = currentScroll;
+					return;
+				}
+
+				// Hide when scrolling down, show when scrolling up
+				if (currentScroll > lastScrollTop + threshold) {
 					header.classList.add("header-hidden");
+					lastScrollTop = currentScroll;
+				} else if (currentScroll < lastScrollTop - threshold) {
+					header.classList.remove("header-hidden");
+					lastScrollTop = currentScroll;
 				}
 			};
 
-			const observer = new IntersectionObserver(
-				(entries) => {
-					entries.forEach((entry) => {
-						if (entry.target === landingHero) {
-							isLandingVisible = entry.isIntersecting;
-						} else if (entry.target === footerCard) {
-							isFooterVisible = entry.isIntersecting;
-						}
-					});
-					updateHeaderVisibility();
-				},
-				{
-					root: scrollContainer,
-					threshold: 0.15,
-				}
-			);
-
-			observer.observe(landingHero);
-			if (footerCard) {
-				observer.observe(footerCard);
-			}
+			target.addEventListener("scroll", handleScroll, { passive: true });
 
 			window.addEventListener("resize", () => {
-				updateHeaderVisibility();
+				if (!isMobile()) {
+					header.classList.remove("header-hidden");
+				}
 			});
 		}
 	}
